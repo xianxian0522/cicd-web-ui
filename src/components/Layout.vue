@@ -61,9 +61,10 @@
 
 <script lang="ts">
 import {DownOutlined, UserOutlined} from "@ant-design/icons-vue";
-import {reactive, ref, toRefs} from 'vue'
+import {onMounted, reactive, ref, toRefs} from 'vue'
 import {useRoute} from "vue-router";
 import {BarItem} from "@/utils/response";
+import cicdRepository from "@/api/cicdRepository";
 
 export default {
   name: "Layout",
@@ -73,9 +74,8 @@ export default {
     const url = route.path.split('/')
 
     const state = reactive({
-      selectedKey: ref(['/cicd/home']),
-      // selectedKeysMenu: ref([url[url.length - 1]]),
-      selectedKeysMenu: ref([url[2]]),
+      selectedKey: ['/cicd/biz'],
+      selectedKeysMenu: [url[2]],
       username: '用户名',
     })
     const bar = ref<BarItem[]>([])
@@ -84,6 +84,17 @@ export default {
     const logout = () => {
       localStorage.removeItem('token')
     }
+    const getBar = async () => {
+      try {
+        menuBar.value = await cicdRepository.queryBar()
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    onMounted(() => {
+      getBar()
+    })
 
     return {
       ...toRefs(state),
