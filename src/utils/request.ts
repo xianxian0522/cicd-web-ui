@@ -46,6 +46,13 @@ export default {
         .catch(err => reject(err))
     })
   },
+  put<T>(url: string, params = {}) {
+    return new Promise<T>((resolve, reject) => {
+      service.put(url, params)
+        .then(res => resolve(res.data))
+        .catch(err => reject(err))
+    })
+  },
   patch<T>(url: string, params = {}) {
     return new Promise<T>((resolve, reject) => {
       service.patch(url, params)

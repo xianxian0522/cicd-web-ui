@@ -20,6 +20,15 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/Login.vue'),
   },
   {
+    path: '/cicd',
+    component: () => import('../components/Layout.vue'),
+    children: [
+      {
+        path: 'biz', name: 'biz', component: () => import('../views/Biz.vue'),
+      },
+    ],
+  },
+  {
     path: '/:pathMatch(.*)*',
     component: () => import('../views/NotFound.vue'),
   },
