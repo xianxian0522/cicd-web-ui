@@ -6,6 +6,14 @@ export interface BarItem {
   route?: string;
   children?: BarItem[];
 }
+export interface JwtTokenResponse {
+  accessToken: string;
+  email: string;
+  id: number;
+  mobile: string;
+  name: string;
+  username: string;
+}
 export interface LoginResponse {
   url?: string;
   token?: string;
@@ -14,7 +22,7 @@ export interface BaseResponse {
   Comment?: string;
   CreatedAt?: string;
   DisplayName?: string;
-  ID: number;
+  ID?: number;
   Name?: string;
   UpdatedAt?: string;
 }

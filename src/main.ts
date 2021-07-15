@@ -1,7 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
-import {Avatar, Button, ConfigProvider, Dropdown, Layout, Menu} from "ant-design-vue";
+import {Avatar, Button, ConfigProvider, Dropdown, Layout, Menu, Select} from "ant-design-vue";
 
 const app = createApp(App)
 
@@ -13,5 +13,6 @@ app.use(Menu)
 app.use(Avatar)
 app.use(Dropdown)
 app.use(Button)
+app.use(Select)
 
 app.mount("#app");

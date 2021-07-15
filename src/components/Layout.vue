@@ -38,6 +38,17 @@
     </a-layout-header>
     <a-layout>
       <a-layout-sider width="200" style="background: #fff">
+        <div class="select-menu-contain">
+          <a-select
+            v-model:value="bizId"
+            show-search
+            placeholder="Select a biz"
+            :filter-option="filterOptionBiz"
+            style="width: 100%"
+          >
+            <a-select-option v-for="option in bizList" :key="option.ID" :value="option.ID" :title="option.Name">{{ option.Name }}</a-select-option>
+          </a-select>
+        </div>
         <a-menu
           class="menu-sider"
           mode="inline"
@@ -62,27 +73,37 @@
 <script lang="ts">
 import {DownOutlined, UserOutlined} from "@ant-design/icons-vue";
 import {onMounted, reactive, ref, toRefs} from 'vue'
-import {useRoute} from "vue-router";
-import {BarItem} from "@/utils/response";
+import {useRoute, useRouter} from "vue-router";
+import {BarItem, JwtTokenResponse} from "@/utils/response";
 import cicdRepository from "@/api/cicdRepository";
+import bizRepositories from "@/composable/bizRepositories";
+import jwtDecode from "jwt-decode";
 
 export default {
   name: "Layout",
   components: {UserOutlined, DownOutlined},
   setup() {
     const route = useRoute()
+    const router = useRouter()
     const url = route.path.split('/')
+    const {bizList, bizId} = bizRepositories()
 
     const state = reactive({
       selectedKey: ['/cicd/biz'],
       selectedKeysMenu: [url[2]],
       username: '用户名',
     })
-    const bar = ref<BarItem[]>([])
+    const bar = ref<BarItem[]>([
+      {id: 1, icon: 'icon-home', path: 'biz', name: '总览'},
+    ])
     const menuBar = ref<BarItem[]>([])
 
     const logout = () => {
       localStorage.removeItem('token')
+      router.push('/login')
+    }
+    const filterOptionBiz = (input: string, option: any) => {
+      return option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0
     }
     const getBar = async () => {
       try {
@@ -94,19 +115,29 @@ export default {
 
     onMounted(() => {
       getBar()
+
+      const token = localStorage.getItem('token')
+      if (token) {
+        const userInfo = jwtDecode<JwtTokenResponse>(token)
+        state.username = userInfo?.username || userInfo?.name
+      }
     })
 
     return {
       ...toRefs(state),
       bar,
       menuBar,
+      bizList,
+      bizId,
       logout,
+      filterOptionBiz,
     }
   }
 }
 </script>
 
 <style scoped lang="less">
+@baseBorder: #DCDEE5;
 .layout {
   width: 100vw;
   height: inherit;
@@ -187,5 +218,13 @@ export default {
   .ant-menu-item-selected a, a:hover {
     color: #1890ff;
   }
+}
+.select-menu-contain {
+  display: flex;
+  justify-content: center;
+  height: 53px;
+  align-items: center;
+  border-bottom: 1px solid @baseBorder;
+  padding: 0 10px;
 }
 </style>
