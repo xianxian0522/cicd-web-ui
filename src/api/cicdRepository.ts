@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import {AppResponse, BarItem, BaseResponse, LoginResponse, ProjectResponse} from "@/utils/response";
+import {AppResponse, BarItem, BaseResponse, LoginResponse, ProjectResponse, VersionResponse} from "@/utils/response";
 
 const ApiLogin = '/api/v1/sso/login';
 const API = '/api/v1/';
@@ -22,5 +22,6 @@ export default {
 
   queryAppInfoByAppId: (appId: number) => request.get<AppResponse>(`${ApiApp}/${appId}`),
   queryProjectByAppId: (appId: number) => request.get<ProjectResponse[]>(`${ApiApp}/${appId}/project`),
+  queryVersionByAppId: (appId: number) => request.get<VersionResponse[]>(`${ApiApp}/${appId}/version`),
   addProjectByAppId: (appId: number, params: any) => request.post(`${ApiApp}/${appId}/project`, params),
 }

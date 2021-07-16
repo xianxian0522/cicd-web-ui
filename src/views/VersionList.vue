@@ -14,7 +14,7 @@
 <script lang="ts">
 import CommonBreadcrumb from "@/components/CommonBreadcrumb.vue";
 import CommonHeader from "@/components/CommonHeader.vue";
-import projectRepositories from "@/composable/projectRepositories";
+import versionRepositories from "@/composable/versionRepositories";
 
 export default {
   name: "VersionList",
@@ -22,7 +22,7 @@ export default {
     CommonBreadcrumb, CommonHeader,
   },
   setup() {
-    const {appId, bizId} = projectRepositories()
+    const {appId, bizId} = versionRepositories()
 
     return {
       appId,

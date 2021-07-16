@@ -78,3 +78,18 @@ export interface ProjectResponse {
   updated_by_username?: string;
   version_name?: string;
 }
+export interface VersionResponse {
+  app_id?: number
+  app_name?: string;
+  biz_id?: number
+  biz_name?: string;
+  build_number?: number;
+  commit_id?: string;
+  created_at?: string;
+  edges?: {
+    Project: ProjectResponse;
+  }
+  id?: number;
+  name?: string;
+  updated_at?: string;
+}
