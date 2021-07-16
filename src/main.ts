@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import {
-  Avatar,
+  Avatar, Breadcrumb,
   Button,
   ConfigProvider,
   Dropdown,
@@ -30,5 +30,6 @@ app.use(Table)
 app.use(Input)
 app.use(Form)
 app.use(Modal)
+app.use(Breadcrumb)
 
 app.mount("#app");

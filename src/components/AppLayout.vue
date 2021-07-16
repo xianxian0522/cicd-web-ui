@@ -15,7 +15,7 @@
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
-    <a-layout-content class="common-content-layout">
+    <a-layout-content class="common-content-layout app-layout-content">
       <router-view></router-view>
     </a-layout-content>
   </a-layout>
@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import {useRoute} from "vue-router";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {BarItem} from "@/utils/response";
 
 export default {
@@ -39,6 +39,11 @@ export default {
       {id: 2, icon: 'icon-version', path: 'version-list', name: '版本列表', route: 'version'},
     ])
 
+    watch(() => route.path, value => {
+      const url = value.split('/')
+      selectedKeysMenu.value = [url[3]]
+    })
+
     return {
       selectedKeysMenu,
       bar,
@@ -51,4 +56,7 @@ export default {
 
 <style scoped lang="less">
 @import "index";
+.app-layout-content {
+  padding: 0 20px;
+}
 </style>

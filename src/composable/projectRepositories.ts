@@ -6,6 +6,7 @@ import { ProjectResponse} from "@/utils/response";
 export default function projectRepositories() {
   const route = useRoute()
   const appId = ref(parseInt(route.params.appId as string, 10))
+  const bizId = ref(parseInt(route.params.bizId as string, 10))
   const projectList = ref<ProjectResponse[]>([])
 
   const getProject = async () => {
@@ -24,6 +25,7 @@ export default function projectRepositories() {
 
   return {
     appId,
+    bizId,
     projectList,
   }
 
