@@ -72,7 +72,7 @@
 
 <script lang="ts">
 import {DownOutlined, UserOutlined} from "@ant-design/icons-vue";
-import {onMounted, reactive, ref, toRefs} from 'vue'
+import {onMounted, reactive, ref, toRefs, watch} from 'vue'
 import {useRoute, useRouter} from "vue-router";
 import {BarItem, JwtTokenResponse} from "@/utils/response";
 import cicdRepository from "@/api/cicdRepository";
@@ -112,6 +112,11 @@ export default {
         console.error(e)
       }
     }
+
+    watch(() => route.path, value => {
+      const url = value.split('/')
+      state.selectedKeysMenu = [url[2]]
+    })
 
     onMounted(() => {
       getBar()
