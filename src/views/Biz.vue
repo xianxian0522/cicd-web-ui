@@ -41,10 +41,20 @@
 
 <script lang="ts">
 import {AppStore} from "@/utils/store";
-import {reactive, ref, toRefs} from "vue";
+import {reactive, ref, toRefs, UnwrapRef} from "vue";
 import {TableState} from "ant-design-vue/es/table/interface";
 import CommonHeader from "@/components/CommonHeader.vue";
-import {RuleObject} from "ant-design-vue/es/form/interface";
+import {RuleObject, ValidateErrorEntity} from "ant-design-vue/es/form/interface";
+import cicdRepository from "@/api/cicdRepository";
+import {ProjectResponse} from "@/utils/response";
+
+export interface ModalForm {
+  BaseBranch: string | undefined;
+  BranchName: string | undefined;
+  Comment: string | undefined;
+  Jira: string | undefined;
+  VersionName: string | undefined;
+}
 
 export default {
   name: "Biz",
@@ -63,12 +73,12 @@ export default {
       pageSize: 10,
     })
 
-    const modalForm = reactive({
-      BaseBranch: '',
-      BranchName: '',
-      Comment: '',
-      Jira: '',
-      VersionName: '',
+    const modalForm: UnwrapRef<ModalForm> = reactive({
+      BaseBranch: undefined,
+      BranchName: undefined,
+      Comment: undefined,
+      Jira: undefined,
+      VersionName: undefined,
     })
     const modalState = reactive({
       visible: false,
@@ -78,6 +88,9 @@ export default {
     const formRef = ref()
     const validateVersion = (rule: RuleObject, value: string) => {
       const reg = /^[0-9a-zA-Z_.]{1,}$/
+      if (!value) {
+        return Promise.reject('Please input VersionName')
+      }
       if (!reg.test(value)) {
         return Promise.reject('数组字母下划线点组成')
       }
@@ -85,15 +98,14 @@ export default {
     }
     const validateJira = (rule: RuleObject, value: string) => {
       const reg = /^((http|https):\/\/)?(([A-Za-z0-9]+-[A-Za-z0-9]+|[A-Za-z0-9]+)\.)+([A-Za-z]+)[/?:]?.*$/
-      if (!reg.test(value)) {
-        return Promise.reject('输入正确的url')
+      if (reg.test(value) || !value) {
+        return Promise.resolve()
       }
-      return Promise.resolve()
+      return Promise.reject('输入正确的url')
     }
     const rules = {
       VersionName: [
-        { required: true, message: 'Please input Activity VersionName', trigger: 'blur' },
-        { validator: validateVersion, trigger: 'change' },
+        { required: true, validator: validateVersion, trigger: 'blur' },
       ],
       Jira: [{ validator: validateJira, trigger: 'change' }],
     };
@@ -102,13 +114,26 @@ export default {
       pagination.current = page?.current as number
       pagination.pageSize = page?.pageSize as number
     }
+    const getFormValue = (project: ProjectResponse) => {
+      modalForm.BranchName = project.branch_name
+      modalForm.BaseBranch = project.base_branch
+      modalForm.Comment = project.comment
+      modalForm.Jira = project.Jira
+      modalForm.VersionName = project.version_name
+    }
     const addProject = (appId: number) => {
       modalState.appId = appId
       modalState.visible = true
       modalState.modelTitle = '新增项目'
+      getFormValue({})
     }
     const handleSubmit = () => {
-      console.log(modalForm)
+      formRef.value.validate()
+        .then(() => {
+          const value = {...modalForm}
+          cicdRepository.addProjectByAppId(modalState.appId, value)
+        })
+        .catch((error: ValidateErrorEntity) => console.error(error))
     }
 
     return {

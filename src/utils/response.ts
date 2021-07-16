@@ -55,3 +55,26 @@ export interface BindInfos {
   Port: number;
   Protocol: string;
 }
+export interface ProjectResponse {
+  app_display_name?: string;
+  app_id?: number;
+  app_name?: string;
+  base_branch?: string;
+  biz_id?: number;
+  biz_name?: string;
+  branch_name?: string;
+  comment?: string;
+  create_by_username?: string;
+  created_at?: string;
+  created_by_user_id?: number;
+  edges?: {Artifactory?: string }
+  id?: number;
+  state?: string;
+  task_id?: string;
+  template_id?: string;
+  Jira?: string;
+  updated_at?: string;
+  updated_by_user_id?: number;
+  updated_by_username?: string;
+  version_name?: string;
+}

@@ -20,5 +20,6 @@ export default {
   queryAllBiz: () => request.get<BaseResponse[]>(`${ApiBiz}`),
   queryAllAppByBizId: (bizId: number) => request.get<AppResponse[]>(`${ApiBiz}/${bizId}/app`),
 
+  queryProjectByAppId: (appId: number) => request.get(`${ApiApp}/${appId}/project`),
   addProjectByAppId: (appId: number, params: any) => request.post(`${ApiApp}/${appId}/project`, params),
 }
