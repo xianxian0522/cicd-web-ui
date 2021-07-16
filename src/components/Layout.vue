@@ -86,7 +86,7 @@ export default {
     const route = useRoute()
     const router = useRouter()
     const url = route.path.split('/')
-    const {bizList, bizId} = bizRepositories()
+    const { bizList, bizId } = bizRepositories()
 
     const state = reactive({
       selectedKey: ['/cicd/biz'],
@@ -193,7 +193,7 @@ export default {
 .common-content {
   background: #fff;
   border-left: 1px solid #DCDEE5;
-  padding: 0 20px;
+  padding: 20px;
   height: inherit;
   // 超过的高度滚动
   overflow: scroll;

@@ -20,9 +20,14 @@ export default function bizRepositories() {
       } else {
         bizId.value = id
       }
+      getBizInfo()
     } catch (e) {
       console.error(e)
     }
+  }
+
+  const getBizInfo = () => {
+    AppStore.bizInfo = bizList.value.filter((b: BaseResponse) => b.ID === bizId.value)?.[0]
   }
 
   const getAppList = async (bizId: number) => {
@@ -42,6 +47,7 @@ export default function bizRepositories() {
       name: 'biz',
       query: {bizId: value},
     }).then()
+    getBizInfo()
     getAppList(value).then()
   })
 

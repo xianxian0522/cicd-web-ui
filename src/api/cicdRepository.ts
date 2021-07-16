@@ -4,7 +4,7 @@ import {AppResponse, BarItem, BaseResponse, LoginResponse} from "@/utils/respons
 const ApiLogin = '/api/v1/sso/login';
 const API = '/api/v1/';
 const ApiBiz = `${API}/my/biz`
-const ApiApp = `${API}/app`
+const ApiApp = `${API}/my/app`
 
 let ApiBar = '/api/my/bar';
 if (window.location.hostname.endsWith('dev.ops.sumscope.com')) {
@@ -19,4 +19,6 @@ export default {
 
   queryAllBiz: () => request.get<BaseResponse[]>(`${ApiBiz}`),
   queryAllAppByBizId: (bizId: number) => request.get<AppResponse[]>(`${ApiBiz}/${bizId}/app`),
+
+  addProjectByAppId: (appId: number, params: any) => request.post(`${ApiApp}/${appId}/project`, params),
 }
