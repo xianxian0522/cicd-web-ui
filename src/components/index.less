@@ -38,3 +38,33 @@
     }
   }
 }
+
+.menu-sider {
+  li {
+    text-align: left;
+  }
+  a::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: transparent;
+    content: '';
+  }
+  a {
+    color: rgba(0, 0, 0, 0.85);
+    margin-left: 10px;
+  }
+  .ant-menu-item-selected a, a:hover {
+    color: #1890ff;
+  }
+}
+.common-content-layout {
+  background: #fff;
+  border-left: 1px solid #DCDEE5;
+  padding: 20px;
+  height: inherit;
+  // 超过的高度滚动
+  overflow: scroll;
+}

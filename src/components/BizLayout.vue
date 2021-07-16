@@ -26,7 +26,7 @@
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
-    <a-layout-content class="common-content">
+    <a-layout-content class="common-content-layout">
       <router-view></router-view>
     </a-layout-content>
   </a-layout>
@@ -70,28 +70,9 @@ export default {
 </script>
 
 <style scoped lang="less">
+@import "index";
 @baseBorder: #DCDEE5;
-.menu-sider {
-  li {
-    text-align: left;
-  }
-  a::before {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-color: transparent;
-    content: '';
-  }
-  a {
-    color: rgba(0, 0, 0, 0.85);
-    margin-left: 10px;
-  }
-  .ant-menu-item-selected a, a:hover {
-    color: #1890ff;
-  }
-}
+
 .select-menu-contain {
   display: flex;
   justify-content: center;
@@ -99,13 +80,5 @@ export default {
   align-items: center;
   border-bottom: 1px solid @baseBorder;
   padding: 0 10px;
-}
-.common-content {
-  background: #fff;
-  border-left: 1px solid #DCDEE5;
-  padding: 20px;
-  height: inherit;
-  // 超过的高度滚动
-  overflow: scroll;
 }
 </style>

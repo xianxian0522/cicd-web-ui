@@ -30,10 +30,19 @@ const routes: Array<RouteRecordRaw> = [
         ],
       },
       {
-        path: ':bizId/project-list/:appId',
-        name: 'project',
-        component: () => import('../views/ProjectList.vue')
+        path: ':bizId/', component: () => import('../components/AppLayout.vue'),
+        children: [
+          {path: 'project-list/:appId', name: 'project',
+            component: () => import('../views/ProjectList.vue')},
+          {path: 'version-list/:appId', name: 'version',
+            component: () => import('../views/VersionList.vue')},
+        ],
       },
+      // {
+      //   path: ':bizId/project-list/:appId',
+      //   name: 'project',
+      //   component: () => import('../views/ProjectList.vue')
+      // },
     ],
   },
   {
