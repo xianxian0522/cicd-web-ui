@@ -7,7 +7,7 @@
       <template v-slot:second>version</template>
     </CommonBreadcrumb>
     <CommonHeader :app-id="appId"/>
-ver
+    ver
   </div>
 </template>
 
@@ -18,7 +18,9 @@ import projectRepositories from "@/composable/projectRepositories";
 
 export default {
   name: "VersionList",
-  components: {CommonBreadcrumb, CommonHeader},
+  components: {
+    CommonBreadcrumb, CommonHeader,
+  },
   setup() {
     const {appId, bizId} = projectRepositories()
 
