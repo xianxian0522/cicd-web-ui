@@ -36,75 +36,35 @@
         </a-dropdown>
       </section>
     </a-layout-header>
-    <a-layout>
-      <a-layout-sider width="200" style="background: #fff">
-        <div class="select-menu-contain">
-          <a-select
-            v-model:value="bizId"
-            show-search
-            placeholder="Select a biz"
-            :filter-option="filterOptionBiz"
-            style="width: 100%"
-          >
-            <a-select-option v-for="option in bizList" :key="option.ID" :value="option.ID" :title="option.Name">{{ option.Name }}</a-select-option>
-          </a-select>
-        </div>
-        <a-menu
-          class="menu-sider"
-          mode="inline"
-          v-model:selectedKeys="selectedKeysMenu"
-          :style="{ height: '100%', borderRight: 0 }"
-        >
-          <a-menu-item v-for="item in bar" :key="item.path">
-            <span>
-<!--              <icon-font :type="item.icon" />-->
-              <router-link :to="'/toolbox/' + item.path">{{ item.name }}</router-link>
-            </span>
-          </a-menu-item>
-        </a-menu>
-      </a-layout-sider>
-      <a-layout-content class="common-content">
-        <router-view></router-view>
-      </a-layout-content>
-    </a-layout>
+
+    <router-view ></router-view>
   </a-layout>
 </template>
 
 <script lang="ts">
 import {DownOutlined, UserOutlined} from "@ant-design/icons-vue";
 import {onMounted, reactive, ref, toRefs, watch} from 'vue'
-import {useRoute, useRouter} from "vue-router";
+import { useRouter} from "vue-router";
 import {BarItem, JwtTokenResponse} from "@/utils/response";
 import cicdRepository from "@/api/cicdRepository";
-import bizRepositories from "@/composable/bizRepositories";
 import jwtDecode from "jwt-decode";
 
 export default {
   name: "Layout",
   components: {UserOutlined, DownOutlined},
   setup() {
-    const route = useRoute()
     const router = useRouter()
-    const url = route.path.split('/')
-    const { bizList, bizId } = bizRepositories()
-
     const state = reactive({
       selectedKey: ['/cicd/biz'],
-      selectedKeysMenu: [url[2]],
       username: '用户名',
     })
-    const bar = ref<BarItem[]>([
-      {id: 1, icon: 'icon-home', path: 'biz', name: '总览'},
-    ])
     const menuBar = ref<BarItem[]>([])
 
     const logout = () => {
       localStorage.removeItem('token')
       router.push('/login')
     }
-    const filterOptionBiz = (input: string, option: any) => {
-      return option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0
-    }
+
     const getBar = async () => {
       try {
         menuBar.value = await cicdRepository.queryBar()
@@ -112,11 +72,6 @@ export default {
         console.error(e)
       }
     }
-
-    watch(() => route.path, value => {
-      const url = value.split('/')
-      state.selectedKeysMenu = [url[2]]
-    })
 
     onMounted(() => {
       getBar()
@@ -130,12 +85,8 @@ export default {
 
     return {
       ...toRefs(state),
-      bar,
       menuBar,
-      bizList,
-      bizId,
       logout,
-      filterOptionBiz,
     }
   }
 }
@@ -146,14 +97,13 @@ export default {
 .layout {
   width: 100vw;
   height: inherit;
-  //height: 100vh;
-  //overflow: hidden;
+  overflow: hidden;
+  background: #fff;
 }
 // 侧边栏滚动
 .ant-layout-sider {
   overflow: auto;
 }
-
 .logo {
   min-width: 130px;
   height: 58px;
@@ -190,46 +140,9 @@ export default {
 .layout-header-menu /deep/ .ant-menu-dark .ant-menu-item:hover {
   background-color: #1890ff;
 }
-.common-content {
-  background: #fff;
-  border-left: 1px solid #DCDEE5;
-  padding: 20px;
-  height: inherit;
-  // 超过的高度滚动
-  overflow: scroll;
-}
 .layout /deep/ .ant-layout-header {
   height: 58px;
   display: flex;
   padding: 0 40px;
-}
-.menu-sider {
-  li {
-    text-align: left;
-  }
-  a::before {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-color: transparent;
-    content: '';
-  }
-  a {
-    color: rgba(0, 0, 0, 0.85);
-    margin-left: 10px;
-  }
-  .ant-menu-item-selected a, a:hover {
-    color: #1890ff;
-  }
-}
-.select-menu-contain {
-  display: flex;
-  justify-content: center;
-  height: 53px;
-  align-items: center;
-  border-bottom: 1px solid @baseBorder;
-  padding: 0 10px;
 }
 </style>

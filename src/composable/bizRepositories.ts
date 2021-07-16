@@ -43,6 +43,7 @@ export default function bizRepositories() {
     // if (parseInt(localStorage.getItem('bizId') as string, 10) !== value) {
     //   localStorage.setItem('bizId', value)
     // }
+
     router.push({
       name: 'biz',
       query: {bizId: value},

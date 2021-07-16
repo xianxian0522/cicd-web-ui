@@ -24,7 +24,15 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../components/Layout.vue'),
     children: [
       {
-        path: 'biz', name: 'biz', component: () => import('../views/Biz.vue'),
+        path: 'biz', component: () => import('../components/BizLayout.vue'),
+        children: [
+          { path: '', name: 'biz', component: () => import('../views/Biz.vue') }
+        ],
+      },
+      {
+        path: ':bizId/project-list/:appId',
+        name: 'project',
+        component: () => import('../views/ProjectList.vue')
       },
     ],
   },

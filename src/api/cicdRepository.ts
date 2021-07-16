@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import {AppResponse, BarItem, BaseResponse, LoginResponse} from "@/utils/response";
+import {AppResponse, BarItem, BaseResponse, LoginResponse, ProjectResponse} from "@/utils/response";
 
 const ApiLogin = '/api/v1/sso/login';
 const API = '/api/v1/';
@@ -20,6 +20,7 @@ export default {
   queryAllBiz: () => request.get<BaseResponse[]>(`${ApiBiz}`),
   queryAllAppByBizId: (bizId: number) => request.get<AppResponse[]>(`${ApiBiz}/${bizId}/app`),
 
-  queryProjectByAppId: (appId: number) => request.get(`${ApiApp}/${appId}/project`),
+  queryAppInfoByAppId: (appId: number) => request.get<AppResponse>(`${ApiApp}/${appId}`),
+  queryProjectByAppId: (appId: number) => request.get<ProjectResponse[]>(`${ApiApp}/${appId}/project`),
   addProjectByAppId: (appId: number, params: any) => request.post(`${ApiApp}/${appId}/project`, params),
 }

@@ -9,9 +9,9 @@
           <a>{{ text }}</a>
         </template>
         <template #action="{ record }">
-          <div style="display: flex; justify-content: space-around">
+          <div >
             <a-button type="link" @click="addProject(record.ID)">创建项目</a-button>
-<!--            <router-link :to="{ path: 'biz/deploy-list', query: { appId: record.ID }}" >发布列表</router-link>-->
+            <router-link :to="{ name: 'project', params: { bizId: bizInfo.ID, appId: record.ID }}" >项目列表</router-link>
           </div>
         </template>
       </a-table>
@@ -65,7 +65,7 @@ export default {
       { dataIndex: 'Name', key: 'Name', title: '名字',},
       { dataIndex: 'DisplayName', key: 'DisplayName', title: '显示名',},
       { dataIndex: 'Level', key: 'Level', title: '级别'},
-      { title: '操作', key: 'action', slots: { customRender: 'action', }, align: 'center', width: 100},
+      { title: '操作', key: 'action', slots: { customRender: 'action', }, align: 'center', width: 200},
     ];
     const pagination = reactive({
       showSizeChanger: true,

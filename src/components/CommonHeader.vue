@@ -1,6 +1,11 @@
 <template>
-  <div class="common-content">
-    <div class="biz-title">
+  <div class="common-header">
+    <div class="biz-title" v-if="appId">
+      <p>{{ appInfo?.Name }}</p>
+      <p>{{ appInfo?.DisplayName }}</p>
+      <p>{{ appInfo?.Comment }}</p>
+    </div>
+    <div class="biz-title" v-else>
       <p>{{ info.Name }}</p>
       <p>{{ info.DisplayName }}</p>
       <p>{{ info.Comment }}</p>
@@ -10,17 +15,27 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import {useRoute} from "vue-router";
+import appInfoRepositories from "@/composable/appInfoRepositories";
 
 export default defineComponent({
   name: "CommonHeader",
   props: {
     info: Object,
+    appId: Number,
   },
+  setup(props: any) {
+    const { appInfo } = appInfoRepositories()
+
+    return {
+      appInfo
+    }
+  }
 });
 </script>
 
 <style scoped lang="less">
-.common-content {
+.common-header {
   display: flex;
   align-items: flex-end;
   margin-bottom: 20px;
