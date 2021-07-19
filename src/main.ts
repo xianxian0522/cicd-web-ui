@@ -4,7 +4,7 @@ import router from "./router";
 import {
   Avatar, Breadcrumb,
   Button,
-  ConfigProvider,
+  ConfigProvider, Descriptions,
   Dropdown,
   Form,
   Input,
@@ -31,5 +31,6 @@ app.use(Input)
 app.use(Form)
 app.use(Modal)
 app.use(Breadcrumb)
+app.use(Descriptions)
 
 app.mount("#app");
