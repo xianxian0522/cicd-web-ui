@@ -1,5 +1,12 @@
 import request from "@/utils/request";
-import {AppResponse, BarItem, BaseResponse, LoginResponse, ProjectResponse, VersionResponse} from "@/utils/response";
+import {
+  AppResponse,
+  BarItem,
+  BaseResponse,
+  LoginResponse,
+  ProjectResponse, ProjectWorkflow,
+  VersionResponse,
+} from "@/utils/response";
 
 const ApiLogin = '/api/v1/sso/login';
 const API = '/api/v1/';
@@ -27,4 +34,5 @@ export default {
   addProjectByAppId: (appId: number, params: any) => request.post(`${ApiApp}/${appId}/project`, params),
 
   queryProjectDetail: (projectId: number) => request.get<ProjectResponse>(`${ApiProject}/${projectId}`),
+  queryWorkflow: (projectId: number) => request.get<ProjectWorkflow>(`${ApiProject}/${projectId}/workflow`)
 }

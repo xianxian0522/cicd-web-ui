@@ -19,12 +19,28 @@
 <script lang="ts">
 import CommonHeader from "@/components/CommonHeader.vue";
 import projectDetailRepositories from "@/composable/projectDetailRepositories";
+import cicdRepository from "@/api/cicdRepository";
+import {onMounted} from "vue";
 
 export default {
   name: "ProjectDetails",
   components: { CommonHeader },
   setup() {
     const { appId, projectId, projectInfo } = projectDetailRepositories()
+
+    const getWorkflow = async () => {
+      try {
+        if (projectId.value) {
+          await cicdRepository.queryWorkflow(projectId.value)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    onMounted(() => {
+      getWorkflow()
+    })
 
     return {
       appId,

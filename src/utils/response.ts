@@ -93,3 +93,75 @@ export interface VersionResponse {
   name?: string;
   updated_at?: string;
 }
+export interface ProjectWorkflow {
+  resolution: ResolutionResponse;
+  task: TaskResponse;
+}
+export interface ResolutionResponse {
+  base_configurations: string;
+  created: string;
+  id: string;
+  instance_id: number;
+  last_start: string;
+  last_stop: string;
+  next_retry: string;
+  resolver_inputs: string;
+  resolver_username: string;
+  run_count: number;
+  run_max: number;
+  state: string;
+  steps: {[key: string]: Step};
+  task_id: string;
+  task_title: string;
+}
+export interface Comment {
+  id: string;
+  created: string;
+  updated: string;
+  content: string;
+  username: string;
+}
+export interface TaskResponse {
+  batch: string;
+  comments: Comment[];
+  created: string;
+  errors: string;
+  id: string;
+  input: {
+    [key: string]: any
+  };
+  last_activity: string;
+  last_start: string;
+  last_stop: string;
+  requester_username: string;
+  resolution: string;
+  result: {
+    [key: string]: any
+  };
+  state: string;
+  steps_done: number;
+  steps_total: number;
+  tags: {
+    [key: string]: string
+  };
+  template_name: string;
+  title: string;
+}
+export interface Step {
+  name: string;
+  description: string;
+  output: {
+    [key: string]: any
+  };
+  error: string;
+  state: string;
+  try_count: number;
+  max_retries: number;
+  last_run: string;
+  dependencies: string[];
+  foreach_strategy: string;
+  tags: {
+    [key:string]: string
+  };
+  children?: any;
+}
