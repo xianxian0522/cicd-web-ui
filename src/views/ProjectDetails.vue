@@ -2,6 +2,11 @@
   <div class="project-detail">
     <CommonHeader :app-id="appId" />
     <a-descriptions title="项目详情" bordered>
+      <template #extra>
+        <a-button type="primary">
+          <router-link :to="{name: 'project', params: {appId, projectId}}">返回详情列表</router-link>
+        </a-button>
+      </template>
       <a-descriptions-item label="基本分支">{{ projectInfo?.base_branch }}</a-descriptions-item>
       <a-descriptions-item label="分支名">{{ projectInfo?.branch_name }}</a-descriptions-item>
       <a-descriptions-item label="comment">{{ projectInfo?.comment }}</a-descriptions-item>
@@ -23,6 +28,7 @@ export default {
 
     return {
       appId,
+      projectId,
       projectInfo,
     }
   }
