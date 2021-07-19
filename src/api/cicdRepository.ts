@@ -5,6 +5,7 @@ const ApiLogin = '/api/v1/sso/login';
 const API = '/api/v1/';
 const ApiBiz = `${API}/my/biz`
 const ApiApp = `${API}/my/app`
+const ApiProject = `${API}/my/project`
 
 let ApiBar = '/api/my/bar';
 if (window.location.hostname.endsWith('dev.ops.sumscope.com')) {
@@ -24,4 +25,6 @@ export default {
   queryProjectByAppId: (appId: number) => request.get<ProjectResponse[]>(`${ApiApp}/${appId}/project`),
   queryVersionByAppId: (appId: number) => request.get<VersionResponse[]>(`${ApiApp}/${appId}/version`),
   addProjectByAppId: (appId: number, params: any) => request.post(`${ApiApp}/${appId}/project`, params),
+
+  queryProjectDetail: (projectId: number) => request.get<ProjectResponse>(`${ApiProject}/${projectId}`),
 }

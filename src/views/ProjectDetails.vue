@@ -5,8 +5,13 @@
 </template>
 
 <script lang="ts">
+import projectDetailRepositories from "@/composable/projectDetailRepositories";
+
 export default {
-  name: "ProjectListDetails"
+  name: "ProjectDetails",
+  setup() {
+    const { appId, projectId, } = projectDetailRepositories()
+  }
 }
 </script>
 
