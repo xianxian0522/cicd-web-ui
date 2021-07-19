@@ -10,7 +10,7 @@ export default function versionRepositories() {
   const bizId = ref(parseInt(route.params.bizId as string, 10))
   const versionList = ref<VersionResponse[]>([])
 
-  const getProject = async () => {
+  const getVersion = async () => {
     try {
       if (appId.value) {
          versionList.value = await cicdRepository.queryVersionByAppId(appId.value)
@@ -21,7 +21,7 @@ export default function versionRepositories() {
   }
 
   onMounted(() => {
-    getProject().then()
+    getVersion().then()
   })
 
   return {
