@@ -9,8 +9,8 @@
     <CommonHeader :app-id="appId"/>
     <CommonTable :columns="columns" :data-source="projectList" :scroll-x="'2500px'">
       <template v-slot:default="slotProps">
-        <a-button type="link" >{{slotProps.action.id}}
-<!--          <router-link :to="{path: 'host-details/instance/' + slotProps.host.ID}">实例</router-link>-->
+        <a-button type="link" >
+          <router-link :to="{name: 'project-detail', query: {projectId: slotProps.action.id}, params: {appId}}">项目详情</router-link>
         </a-button>
       </template>
     </CommonTable>
@@ -45,7 +45,7 @@ export default {
       { dataIndex: 'comment', key: 'comment', title: '备注',},
       { dataIndex: 'created_at', key: 'created_at', title: '创建时间', slots: { customRender: 'time' }},
       { dataIndex: 'updated_at', key: 'updated_at', title: '更新时间', slots: { customRender: 'time' }},
-      { title: '操作', key: 'action', fixed: 'right', slots: { customRender: 'action', }, align: 'center', width: 200},
+      { title: '操作', key: 'action', fixed: 'right', slots: { customRender: 'action', }, align: 'center', width: 120},
     ]
     const { projectList, appId, bizId } = projectRepositories()
 

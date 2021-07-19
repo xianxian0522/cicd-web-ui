@@ -34,6 +34,8 @@ const routes: Array<RouteRecordRaw> = [
         children: [
           {path: 'project-list/:appId', name: 'project',
             component: () => import('../views/ProjectList.vue')},
+          {path: 'project-list/:appId/detail', name: 'project-detail',
+            component: () => import('../views/ProjectDetails.vue')},
           {path: 'version-list/:appId', name: 'version',
             component: () => import('../views/VersionList.vue')},
         ],
