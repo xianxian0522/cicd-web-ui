@@ -23,22 +23,63 @@
 import CommonHeader from "@/components/CommonHeader.vue";
 import projectDetailRepositories from "@/composable/projectDetailRepositories";
 import cicdRepository from "@/api/cicdRepository";
-import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
 import dagreD3 from 'dagre-d3'
 import * as d3 from 'd3'
+import {Step} from "@/utils/response";
 
 export default {
   name: "ProjectDetails",
   components: { CommonHeader },
   setup() {
     const { appId, projectId, projectInfo } = projectDetailRepositories()
+    // const stepsSortData = ref<{[key: string]: any}>({})
+    const stepsSortData = ref<any[]>([])
+
+    const sortSteps = (steps: any, str?: string) => {
+      // if (!str) {
+      //   const startStr = Object.keys(steps).filter(t => !steps[t].dependencies)?.[0]
+      //   stepsSortData.value[startStr]= steps[startStr]
+      //   sortSteps(steps, startStr)
+      // } else {
+      //   // console.log(str, steps[str])
+      //   Object.keys(steps).forEach(s => {
+      //     if (steps[s].dependencies?.includes(str)) {
+      //       stepsSortData.value[s]= steps[s]
+      //       sortSteps(steps, s)
+      //     }
+      //     return
+      //   })
+      // }
+      if (!str) {
+        const startStr = steps.filter((t: any)=> !t.value.dependencies)?.[0]
+        stepsSortData.value.push(startStr)
+        sortSteps(steps, startStr.name)
+      } else {
+        steps.forEach((s: any) => {
+          if (s.value.dependencies?.includes(str)) {
+            if (!stepsSortData.value.includes(s)) {
+              stepsSortData.value.push(s)
+            }
+          }
+        })
+        steps.forEach((s: any) => {
+          if (s.value.dependencies?.includes(str)) {
+            if (stepsSortData.value.includes(s)) {
+              sortSteps(steps, s.name)
+            }
+          }
+          return
+        })
+      }
+    }
 
     const getWorkflow = async () => {
       try {
         if (projectId.value) {
           const task = await cicdRepository.queryWorkflow(projectId.value)
           const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
-          const taskStates = {
+          const taskStates: {[key: string]: string} = {
             'BLOCKED': '#dc3545',
             'CANCELLED': '#fd7e14',
             'DONE': '#28a745',
@@ -46,6 +87,9 @@ export default {
             'TODO': '#005ff0',
             'WONTFIX': '#f06e20',
           }
+          const data = Object.keys(task.resolution.steps).map(t => ({name: t, value: task.resolution.steps[t]}))
+          sortSteps(data)
+          console.log(stepsSortData.value, '===>>>')
           Object.keys(task.resolution.steps).forEach(t => {
             const color = taskStates[task.resolution.steps[t].state]
             g.setNode(t, {
@@ -67,6 +111,28 @@ export default {
               })
             })
           })
+          // stepsSortData.value.forEach(t => {
+          //   const color = taskStates[t.value.state]
+          //   g.setNode(t.name, {
+          //     id: t.name,
+          //     label: t.name,
+          //     style: 'fill:' + color + ';stroke:' + color,
+          //     labelStyle: 'fill: #fff',
+          //     rx: 5,
+          //     ry: 5,
+          //   })
+          //   t.value.dependencies?.forEach((d: string) => {
+          //     if (d.endsWith(':ANY')) {
+          //       d = d.slice(0, -4)
+          //     }
+          //     g.setEdge(d, t.name, {
+          //       style: 'stroke:' + color + ';fill:' + color ,
+          //       arrowheadStyle: 'fill:' + color + ';stroke:' + color,
+          //       arrowhead: 'vee'
+          //     })
+          //   })
+          // })
+          console.log(g)
           const render = new dagreD3.render()
           const svg = d3.select('#svg svg')
           const svgGroup = svg.append('g')
@@ -74,8 +140,8 @@ export default {
           const zoom = d3.zoom().on('zoom', function (e) { //添加鼠标滚轮放大缩小事件
             inner.attr('transform', e.transform)
           })
-          svg.call(zoom)
-          render(inner, g)
+          svg.call(zoom as any)
+          render(inner as any, g as any)
           inner.selectAll('g.node').on('click', e => {
             //点击事件
             console.log(e.target);
@@ -90,47 +156,76 @@ export default {
           //     )
           //     .scale(initialScale)
           // )
-          svg.attr('height', g.graph().height * initialScale + 40)
+          svg.attr('height', (g.graph().height as number) * initialScale + 40)
         }
       } catch (e) {
         console.error(e)
       }
     }
+
     const dagre = () => {
       const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
       const list = {
         //节点
         nodeInfos: [
           {
-            id: "node1",
-            label: "节点1",
+            id: "create_gitlab_branch",
+            label: "节点-create_gitlab_branch",
           },
           {
-            id: "node2",
-            label: "节点2",
+            id: "create_jenkins_job",
+            label: "节点-create_jenkins_job",
           },
           {
-            id: "node3",
-            label: "节点3",
+            id: "create_sonarqube_project",
+            label: "节点-create_sonarqube_project",
           },
           {
-            id: "node4",
-            label: "节点4",
+            id: "after_prepare",
+            label: "节点-after_prepare",
           },
+          {
+            id: 'create_jenkins_sonarqube_job',
+            label: '节点-create_jenkins_sonarqube_job'
+          },
+          {
+            id: 'commit_id',
+            label: '节点-commit_id',
+          }
         ],
           //节点之间的连线
-          edges: [
+        edges: [
           {
-            source: "node1",
-            target: "node2",
+            source: "create_gitlab_branch",
+            target: "create_jenkins_job",
           },
           {
-            source: "node2",
-            target: "node3",
+            source: "create_gitlab_branch",
+            target: "create_sonarqube_project",
           },
           {
-            source: "node2",
-            target: "node4",
+            source: "create_gitlab_branch",
+            target: "after_prepare",
+          },
+          {
+            source: "create_jenkins_job",
+            target: "after_prepare",
+          },
+          {
+            source: "create_sonarqube_project",
+            target: "after_prepare",
+          },
+          {
+            source: "create_sonarqube_project",
+            target: "create_jenkins_sonarqube_job",
+          },
+          {
+            source: "create_jenkins_sonarqube_job",
+            target: "after_prepare",
+          },
+          {
+            source: "after_prepare",
+            target: "commit_id",
           },
         ]
       }
@@ -196,8 +291,8 @@ export default {
       const zoom = d3.zoom().on('zoom', function (e) { //添加鼠标滚轮放大缩小事件
         inner.attr('transform', e.transform)
       })
-      svg.call(zoom)
-      render(inner, g)
+      svg.call(zoom as any)
+      render(inner as any, g as any)
       inner.selectAll('g.node').on('click', e => {
         //点击事件
         const code = list.nodeInfos.filter(item => {
@@ -215,7 +310,7 @@ export default {
       //     )
       //     .scale(initialScale)
       // )
-      svg.attr('height', g.graph().height * initialScale + 40)
+      svg.attr('height', (g.graph().height as number) * initialScale + 40)
     }
 
     onMounted(() => {
