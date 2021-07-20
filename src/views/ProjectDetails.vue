@@ -36,7 +36,61 @@ export default {
     const getWorkflow = async () => {
       try {
         if (projectId.value) {
-          await cicdRepository.queryWorkflow(projectId.value)
+          const task = await cicdRepository.queryWorkflow(projectId.value)
+          const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
+          const taskStates = {
+            'BLOCKED': '#dc3545',
+            'CANCELLED': '#fd7e14',
+            'DONE': '#28a745',
+            'RUNNING': '#007bff',
+            'TODO': '#005ff0',
+            'WONTFIX': '#f06e20',
+          }
+          Object.keys(task.resolution.steps).forEach(t => {
+            const color = taskStates[task.resolution.steps[t].state]
+            g.setNode(t, {
+              id: t,
+              label: t,
+              style: 'fill:' + color + ';stroke:' + color,
+              labelStyle: 'fill: #fff',
+              rx: 5,
+              ry: 5,
+            })
+            task.resolution.steps[t].dependencies?.forEach(d => {
+              if (d.endsWith(':ANY')) {
+                d = d.slice(0, -4)
+              }
+              g.setEdge(d, t, {
+                style: 'stroke:' + color + ';fill:' + color ,
+                arrowheadStyle: 'fill:' + color + ';stroke:' + color,
+                arrowhead: 'vee'
+              })
+            })
+          })
+          const render = new dagreD3.render()
+          const svg = d3.select('#svg svg')
+          const svgGroup = svg.append('g')
+          const inner = svg.select('g')
+          const zoom = d3.zoom().on('zoom', function (e) { //添加鼠标滚轮放大缩小事件
+            inner.attr('transform', e.transform)
+          })
+          svg.call(zoom)
+          render(inner, g)
+          inner.selectAll('g.node').on('click', e => {
+            //点击事件
+            console.log(e.target);
+          })
+          const initialScale = 1 // 缩放比例
+          // svg.call(
+          //   zoom.transform,
+          //   d3.zoomIdentity
+          //     .translate(
+          //       (svg.attr('width') - g.graph().width * initialScale) / 2,
+          //       20
+          //     )
+          //     .scale(initialScale)
+          // )
+          svg.attr('height', g.graph().height * initialScale + 40)
         }
       } catch (e) {
         console.error(e)
@@ -102,6 +156,7 @@ export default {
         node.rx = node.ry = 5
         console.log(node, '[[[[[[')
       })
+      console.log(g, '====')
       const taskStates = [
         {
           color: '#dc3545',
@@ -165,7 +220,7 @@ export default {
 
     onMounted(() => {
       getWorkflow()
-      dagre()
+      // dagre()
     })
 
     return {
