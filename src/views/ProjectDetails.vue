@@ -13,6 +13,9 @@
       <a-descriptions-item label="版本名">{{ projectInfo?.version_name }}</a-descriptions-item>
       <a-descriptions-item label="创建人" :span="2">{{ projectInfo?.create_by_username }}</a-descriptions-item>
     </a-descriptions>
+    <div id="tooltip" class="hidden">
+      <p><span id="tooltip_value"></span></p>
+    </div>
     <div id="svg" style="margin-top: 20px">
       <svg style="width: 100%; "></svg>
     </div>
@@ -78,9 +81,11 @@ export default {
           // })
           Object.keys(task.resolution.steps).forEach(t => {
             const color = taskStates[task.resolution.steps[t].state]
+            const desc = task.resolution.steps[t].description
             g.setNode(t, {
               id: t,
               label: t,
+              description: desc,
               style: 'fill:' + color + ';stroke:' + color,
               labelStyle: 'fill: #fff',
               rx: 5,
@@ -109,14 +114,16 @@ export default {
           inner.selectAll('g.node')
             .on('mouseover', (event, v: any) => {
               console.log(event, v, g.node(v), event.target)
-              const toolTip = d3.select('g#' + v + '.node')
-                .append('div')
-                .classed('tooltip', true)
-                .style('opacity', 0)
-                .style('display', 'none')
-              tipVisible(toolTip, g.node(v).label + '')
+              //显示提示信息：更新提示条位置和值
+              const info: any = g.node(v)
+              d3.select("#tooltip")
+                .attr("style", "left:" + (event.pageX - 70) + "px" + ";top:" + (event.pageY - 75) + "px")
+                .select("#tooltip_value")
+                .text(info.description ? info.label + '-' + info.description : info.label)
+              //显示提示条
+              d3.select("#tooltip").classed("hidden", false)
             }).on('mouseout', e => {
-              tipHidden();
+              // d3.select("#tooltip").classed("hidden", true)
             })
           const initialScale = 1 // 缩放比例
           // svg.call(
@@ -135,31 +142,6 @@ export default {
       }
     }
 
-    const createTooltip = () => {
-      return d3.select('#svg')
-        .append('div')
-        .classed('tooltip', true)
-        .style('opacity', 0)
-        .style('display', 'none');
-    }
-    const tipVisible = (tooltip: any, textContent: string) => {
-      // const tooltip = createTooltip()
-      // console.log(d3, '......======')
-      tooltip.transition()
-        .duration(400)
-        .style('opacity', 0.9)
-        .style('display', 'block');
-      tooltip.html(textContent)
-        .style('left', '700px')
-        .style('top', '500px');
-    }
-    const tipHidden = () => {
-      const tooltip = createTooltip()
-      tooltip.transition()
-        .duration(400)
-        .style('opacity', 0)
-        .style('display', 'none');
-    }
     onMounted(() => {
       getWorkflow()
     })
@@ -177,19 +159,33 @@ export default {
 .project-detail {
   padding-top: 20px;
 }
-.tooltip {
+#tooltip {
   position: absolute;
-  font-size: 12px;
-  text-align: center;
-  background-color: white;
-  border-radius: 3px;
-  box-shadow: rgb(174, 174, 174) 0 0 10px;
-  cursor: pointer;
-  display: inline-block;
+  width: auto;
+  height: auto;
   padding: 10px;
+  background-color: #000;
+  opacity: 0.75;
+  color: #fff;
+  text-align: center;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  -webkit-box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
+  -moz-box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
+  box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
+  pointer-events: none;
 }
 
-.tooltip>div {
-  padding: 10px;
+#tooltip.hidden {
+  display: none;
+}
+
+#tooltip p {
+  margin: 0;
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 20px;
 }
 </style>
