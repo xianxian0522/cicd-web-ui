@@ -106,10 +106,18 @@ export default {
           })
           svg.call(zoom as any)
           render(inner as any, g as any)
-          inner.selectAll('g.node').on('click', e => {
-            //点击事件
-            console.log(e.target);
-          })
+          inner.selectAll('g.node')
+            .on('mouseover', (event, v: any) => {
+              console.log(event, v, g.node(v), event.target)
+              const toolTip = d3.select('g#' + v + '.node')
+                .append('div')
+                .classed('tooltip', true)
+                .style('opacity', 0)
+                .style('display', 'none')
+              tipVisible(toolTip, g.node(v).label + '')
+            }).on('mouseout', e => {
+              tipHidden();
+            })
           const initialScale = 1 // 缩放比例
           // svg.call(
           //   zoom.transform,
@@ -127,7 +135,31 @@ export default {
       }
     }
 
-
+    const createTooltip = () => {
+      return d3.select('#svg')
+        .append('div')
+        .classed('tooltip', true)
+        .style('opacity', 0)
+        .style('display', 'none');
+    }
+    const tipVisible = (tooltip: any, textContent: string) => {
+      // const tooltip = createTooltip()
+      // console.log(d3, '......======')
+      tooltip.transition()
+        .duration(400)
+        .style('opacity', 0.9)
+        .style('display', 'block');
+      tooltip.html(textContent)
+        .style('left', '700px')
+        .style('top', '500px');
+    }
+    const tipHidden = () => {
+      const tooltip = createTooltip()
+      tooltip.transition()
+        .duration(400)
+        .style('opacity', 0)
+        .style('display', 'none');
+    }
     onMounted(() => {
       getWorkflow()
     })
@@ -144,5 +176,20 @@ export default {
 <style scoped lang="less">
 .project-detail {
   padding-top: 20px;
+}
+.tooltip {
+  position: absolute;
+  font-size: 12px;
+  text-align: center;
+  background-color: white;
+  border-radius: 3px;
+  box-shadow: rgb(174, 174, 174) 0 0 10px;
+  cursor: pointer;
+  display: inline-block;
+  padding: 10px;
+}
+
+.tooltip>div {
+  padding: 10px;
 }
 </style>
