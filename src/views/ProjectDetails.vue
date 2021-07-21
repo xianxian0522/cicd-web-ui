@@ -16,9 +16,16 @@
     <div id="tooltip" class="hidden">
       <p><span id="tooltip_value"></span></p>
     </div>
-    <div id="svg" style="margin-top: 20px">
-      <svg style="width: 100%; "></svg>
-    </div>
+    <a-row class="project-detail-svg">
+      <a-col :span="8" style="padding: 0 8px">
+        <TaskStepsList :stepsList="stepsList" />
+      </a-col>
+      <a-col :span="16">
+        <div id="svg">
+          <svg style="width: 100%; "></svg>
+        </div>
+      </a-col>
+    </a-row>
   </div>
 </template>
 
@@ -30,12 +37,15 @@ import {onMounted, ref} from "vue";
 import dagreD3 from 'dagre-d3'
 import * as d3 from 'd3'
 import * as _ from 'lodash'
+import TaskStepsList from "@/views/TaskStepsList.vue";
+import {Step} from "@/utils/response";
 
 export default {
   name: "ProjectDetails",
-  components: { CommonHeader },
+  components: { CommonHeader, TaskStepsList },
   setup() {
     const { appId, projectId, projectInfo } = projectDetailRepositories()
+    const stepsList = ref<{[key: string]: Step}>({})
 
     const getWorkflow = async () => {
       try {
@@ -50,6 +60,7 @@ export default {
             'TODO': '#005ff0',
             'WONTFIX': '#f06e20',
           }
+          stepsList.value = task.resolution.steps
           // const nodeInfos = Object.keys(task.resolution.steps).map(t => ({id: t, label: t, color: taskStates[task.resolution.steps[t]?.state]}))
           // const edges = Object.keys(task.resolution.steps).filter(f => task.resolution.steps[f].dependencies)
           //   .map(t => task.resolution.steps[t].dependencies?.map(d => {
@@ -113,14 +124,14 @@ export default {
           render(inner as any, g as any)
           inner.selectAll('g.node')
             .on('mouseover', (event, v: any) => {
-              console.log(event, v, g.node(v), event.target)
-              //显示提示信息：更新提示条位置和值
+              // console.log(event, v, g.node(v), event.target)
+              // 显示提示信息：更新提示条位置和值
               const info: any = g.node(v)
               d3.select("#tooltip")
                 .attr("style", "left:" + (event.pageX - 70) + "px" + ";top:" + (event.pageY - 75) + "px")
                 .select("#tooltip_value")
                 .text(info.description ? info.label + '-' + info.description : info.label)
-              //显示提示条
+              // 显示提示条
               d3.select("#tooltip").classed("hidden", false)
             }).on('mouseout', e => {
               d3.select("#tooltip").classed("hidden", true)
@@ -150,12 +161,16 @@ export default {
       appId,
       projectId,
       projectInfo,
+      stepsList,
     }
   }
 }
 </script>
 
 <style scoped lang="less">
+.project-detail-svg {
+  margin-top: 20px;
+}
 .project-detail {
   padding-top: 20px;
 }

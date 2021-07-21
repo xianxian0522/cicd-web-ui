@@ -3,14 +3,14 @@ import App from "./App.vue";
 import router from "./router";
 import {
   Avatar, Breadcrumb,
-  Button,
+  Button, Col, Collapse,
   ConfigProvider, Descriptions,
   Dropdown,
   Form,
   Input,
   Layout,
   Menu,
-  Modal,
+  Modal, Row,
   Select,
   Table
 } from "ant-design-vue";
@@ -32,5 +32,8 @@ app.use(Form)
 app.use(Modal)
 app.use(Breadcrumb)
 app.use(Descriptions)
+app.use(Col)
+app.use(Row)
+app.use(Collapse)
 
 app.mount("#app");
