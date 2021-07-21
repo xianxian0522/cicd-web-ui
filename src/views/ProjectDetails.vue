@@ -123,7 +123,7 @@ export default {
               //显示提示条
               d3.select("#tooltip").classed("hidden", false)
             }).on('mouseout', e => {
-              // d3.select("#tooltip").classed("hidden", true)
+              d3.select("#tooltip").classed("hidden", true)
             })
           const initialScale = 1 // 缩放比例
           // svg.call(
