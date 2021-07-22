@@ -10,6 +10,7 @@ export default {
   name: "TaskEditor",
   props: {
     editorId: String,
+    editorValue: String,
   },
   setup(props: any) {
     const editor = ref()
@@ -18,10 +19,11 @@ export default {
       const id = document.getElementById(props.editorId)
       if (id) {
         editor.value = monaco.editor.create(id, {
-          value: '', //编辑器初始显示文字
+          value: props.editorValue, //编辑器初始显示文字
           language: 'json',
           automaticLayout: true,
-          theme: 'vs-dark' //官方自带三种主题vs, hc-black, or vs-dark
+          readOnly: true,
+          theme: 'vs' //官方自带三种主题vs, hc-black, or vs-dark
         })
       }
     }
