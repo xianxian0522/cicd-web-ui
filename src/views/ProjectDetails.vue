@@ -53,12 +53,17 @@ export default {
           const task = await cicdRepository.queryWorkflow(projectId.value)
           const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
           const taskStates: {[key: string]: string} = {
-            'BLOCKED': '#dc3545',
-            'CANCELLED': '#fd7e14',
-            'DONE': '#28a745',
-            'RUNNING': '#007bff',
-            'TODO': '#005ff0',
-            'WONTFIX': '#f06e20',
+            DONE: '#28a745',
+            TODO: '#aaa',
+            RUNNING: '#32acff',
+            EXPANDED: '#32acff',
+            BLOCKED: '#ff9803',
+            TO_RETRY: '#ff9803',
+            AFTERRUN_ERROR: '#ff9803',
+            CLIENT_ERROR: '#b04020',
+            FATAL_ERROR: '#b04020',
+            SERVER_ERROR: '#b04020',
+            PRUNE: '#ddd',
           }
           stepsList.value = task.resolution.steps
           // const nodeInfos = Object.keys(task.resolution.steps).map(t => ({id: t, label: t, color: taskStates[task.resolution.steps[t]?.state]}))
@@ -91,25 +96,31 @@ export default {
           //   })
           // })
           Object.keys(task.resolution.steps).forEach(t => {
-            const color = taskStates[task.resolution.steps[t].state]
+            const state = task.resolution.steps[t].state
+            let color = taskStates[state]
+            const styleColor = state === 'TODO' ? '#f0f0f0' : color
             const desc = task.resolution.steps[t].description
             g.setNode(t, {
               id: t,
               label: t,
               description: desc,
-              style: 'fill:' + color + ';stroke:' + color,
-              labelStyle: 'fill: #fff',
+              style: 'fill:' + styleColor + ';stroke:' + styleColor,
+              labelStyle: state === 'TODO' ? 'fill: #000' : state === 'PRUNE' ? 'fill: grey' : 'fill: #fff',
               rx: 5,
               ry: 5,
             })
             task.resolution.steps[t].dependencies?.forEach(d => {
+              let label = ''
               if (d.endsWith(':ANY')) {
                 d = d.slice(0, -4)
+                label = 'ANY'
+                color = '#ad0067'
               }
               g.setEdge(d, t, {
                 style: 'stroke:' + color + ';fill: none' ,
                 arrowheadStyle: 'fill:' + color + ';stroke:' + color,
-                arrowhead: 'vee'
+                arrowhead: 'vee',
+                label: label,
               })
             })
           })
