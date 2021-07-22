@@ -7,9 +7,7 @@
       placeholder="Filter Steps"
       @change="FilterSteps"
     >
-      <a-select-option value="todo">State: TODO</a-select-option>
-      <a-select-option value="done">State: DONE</a-select-option>
-      <a-select-option value="blocked">State: BLOCKED</a-select-option>
+      <a-select-option v-for="state in taskState" :key="state" :value="state" >State: {{ state }}</a-select-option>
     </a-select>
     <div class="steps-list">
       <TaskBox v-for="step in taskSteps" :key="step.name" :title="step.name" :step-info="step.value" />
@@ -18,9 +16,10 @@
 </template>
 
 <script lang="ts">
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import TaskBox from "@/views/TaskBox.vue";
 import {Step} from "@/utils/response";
+import * as _ from "lodash";
 
 export interface TaskSteps {
   name: string;
@@ -36,34 +35,63 @@ export default {
   setup(props: any) {
     const stepSelect = ref()
     const taskSteps = ref<TaskSteps[]>([])
+    const taskState = ref<string[]>([])
 
-    const FilterSteps = (input: string[], option: string) => {
-      console.log(input, option, props.stepsList)
+    const filterInput = (input: string[]) => {
       let arr: string[] = []
       input.forEach(str => {
         const filter = Object.keys(props.stepsList)
           .filter(f => props.stepsList[f].state.toLowerCase().indexOf(str.toLowerCase()) >= 0 )
         arr = arr.concat(filter)
       })
-      const data = Object.keys(props.stepsList).map(s => {
-        if (arr.includes(s)) {
-          return ({name: s, value: props.stepsList[s]})
+      return arr
+    }
+    const FilterSteps = (input: string[], option: string) => {
+      if (input.length > 0) {
+        let arr: string[] = []
+        const includeState = input.every(str => taskState.value.includes(str))
+        if (includeState) {
+          arr = filterInput(input)
+        } else {
+          const include = input.filter(str => taskState.value.includes(str))
+          const noInclude = input.filter(str => !taskState.value.includes(str))
+          let arrInclude: string[] = filterInput(include)
+          noInclude.forEach(str => {
+            arr = arr.concat(arrInclude.filter(inc => inc.toLowerCase().indexOf(str.toLowerCase()) >= 0))
+          })
         }
-      }).filter(und => und)
-      taskSteps.value = data as TaskSteps[]
+        const data = Object.keys(props.stepsList).map(s => {
+          if (arr.includes(s)) {
+            return ({name: s, value: props.stepsList[s]})
+          }
+        }).filter(und => und)
+        taskSteps.value = data as TaskSteps[]
+      } else {
+        getTaskStep()
+      }
     }
 
-    const getTaskStep = (value: {[key: string]: Step}) => {
-      taskSteps.value = Object.keys(value)?.map(s => ({name: s, value: value[s]}))
+    const getTaskStep = () => {
+      taskSteps.value = Object.keys(props.stepsList)?.map(s => ({name: s, value: props.stepsList[s]}))
     }
+    const getTaskState = () => {
+      taskState.value = _.uniq(Object.keys(props.stepsList)?.map(s => props.stepsList[s].state))
+    }
+
+    onMounted(() => {
+      getTaskStep()
+      getTaskState()
+    })
 
     watch(() => props.stepsList, value => {
-      getTaskStep(value)
+      getTaskStep()
+      getTaskState()
     })
 
     return {
       stepSelect,
       taskSteps,
+      taskState,
       FilterSteps,
     }
   }

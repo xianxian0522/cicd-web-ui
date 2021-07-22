@@ -39,6 +39,7 @@ import * as d3 from 'd3'
 import * as _ from 'lodash'
 import TaskStepsList from "@/views/TaskStepsList.vue";
 import {Step} from "@/utils/response";
+import {taskStates} from "@/utils/store";
 
 export default {
   name: "ProjectDetails",
@@ -52,19 +53,6 @@ export default {
         if (projectId.value) {
           const task = await cicdRepository.queryWorkflow(projectId.value)
           const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
-          const taskStates: {[key: string]: string} = {
-            DONE: '#28a745',
-            TODO: '#aaa',
-            RUNNING: '#32acff',
-            EXPANDED: '#32acff',
-            BLOCKED: '#ff9803',
-            TO_RETRY: '#ff9803',
-            AFTERRUN_ERROR: '#ff9803',
-            CLIENT_ERROR: '#b04020',
-            FATAL_ERROR: '#b04020',
-            SERVER_ERROR: '#b04020',
-            PRUNE: '#ddd',
-          }
           stepsList.value = task.resolution.steps
           // const nodeInfos = Object.keys(task.resolution.steps).map(t => ({id: t, label: t, color: taskStates[task.resolution.steps[t]?.state]}))
           // const edges = Object.keys(task.resolution.steps).filter(f => task.resolution.steps[f].dependencies)
