@@ -17,7 +17,7 @@
       <p><span id="tooltip_value"></span></p>
     </div>
     <a-row class="project-detail-svg">
-      <a-col :span="8" style="padding: 0 8px">
+      <a-col :span="8" >
         <TaskStepsList :stepsList="stepsList" />
       </a-col>
       <a-col :span="16">
@@ -147,16 +147,22 @@ export default {
             }).on('mouseout', e => {
               d3.select("#tooltip").classed("hidden", true)
             })
-          const initialScale = 1 // 缩放比例
-          // svg.call(
-          //   zoom.transform,
-          //   d3.zoomIdentity
-          //     .translate(
-          //       (svg.attr('width') - g.graph().width * initialScale) / 2,
-          //       20
-          //     )
-          //     .scale(initialScale)
-          // )
+          const graphWidth = g.graph().width as number
+          const graphHeight = g.graph().height as number
+          const width = parseInt(svg.style('width').replace(/px/, ''))
+          const height = parseInt(svg.style('height').replace(/px/, ''))
+          let initialScale = 0.75 // 缩放比例
+          if (Object.keys(task.resolution.steps).length < 5) {
+            initialScale = 0.9
+          } else if (Object.keys(task.resolution.steps).length < 9) {
+            initialScale = 0.8
+          }
+          svg.call(
+            zoom.transform as any,
+            d3.zoomIdentity
+              .translate((graphWidth - width) / 2, 0)
+              .scale(initialScale)
+          )
           svg.attr('height', (g.graph().height as number) * initialScale + 40)
         }
       } catch (e) {
@@ -181,6 +187,10 @@ export default {
 <style scoped lang="less">
 .project-detail-svg {
   margin-top: 20px;
+  padding-bottom: 16px;
+  .ant-col {
+    padding: 0 8px;
+  }
 }
 .project-detail {
   padding-top: 20px;
@@ -202,6 +212,7 @@ export default {
   -moz-box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
   box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
   pointer-events: none;
+  z-index: 10;
 }
 
 #tooltip.hidden {
