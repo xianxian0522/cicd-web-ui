@@ -17,6 +17,8 @@
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
+    "monaco-editor": "^0.26.1",
+    "monaco-editor-webpack-plugin": "^4.1.1",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0"
   },

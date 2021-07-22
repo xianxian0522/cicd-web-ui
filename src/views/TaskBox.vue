@@ -7,8 +7,15 @@
                         :style="{background: taskStates[stepInfo?.state],
                         'border':'1px solid ' + taskStates[stepInfo?.state],
                         color: stepInfo?.state === 'TODO' ? '#000' : stepInfo?.state === 'PRUNE' ? 'grey' : '#fff'}">
-        <div v-if="stepInfo?.output">{{ title }}</div>
-        <div v-else>Last run: <strong>{{ timeFormat(stepInfo?.last_run) }}</strong></div>
+        <div v-if="stepInfo?.output">
+          Output:
+          <TaskEditor :editor-id="'output' + title" />
+        </div>
+        <div v-if="stepInfo?.error">
+          Error:
+          <TaskEditor :editor-id="'error' + title" />
+        </div>
+        <div v-if="stepInfo?.last_run">Last run: <strong>{{ timeFormat(stepInfo?.last_run) }}</strong></div>
         <template #extra>
           <a-button size="small"><ProfileOutlined @click="handleEditClick" style="color: #fff;" /></a-button>
         </template>
@@ -22,6 +29,7 @@ import {ProfileOutlined} from '@ant-design/icons-vue'
 import {ref} from "vue";
 import {taskStates} from "@/utils/store";
 import moment from "moment";
+import TaskEditor from "@/views/TaskEditor.vue";
 
 export default {
   name: "TaskBox",
@@ -29,7 +37,7 @@ export default {
     title: String,
     stepInfo: Object,
   },
-  components: {ProfileOutlined},
+  components: {ProfileOutlined, TaskEditor},
   setup() {
     const activeKey = ref(['0'])
 
