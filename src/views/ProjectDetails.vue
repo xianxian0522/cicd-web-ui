@@ -148,7 +148,7 @@ export default {
           svg.call(
             zoom.transform as any,
             d3.zoomIdentity
-              .translate((graphWidth - width) / 2, 0)
+              .translate((graphWidth * initialScale) / 2 - width, 0)
               .scale(initialScale)
           )
           svg.attr('height', (g.graph().height as number) * initialScale + 40)

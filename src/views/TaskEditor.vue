@@ -19,12 +19,14 @@ export default {
       const id = document.getElementById(props.editorId)
       if (id) {
         editor.value = monaco.editor.create(id, {
-          value: props.editorValue, //编辑器初始显示文字
+          value: '', //编辑器初始显示文字
           language: 'json',
           automaticLayout: true,
           readOnly: true,
+          selectOnLineNumbers: true,
           theme: 'vs' //官方自带三种主题vs, hc-black, or vs-dark
         })
+        editor.value.setValue('roundedSelection')
       }
     }
     onMounted(() => {
