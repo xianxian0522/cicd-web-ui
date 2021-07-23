@@ -55,6 +55,8 @@ export default {
     const stepsList = ref<{[key: string]: Step}>({})
     const autoRefresh = ref(true)
     const timer = ref()
+    let nodeObj: any = {}
+    const nodeEdge = ref<string[]>([])
 
     const getWorkflow = async () => {
       try {
@@ -143,6 +145,27 @@ export default {
             }).on('mouseout', e => {
               d3.select("#tooltip").classed("hidden", true)
             })
+            .on('click', (event, v: any) => {
+              let arr: string[] = []
+              if (nodeObj[v]) {
+                arr = []
+                nodeObj[v] = false
+              } else {
+                nodeObj[v] = true
+                g.edges().forEach(edge => {
+                  if (edge.v === v) {
+                    arr.push(edge.w)
+                    // console.log(g.node(edge.w), '设置颜色深浅')
+                    g.node(edge.w).class = 'opacity'
+                  }
+                  if (edge.w === v) {
+                    arr.push(edge.v)
+                  }
+                })
+              }
+              nodeEdge.value = arr
+              // console.log(arr, nodeEdge.value, '保存在外面 刷新渲染画图的时候去判断 这里也要处理')
+            })
           const graphWidth = g.graph().width as number
           const graphHeight = g.graph().height as number
           const width = parseInt(svg.style('width').replace(/px/, ''))
@@ -219,6 +242,9 @@ export default {
   button {
     margin-left: 10px;
   }
+}
+.opacity {
+  opacity: 0.3 !important;
 }
 #tooltip {
   position: absolute;
