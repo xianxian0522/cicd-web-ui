@@ -46,8 +46,8 @@ export default {
       })
       return arr
     }
-    const FilterSteps = (input: string[], option: string) => {
-      if (input.length > 0) {
+    const FilterSteps = (input: string[]) => {
+      if (input && input.length > 0) {
         let arr: string[] = []
         const includeState = input.every(str => taskState.value.includes(str))
         if (includeState) {
@@ -67,12 +67,13 @@ export default {
         }).filter(und => und)
         taskSteps.value = data as TaskSteps[]
       } else {
-        getTaskStep()
+        taskSteps.value = Object.keys(props.stepsList)?.map(s => ({name: s, value: props.stepsList[s]}))
       }
     }
 
     const getTaskStep = () => {
-      taskSteps.value = Object.keys(props.stepsList)?.map(s => ({name: s, value: props.stepsList[s]}))
+      const value = stepSelect.value || []
+      FilterSteps(value)
     }
     const getTaskState = () => {
       taskState.value = _.uniq(Object.keys(props.stepsList)?.map(s => props.stepsList[s].state))

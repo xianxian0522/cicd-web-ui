@@ -1,6 +1,11 @@
 <template>
   <div class="project-detail">
     <CommonHeader :app-id="appId" />
+    <div class="project-refresh">
+      <span>自动刷新(5s)</span>
+      <a-switch v-model:checked="autoRefresh" />
+      <a-button :disabled="autoRefresh" @click="refresh" shape="circle"><SyncOutlined /></a-button>
+    </div>
     <a-descriptions title="项目详情" bordered>
       <template #extra>
         <a-button type="primary">
@@ -33,20 +38,23 @@
 import CommonHeader from "@/components/CommonHeader.vue";
 import projectDetailRepositories from "@/composable/projectDetailRepositories";
 import cicdRepository from "@/api/cicdRepository";
-import {onMounted, ref} from "vue";
+import {onBeforeUnmount, onMounted, ref, watch} from "vue";
 import dagreD3 from 'dagre-d3'
 import * as d3 from 'd3'
 import * as _ from 'lodash'
 import TaskStepsList from "@/views/TaskStepsList.vue";
 import {Step} from "@/utils/response";
 import {taskStates} from "@/utils/store";
+import {SyncOutlined} from '@ant-design/icons-vue'
 
 export default {
   name: "ProjectDetails",
-  components: { CommonHeader, TaskStepsList },
+  components: { CommonHeader, TaskStepsList, SyncOutlined },
   setup() {
     const { appId, projectId, projectInfo } = projectDetailRepositories()
     const stepsList = ref<{[key: string]: Step}>({})
+    const autoRefresh = ref(true)
+    const timer = ref()
 
     const getWorkflow = async () => {
       try {
@@ -158,8 +166,29 @@ export default {
       }
     }
 
+    const refresh = () => {
+      getWorkflow()
+    }
+    const watchRefresh = () => {
+      timer.value = setInterval(() => {
+        if (autoRefresh.value) {
+          getWorkflow()
+        } else {
+          clearInterval(timer.value)
+        }
+      }, 5000)
+    }
+    watch(autoRefresh, value => {
+      if (value) {
+        watchRefresh()
+      }
+    })
     onMounted(() => {
       getWorkflow()
+      watchRefresh()
+    })
+    onBeforeUnmount(() => {
+      clearInterval(timer.value)
     })
 
     return {
@@ -167,6 +196,8 @@ export default {
       projectId,
       projectInfo,
       stepsList,
+      autoRefresh,
+      refresh,
     }
   }
 }
@@ -182,6 +213,12 @@ export default {
 }
 .project-detail {
   padding-top: 20px;
+}
+.project-refresh {
+  margin-bottom: 6px;
+  button {
+    margin-left: 10px;
+  }
 }
 #tooltip {
   position: absolute;

@@ -11,7 +11,7 @@ import {
   Layout,
   Menu,
   Modal, Row,
-  Select,
+  Select, Switch,
   Table
 } from "ant-design-vue";
 
@@ -35,5 +35,6 @@ app.use(Descriptions)
 app.use(Col)
 app.use(Row)
 app.use(Collapse)
+app.use(Switch)
 
 app.mount("#app");
