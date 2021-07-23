@@ -39,11 +39,10 @@ export default {
           },
           theme: 'vs'
         }).getContentHeight()
-        console.log(editor.value, props.editorLanguage)
         if (!props.isEditor) {
           id.style.height = editor.value  + 18 + 'px'
         }
-        // console.log(props.editorValue, JSON.stringify(props.editorValue, null, 2))
+        // console.log(editor.value, props.editorValue, JSON.stringify(props.editorValue, null, 2))
       }
     }
     onMounted(() => {
