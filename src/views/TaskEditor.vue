@@ -1,5 +1,5 @@
 <template>
-  <div :id="editorId" class="editor-task"></div>
+  <div :id="editorId" class="editor-task" style="height: 400px;"></div>
 </template>
 
 <script lang="ts">
@@ -11,6 +11,14 @@ export default {
   props: {
     editorId: String,
     editorValue: Object || String,
+    editorLanguage: {
+      type: String,
+      default: 'json',
+    },
+    isEditor: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props: any) {
     const editor = ref()
@@ -20,7 +28,7 @@ export default {
       if (id) {
         editor.value = monaco.editor.create(id, {
           value: JSON.stringify(props.editorValue, null, 4), //编辑器初始显示文字
-          language: 'json',
+          language: props.editorLanguage,
           automaticLayout: true,
           readOnly: true,
           selectOnLineNumbers: true,
@@ -31,8 +39,10 @@ export default {
           },
           theme: 'vs'
         }).getContentHeight()
-        console.log(editor.value)
-        id.style.height = editor.value  + 18 + 'px'
+        console.log(editor.value, props.editorLanguage)
+        if (!props.isEditor) {
+          id.style.height = editor.value  + 18 + 'px'
+        }
         // console.log(props.editorValue, JSON.stringify(props.editorValue, null, 2))
       }
     }

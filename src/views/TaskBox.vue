@@ -17,16 +17,23 @@
         </div>
         <div v-if="stepInfo?.last_run">Last run: <strong>{{ timeFormat(stepInfo?.last_run) }}</strong></div>
         <template #extra>
-          <a-button size="small"><ProfileOutlined @click="handleEditClick" style="color: #fff;" /></a-button>
+          <a-button size="small"><ProfileOutlined @click.stop="showTaskEdit" style="color: #fff;" /></a-button>
         </template>
       </a-collapse-panel>
     </a-collapse>
+
+    <a-modal v-model:visible="modalVisible" :title="modalTitle" width="80vw" >
+      <template #footer>
+        <a-button @click="cancelTaskEdit">Close</a-button>
+      </template>
+      <TaskEditor :editor-id="'modal' + title" :editor-value="stepInfo" :editor-language="'yaml'" :is-editor="true"/>
+    </a-modal>
   </div>
 </template>
 
 <script lang="ts">
 import {ProfileOutlined} from '@ant-design/icons-vue'
-import {ref} from "vue";
+import {reactive, ref, toRefs} from "vue";
 import {taskStates} from "@/utils/store";
 import moment from "moment";
 import TaskEditor from "@/views/TaskEditor.vue";
@@ -38,11 +45,19 @@ export default {
     stepInfo: Object,
   },
   components: {ProfileOutlined, TaskEditor},
-  setup() {
+  setup(props: any) {
     const activeKey = ref(['0'])
+    const modalTask = reactive({
+      modalVisible: false,
+      modalTitle: '',
+    })
 
-    const handleEditClick = () => {
-      console.log('edit')
+    const showTaskEdit = () => {
+      modalTask.modalVisible = true
+      modalTask.modalTitle = 'Step - ' + props.title
+    }
+    const cancelTaskEdit = () => {
+      modalTask.modalVisible = false
     }
     const timeFormat = (time: string) => {
       moment.updateLocale('en', {
@@ -69,8 +84,10 @@ export default {
     return {
       taskStates,
       activeKey,
-      handleEditClick,
+      ...toRefs(modalTask),
+      showTaskEdit,
       timeFormat,
+      cancelTaskEdit,
     }
   }
 }
