@@ -92,6 +92,7 @@ export default {
 }
 .step-box ::v-deep .ant-collapse > .ant-collapse-item > .ant-collapse-header {
   color: inherit;
+  overflow: hidden;
 }
 .step-box ::v-deep .ant-collapse .ant-collapse-item-disabled > .ant-collapse-header, .ant-collapse .ant-collapse-item-disabled > .ant-collapse-header > .arrow {
   cursor: pointer;

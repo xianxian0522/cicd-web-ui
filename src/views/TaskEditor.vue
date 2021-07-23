@@ -1,5 +1,5 @@
 <template>
-  <div :id="editorId" ></div>
+  <div :id="editorId" class="editor-task"></div>
 </template>
 
 <script lang="ts">
@@ -25,13 +25,14 @@ export default {
           readOnly: true,
           selectOnLineNumbers: true,
           foldingStrategy: 'indentation',
+          scrollBeyondLastLine: false,
           scrollbar: {
             vertical: 'hidden',
           },
-          theme: 'vs' //官方自带三种主题vs, hc-black, or vs-dark
+          theme: 'vs'
         }).getContentHeight()
         console.log(editor.value)
-        id.style.height = editor.value + 'px'
+        id.style.height = editor.value  + 18 + 'px'
         // console.log(props.editorValue, JSON.stringify(props.editorValue, null, 2))
       }
     }
@@ -40,12 +41,16 @@ export default {
     })
 
     return {
-      editor,
+      // editor,
     }
   }
 }
 </script>
 
 <style scoped lang="less">
-
+.editor-task {
+  display: block;
+  overflow: hidden;
+  border: 1px solid #d9d9d9;
+}
 </style>
