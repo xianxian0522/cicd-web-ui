@@ -9,11 +9,11 @@
                         color: stepInfo?.state === 'TODO' ? '#000' : stepInfo?.state === 'PRUNE' ? 'grey' : '#fff'}">
         <div v-if="stepInfo?.output">
           Output:
-          <TaskEditor :editor-id="'output' + title" :editor-value="JSON.stringify(stepInfo?.output)" />
+          <TaskEditor :editor-id="'output' + title" :editor-value="stepInfo?.output" />
         </div>
         <div v-if="stepInfo?.error">
           Error:
-          <TaskEditor :editor-id="'error' + title" :editor-value="JSON.stringify(stepInfo?.error)" />
+          <TaskEditor :editor-id="'error' + title" :editor-value="stepInfo?.error" />
         </div>
         <div v-if="stepInfo?.last_run">Last run: <strong>{{ timeFormat(stepInfo?.last_run) }}</strong></div>
         <template #extra>

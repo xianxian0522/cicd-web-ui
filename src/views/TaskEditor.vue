@@ -1,16 +1,16 @@
 <template>
-  <div :id="editorId" style="height: 300px"></div>
+  <div :id="editorId" ></div>
 </template>
 
 <script lang="ts">
 import * as monaco from 'monaco-editor'
-import {onMounted, ref} from "vue";
+import {onMounted, ref} from "vue"
 
 export default {
   name: "TaskEditor",
   props: {
     editorId: String,
-    editorValue: String,
+    editorValue: Object || String,
   },
   setup(props: any) {
     const editor = ref()
@@ -19,14 +19,20 @@ export default {
       const id = document.getElementById(props.editorId)
       if (id) {
         editor.value = monaco.editor.create(id, {
-          value: '', //编辑器初始显示文字
+          value: JSON.stringify(props.editorValue, null, 4), //编辑器初始显示文字
           language: 'json',
           automaticLayout: true,
           readOnly: true,
           selectOnLineNumbers: true,
+          foldingStrategy: 'indentation',
+          scrollbar: {
+            vertical: 'hidden',
+          },
           theme: 'vs' //官方自带三种主题vs, hc-black, or vs-dark
-        })
-        editor.value.setValue('roundedSelection')
+        }).getContentHeight()
+        console.log(editor.value)
+        id.style.height = editor.value + 'px'
+        // console.log(props.editorValue, JSON.stringify(props.editorValue, null, 2))
       }
     }
     onMounted(() => {
