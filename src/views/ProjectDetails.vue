@@ -25,7 +25,7 @@
     </div>
     <a-row class="project-detail-svg">
       <a-col :span="8" >
-        <TaskStepsList :stepsList="stepsList" />
+        <TaskStepsList :stepsList="stepsList" ref="taskRef"/>
       </a-col>
       <a-col :span="16">
         <div id="svg">
@@ -60,6 +60,7 @@ export default {
     const timer = ref()
     let nodeObj: any = {}
     const nodeEdge = ref<string[]>([])
+    const taskRef = ref()
 
     const getWorkflow = async () => {
       try {
@@ -153,18 +154,20 @@ export default {
               if (nodeObj[v]) {
                 arr = []
                 nodeObj[v] = false
+                taskRef.value?.exactFilter(v, false)
               } else {
                 nodeObj[v] = true
                 g.edges().forEach(edge => {
                   if (edge.v === v) {
                     arr.push(edge.w)
-                    console.log(g.node(edge.w), '设置颜色深浅',)
+                    console.log(g.node(edge.w), '设置颜色深浅', v)
                     g.node(edge.w).class = 'opacity: 0.3'
                   }
                   if (edge.w === v) {
                     arr.push(edge.v)
                   }
                 })
+                taskRef.value?.exactFilter(v, true)
               }
               nodeEdge.value = arr
               // console.log(arr, nodeEdge.value, '保存在外面 刷新渲染画图的时候去判断 这里也要处理')
@@ -230,6 +233,7 @@ export default {
       stepsList,
       autoRefresh,
       advancedDisplay,
+      taskRef,
       refresh,
     }
   }

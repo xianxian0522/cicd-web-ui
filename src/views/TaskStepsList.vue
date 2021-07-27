@@ -37,6 +37,16 @@ export default {
     const taskSteps = ref<TaskSteps[]>([])
     const taskState = ref<string[]>([])
 
+    const exactFilter = (value: string, isExact: boolean) => {
+      if (isExact) {
+        const filter = Object.keys(props.stepsList).filter(f => f.toLowerCase().indexOf(value.toLowerCase()) >= 0)
+        taskSteps.value = filter.map(s => ({name: s, value: props.stepsList[s]}))
+        stepSelect.value = ['Step: ' + value]
+      } else {
+        stepSelect.value = []
+        taskSteps.value = Object.keys(props.stepsList)?.map(s => ({name: s, value: props.stepsList[s]}))
+      }
+    }
     const filterInput = (input: string[]) => {
       let arr: string[] = []
       input.forEach(str => {
@@ -46,7 +56,7 @@ export default {
       })
       return arr
     }
-    const FilterSteps = (input: string[]) => {
+    const filterTask = (input: string[]) => {
       if (input && input.length > 0) {
         let arr: string[] = []
         const includeState = input.every(str => taskState.value.includes(str))
@@ -70,10 +80,13 @@ export default {
         taskSteps.value = Object.keys(props.stepsList)?.map(s => ({name: s, value: props.stepsList[s]}))
       }
     }
+    const FilterSteps = (input: string[]) => {
+      filterTask(input)
+    }
 
     const getTaskStep = () => {
       const value = stepSelect.value || []
-      FilterSteps(value)
+      filterTask(value)
     }
     const getTaskState = () => {
       taskState.value = _.uniq(Object.keys(props.stepsList)?.map(s => props.stepsList[s].state))
@@ -94,6 +107,7 @@ export default {
       taskSteps,
       taskState,
       FilterSteps,
+      exactFilter,
     }
   }
 }
