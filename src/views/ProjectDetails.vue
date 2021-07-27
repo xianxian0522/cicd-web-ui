@@ -60,6 +60,7 @@ export default {
     const timer = ref()
     let nodeObj: any = {}
     const nodeEdge = ref<string[]>([])
+    const edgeSelect = ref()
     const taskRef = ref()
 
     const setOpacity = (arr: string[]) => {
@@ -112,11 +113,12 @@ export default {
             let color = taskStates[state]
             const styleColor = state === 'TODO' ? '#f0f0f0' : color
             const desc = stepsList.value[t].description
+            const opacity = nodeEdge.value.length === 0 ? 1 : nodeEdge.value.includes(t) ? 1 : 0.3
             g.setNode(t, {
               id: t,
               label: t,
               description: desc,
-              style: 'fill:' + styleColor + ';stroke:' + styleColor,
+              style: 'fill:' + styleColor + ';stroke:' + styleColor + ';opacity:' + opacity,
               labelStyle: state === 'TODO' ? 'fill: #000' : state === 'PRUNE' ? 'fill: grey' : 'fill: #fff',
               rx: 5,
               ry: 5,
@@ -128,16 +130,16 @@ export default {
                 label = 'ANY'
                 color = '#ad0067'
               }
+              const opacityEdge = nodeEdge.value.length === 0 ? 1 : edgeSelect.value === d || edgeSelect.value === t ? 1 : 0.3
               g.setEdge(d, t, {
-                style: 'stroke:' + color + ';fill: none' ,
+                style: 'stroke:' + color + ';fill: none' + ';opacity:' + opacityEdge ,
                 arrowheadStyle: 'fill:' + color + ';stroke:' + color,
                 arrowhead: 'vee',
                 label: label,
               })
             })
           })
-          console.log(nodeEdge.value, '=====')
-          setOpacity(nodeEdge.value)
+
           const render = new dagreD3.render()
           const svg = d3.select('#svg svg')
           const svgGroup = svg.append('g')
@@ -163,31 +165,56 @@ export default {
             })
             .on('click', (event, v: any) => {
               let arr: string[] = []
-              if (nodeObj[v]) {
+              // edgeSelect.value = v
+              // if (nodeObj[v]) {
+              //   edgeSelect.value = ''
+              //   arr = []
+              //   // nodeObj[v] = false
+              //   nodeObj = {}
+              //   taskRef.value?.exactFilter(v, false)
+              // } else {
+              //   nodeObj[v] = true
+              //   g.edges().forEach(edge => {
+              //     if (edge.v === v) {
+              //       arr.push(edge.w)
+              //     }
+              //     if (edge.w === v) {
+              //       arr.push(edge.v)
+              //     }
+              //   })
+              //   arr.push(v)
+              //   taskRef.value?.exactFilter(v, true)
+              // }
+              if (edgeSelect.value === v) {
+                edgeSelect.value = ''
                 arr = []
-                nodeObj[v] = false
                 taskRef.value?.exactFilter(v, false)
               } else {
-                nodeObj[v] = true
+                edgeSelect.value = v
                 g.edges().forEach(edge => {
-                  g.edge(edge).elem.style.opacity = 0.3
                   if (edge.v === v) {
                     arr.push(edge.w)
-                    g.edge(edge).elem.style.opacity = 1
                   }
                   if (edge.w === v) {
                     arr.push(edge.v)
-                    g.edge(edge).elem.style.opacity = 1
                   }
                 })
                 arr.push(v)
-                console.log(arr, g.edges())
                 taskRef.value?.exactFilter(v, true)
               }
+
               nodeEdge.value = arr
               setOpacity(nodeEdge.value)
-              
-              // console.log(arr, nodeEdge.value, '保存在外面 刷新渲染画图的时候去判断 这里也要处理')
+              g.edges().forEach(edge => {
+                g.edge(edge).elem.style.opacity = 0.3
+                if (!edgeSelect.value) {
+                  g.edge(edge).elem.style.opacity = 1
+                }
+                if (edge.v === edgeSelect.value || edge.w === edgeSelect.value) {
+                  g.edge(edge).elem.style.opacity = 1
+                }
+              })
+
             })
           let initialScale = 0.75 // 缩放比例
           if (Object.keys(stepsList.value).length < 5) {
