@@ -160,8 +160,23 @@ export default {
                 g.edges().forEach(edge => {
                   if (edge.v === v) {
                     arr.push(edge.w)
-                    console.log(g.node(edge.w), '设置颜色深浅', v)
+                    const edgeEle = d3.select('g#' + edge.w + '.node')
+                    console.log(g.node(edge.w), '设置颜色深浅', v, edgeEle.style('opacity', '0.3'))
                     g.node(edge.w).class = 'opacity: 0.3'
+
+                    // const state = stepsList.value[v].state
+                    // let color = taskStates[state]
+                    // const styleColor = state === 'TODO' ? '#f0f0f0' : color
+                    // const desc = stepsList.value[v].description
+                    // g.setNode(v, {
+                    //   id: v,
+                    //   label: v,
+                    //   description: desc,
+                    //   style: 'opacity: 0.3; fill:' + styleColor + ';stroke:' + styleColor,
+                    //   labelStyle: state === 'TODO' ? 'fill: #000' : state === 'PRUNE' ? 'fill: grey' : 'fill: #fff',
+                    //   rx: 5,
+                    //   ry: 5,
+                    // })
                   }
                   if (edge.w === v) {
                     arr.push(edge.v)
