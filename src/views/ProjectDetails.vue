@@ -5,6 +5,8 @@
       <span>自动刷新(5s)</span>
       <a-switch v-model:checked="autoRefresh" />
       <a-button :disabled="autoRefresh" @click="refresh" shape="circle"><SyncOutlined /></a-button>
+      <span style="display: inline-block; margin-left: 10px">高级展示</span>
+      <a-switch v-model:checked="advancedDisplay" />
     </div>
     <a-descriptions title="项目详情" bordered>
       <template #extra>
@@ -27,7 +29,7 @@
       </a-col>
       <a-col :span="16">
         <div id="svg">
-          <svg style="width: 100%; "></svg>
+          <svg ></svg>
         </div>
       </a-col>
     </a-row>
@@ -54,6 +56,7 @@ export default {
     const { appId, projectId, projectInfo } = projectDetailRepositories()
     const stepsList = ref<{[key: string]: Step}>({})
     const autoRefresh = ref(true)
+    const advancedDisplay = ref(false)
     const timer = ref()
     let nodeObj: any = {}
     const nodeEdge = ref<string[]>([])
@@ -63,14 +66,14 @@ export default {
         if (projectId.value) {
           const task = await cicdRepository.queryWorkflow(projectId.value)
           const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
-          stepsList.value = task.resolution.steps
-          // const nodeInfos = Object.keys(task.resolution.steps).map(t => ({id: t, label: t, color: taskStates[task.resolution.steps[t]?.state]}))
-          // const edges = Object.keys(task.resolution.steps).filter(f => task.resolution.steps[f].dependencies)
-          //   .map(t => task.resolution.steps[t].dependencies?.map(d => {
+          stepsList.value = advancedDisplay.value ? task.resolution.steps : task.display_resolution.steps
+          // const nodeInfos = Object.keys(stepsList.value).map(t => ({id: t, label: t, color: taskStates[stepsList.value[t]?.state]}))
+          // const edges = Object.keys(stepsList.value).filter(f => stepsList.value[f].dependencies)
+          //   .map(t => stepsList.value[t].dependencies?.map(d => {
           //     if (d.endsWith(':ANY')) {
           //       d = d.slice(0, -4)
           //     }
-          //     return ({source: d, target: t, color: taskStates[task.resolution.steps[d]?.state]})
+          //     return ({source: d, target: t, color: taskStates[stepsList.value[d]?.state]})
           //   }))
           // const edgesInfos = _.flattenDeep(edges)
           // // console.log(nodeInfos, edges, edgesInfos)
@@ -93,11 +96,11 @@ export default {
           //     arrowhead: 'vee'
           //   })
           // })
-          Object.keys(task.resolution.steps).forEach(t => {
-            const state = task.resolution.steps[t].state
+          Object.keys(stepsList.value).forEach(t => {
+            const state = stepsList.value[t].state
             let color = taskStates[state]
             const styleColor = state === 'TODO' ? '#f0f0f0' : color
-            const desc = task.resolution.steps[t].description
+            const desc = stepsList.value[t].description
             g.setNode(t, {
               id: t,
               label: t,
@@ -107,7 +110,7 @@ export default {
               rx: 5,
               ry: 5,
             })
-            task.resolution.steps[t].dependencies?.forEach(d => {
+            stepsList.value[t].dependencies?.forEach(d => {
               let label = ''
               if (d.endsWith(':ANY')) {
                 d = d.slice(0, -4)
@@ -155,8 +158,8 @@ export default {
                 g.edges().forEach(edge => {
                   if (edge.v === v) {
                     arr.push(edge.w)
-                    // console.log(g.node(edge.w), '设置颜色深浅')
-                    g.node(edge.w).class = 'opacity'
+                    console.log(g.node(edge.w), '设置颜色深浅',)
+                    g.node(edge.w).class = 'opacity: 0.3'
                   }
                   if (edge.w === v) {
                     arr.push(edge.v)
@@ -166,23 +169,26 @@ export default {
               nodeEdge.value = arr
               // console.log(arr, nodeEdge.value, '保存在外面 刷新渲染画图的时候去判断 这里也要处理')
             })
+          let initialScale = 0.75 // 缩放比例
+          if (Object.keys(stepsList.value).length < 5) {
+            initialScale = 0.9
+          } else if (Object.keys(stepsList.value).length < 9) {
+            initialScale = 0.8
+          }
+          // console.log(graphWidth * initialScale, width * initialScale, )
+          const svgWidth = document.getElementById('svg')?.clientWidth || (g.graph().width as number) * initialScale + 40
+          svg.attr('width', svgWidth)
           const graphWidth = g.graph().width as number
           const graphHeight = g.graph().height as number
           const width = parseInt(svg.style('width').replace(/px/, ''))
           const height = parseInt(svg.style('height').replace(/px/, ''))
-          let initialScale = 0.75 // 缩放比例
-          if (Object.keys(task.resolution.steps).length < 5) {
-            initialScale = 0.9
-          } else if (Object.keys(task.resolution.steps).length < 9) {
-            initialScale = 0.8
-          }
+          svg.attr('height', (g.graph().height as number) * initialScale + 40)
           svg.call(
             zoom.transform as any,
             d3.zoomIdentity
-              .translate((graphWidth * initialScale) / 2 - width, 0)
+              .translate(Math.abs((graphWidth * initialScale - width * initialScale) / 2), 0)
               .scale(initialScale)
           )
-          svg.attr('height', (g.graph().height as number) * initialScale + 40)
         }
       } catch (e) {
         console.error(e)
@@ -206,6 +212,9 @@ export default {
         watchRefresh()
       }
     })
+    watch(advancedDisplay, value => {
+      getWorkflow()
+    })
     onMounted(() => {
       getWorkflow()
       watchRefresh()
@@ -220,6 +229,7 @@ export default {
       projectInfo,
       stepsList,
       autoRefresh,
+      advancedDisplay,
       refresh,
     }
   }

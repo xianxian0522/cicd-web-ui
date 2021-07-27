@@ -96,6 +96,7 @@ export interface VersionResponse {
 export interface ProjectWorkflow {
   resolution: ResolutionResponse;
   task: TaskResponse;
+  display_resolution: ResolutionResponse;
 }
 export interface ResolutionResponse {
   base_configurations: string;
