@@ -58,18 +58,27 @@ export default {
     const autoRefresh = ref(true)
     const advancedDisplay = ref(false)
     const timer = ref()
-    let nodeObj: any = {}
     const nodeEdge = ref<string[]>([])
     const edgeSelect = ref()
     const taskRef = ref()
 
-    const setOpacity = (arr: string[]) => {
+    const setNodeOpacity = (arr: string[]) => {
       Object.keys(stepsList.value).forEach(all => {
-        let edgeEle = d3.select('g#' + all + '.node')
+        let nodeEle = d3.select('g#' + all + '.node')
         if (arr.includes(all) || arr.length === 0) {
-          edgeEle.style('opacity', '1')
+          nodeEle.style('opacity', 1)
         } else {
-          edgeEle.style('opacity', '0.3')
+          nodeEle.style('opacity', 0.3)
+        }
+      })
+    }
+    const setEdgeOpacity = (g: dagreD3.graphlib.Graph) => {
+      g.edges().forEach(edge => {
+        g.edge(edge).elem.style.opacity = 1
+        if (edge.v === edgeSelect.value || edge.w === edgeSelect.value || !edgeSelect.value) {
+          g.edge(edge).elem.style.opacity = 1
+        } else {
+          g.edge(edge).elem.style.opacity = 0.3
         }
       })
     }
@@ -113,12 +122,11 @@ export default {
             let color = taskStates[state]
             const styleColor = state === 'TODO' ? '#f0f0f0' : color
             const desc = stepsList.value[t].description
-            const opacity = nodeEdge.value.length === 0 ? 1 : nodeEdge.value.includes(t) ? 1 : 0.3
             g.setNode(t, {
               id: t,
               label: t,
               description: desc,
-              style: 'fill:' + styleColor + ';stroke:' + styleColor + ';opacity:' + opacity,
+              style: 'fill:' + styleColor + ';stroke:' + styleColor,
               labelStyle: state === 'TODO' ? 'fill: #000' : state === 'PRUNE' ? 'fill: grey' : 'fill: #fff',
               rx: 5,
               ry: 5,
@@ -130,16 +138,14 @@ export default {
                 label = 'ANY'
                 color = '#ad0067'
               }
-              const opacityEdge = nodeEdge.value.length === 0 ? 1 : edgeSelect.value === d || edgeSelect.value === t ? 1 : 0.3
               g.setEdge(d, t, {
-                style: 'stroke:' + color + ';fill: none' + ';opacity:' + opacityEdge ,
+                style: 'stroke:' + color + ';fill: none' ,
                 arrowheadStyle: 'fill:' + color + ';stroke:' + color,
                 arrowhead: 'vee',
                 label: label,
               })
             })
           })
-
           const render = new dagreD3.render()
           const svg = d3.select('#svg svg')
           const svgGroup = svg.append('g')
@@ -165,26 +171,6 @@ export default {
             })
             .on('click', (event, v: any) => {
               let arr: string[] = []
-              // edgeSelect.value = v
-              // if (nodeObj[v]) {
-              //   edgeSelect.value = ''
-              //   arr = []
-              //   // nodeObj[v] = false
-              //   nodeObj = {}
-              //   taskRef.value?.exactFilter(v, false)
-              // } else {
-              //   nodeObj[v] = true
-              //   g.edges().forEach(edge => {
-              //     if (edge.v === v) {
-              //       arr.push(edge.w)
-              //     }
-              //     if (edge.w === v) {
-              //       arr.push(edge.v)
-              //     }
-              //   })
-              //   arr.push(v)
-              //   taskRef.value?.exactFilter(v, true)
-              // }
               if (edgeSelect.value === v) {
                 edgeSelect.value = ''
                 arr = []
@@ -204,17 +190,8 @@ export default {
               }
 
               nodeEdge.value = arr
-              setOpacity(nodeEdge.value)
-              g.edges().forEach(edge => {
-                g.edge(edge).elem.style.opacity = 0.3
-                if (!edgeSelect.value) {
-                  g.edge(edge).elem.style.opacity = 1
-                }
-                if (edge.v === edgeSelect.value || edge.w === edgeSelect.value) {
-                  g.edge(edge).elem.style.opacity = 1
-                }
-              })
-
+              setNodeOpacity(nodeEdge.value)
+              setEdgeOpacity(g)
             })
           let initialScale = 0.75 // 缩放比例
           if (Object.keys(stepsList.value).length < 5) {
@@ -236,6 +213,9 @@ export default {
               .translate(Math.abs((graphWidth * initialScale - width * initialScale) / 2), 0)
               .scale(initialScale)
           )
+
+          setNodeOpacity(nodeEdge.value)
+          setEdgeOpacity(g)
         }
       } catch (e) {
         console.error(e)
@@ -260,6 +240,7 @@ export default {
       }
     })
     watch(advancedDisplay, value => {
+      nodeEdge.value = []
       getWorkflow()
     })
     onMounted(() => {
