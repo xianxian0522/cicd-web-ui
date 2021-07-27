@@ -62,6 +62,16 @@ export default {
     const nodeEdge = ref<string[]>([])
     const taskRef = ref()
 
+    const setOpacity = (arr: string[]) => {
+      Object.keys(stepsList.value).forEach(all => {
+        let edgeEle = d3.select('g#' + all + '.node')
+        if (arr.includes(all) || arr.length === 0) {
+          edgeEle.style('opacity', '1')
+        } else {
+          edgeEle.style('opacity', '0.3')
+        }
+      })
+    }
     const getWorkflow = async () => {
       try {
         if (projectId.value) {
@@ -126,6 +136,8 @@ export default {
               })
             })
           })
+          console.log(nodeEdge.value, '=====')
+          setOpacity(nodeEdge.value)
           const render = new dagreD3.render()
           const svg = d3.select('#svg svg')
           const svgGroup = svg.append('g')
@@ -158,33 +170,23 @@ export default {
               } else {
                 nodeObj[v] = true
                 g.edges().forEach(edge => {
+                  g.edge(edge).elem.style.opacity = 0.3
                   if (edge.v === v) {
                     arr.push(edge.w)
-                    const edgeEle = d3.select('g#' + edge.w + '.node')
-                    console.log(g.node(edge.w), '设置颜色深浅', v, edgeEle.style('opacity', '0.3'))
-                    g.node(edge.w).class = 'opacity: 0.3'
-
-                    // const state = stepsList.value[v].state
-                    // let color = taskStates[state]
-                    // const styleColor = state === 'TODO' ? '#f0f0f0' : color
-                    // const desc = stepsList.value[v].description
-                    // g.setNode(v, {
-                    //   id: v,
-                    //   label: v,
-                    //   description: desc,
-                    //   style: 'opacity: 0.3; fill:' + styleColor + ';stroke:' + styleColor,
-                    //   labelStyle: state === 'TODO' ? 'fill: #000' : state === 'PRUNE' ? 'fill: grey' : 'fill: #fff',
-                    //   rx: 5,
-                    //   ry: 5,
-                    // })
+                    g.edge(edge).elem.style.opacity = 1
                   }
                   if (edge.w === v) {
                     arr.push(edge.v)
+                    g.edge(edge).elem.style.opacity = 1
                   }
                 })
+                arr.push(v)
+                console.log(arr, g.edges())
                 taskRef.value?.exactFilter(v, true)
               }
               nodeEdge.value = arr
+              setOpacity(nodeEdge.value)
+              
               // console.log(arr, nodeEdge.value, '保存在外面 刷新渲染画图的时候去判断 这里也要处理')
             })
           let initialScale = 0.75 // 缩放比例

@@ -36,14 +36,17 @@ export default {
     const stepSelect = ref()
     const taskSteps = ref<TaskSteps[]>([])
     const taskState = ref<string[]>([])
+    const isExactValue = ref()
 
     const exactFilter = (value: string, isExact: boolean) => {
       if (isExact) {
         const filter = Object.keys(props.stepsList).filter(f => f.toLowerCase().indexOf(value.toLowerCase()) >= 0)
         taskSteps.value = filter.map(s => ({name: s, value: props.stepsList[s]}))
         stepSelect.value = ['Step: ' + value]
+        isExactValue.value = value
       } else {
         stepSelect.value = []
+        isExactValue.value = ''
         taskSteps.value = Object.keys(props.stepsList)?.map(s => ({name: s, value: props.stepsList[s]}))
       }
     }
@@ -86,7 +89,9 @@ export default {
 
     const getTaskStep = () => {
       const value = stepSelect.value || []
-      filterTask(value)
+      if (!isExactValue.value) {
+        filterTask(value)
+      }
     }
     const getTaskState = () => {
       taskState.value = _.uniq(Object.keys(props.stepsList)?.map(s => props.stepsList[s].state))
