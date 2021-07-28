@@ -58,13 +58,16 @@ export default {
     })
     const projectId = ref(inject<number>('projectId'))
     const advancedDisplay = ref(inject<boolean>('advancedDisplay'))
+    const spinChange: any = inject('spinChange')
 
     const workflowRedo = async () => {
       try {
         const stepName = props.advancedDisplay ? props.stepInfo?.name : props.stepInfo?.redo_step
-        console.log(props.stepInfo, advancedDisplay.value, projectId.value)
+        // console.log(props.stepInfo, advancedDisplay.value, projectId.value)
+        spinChange(true)
         await cicdRepository.workflowRedo(props.projectId, stepName)
         message.success('redo success')
+        spinChange(false)
       } catch (e) {
         console.error(e)
       }

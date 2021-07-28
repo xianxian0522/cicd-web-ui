@@ -1,5 +1,6 @@
 <template>
   <div class="project-detail">
+    <a-spin :spinning="spinning">
     <CommonHeader :app-id="appId" />
     <div class="project-refresh">
       <span>自动刷新(5s)</span>
@@ -33,6 +34,7 @@
         </div>
       </a-col>
     </a-row>
+    </a-spin>
   </div>
 </template>
 
@@ -61,8 +63,21 @@ export default {
     const nodeEdge = ref<string[]>([])
     const edgeSelect = ref()
     const taskRef = ref()
+    const spinning = ref(false)
     provide('advancedDisplay', advancedDisplay)
     provide('projectId', projectId)
+
+    const spinChange = (value: boolean) => {
+      spinning.value = value
+      if (autoRefresh.value) {
+        if (value) {
+          clearInterval(timer.value)
+        } else {
+          watchRefresh()
+        }
+      }
+    }
+    provide('spinChange', spinChange)
 
     const setNodeOpacity = (arr: string[]) => {
       Object.keys(stepsList.value).forEach(all => {
@@ -261,6 +276,7 @@ export default {
       autoRefresh,
       advancedDisplay,
       taskRef,
+      spinning,
       refresh,
     }
   }
