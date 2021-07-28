@@ -10,7 +10,7 @@
       <a-select-option v-for="state in taskState" :key="state" :value="state" >State: {{ state }}</a-select-option>
     </a-select>
     <div class="steps-list">
-      <TaskBox v-for="step in taskSteps" :key="step.name" :title="step.name" :step-info="step.value" />
+      <TaskBox v-for="step in taskSteps" :key="step.name" :title="step.name" :step-info="step.value" :advanced-display="advancedDisplay" :project-id="projectId" />
     </div>
   </div>
 </template>
@@ -30,6 +30,8 @@ export default {
   name: "TaskStepsList",
   props: {
     stepsList: Object,
+    advancedDisplay: Boolean,
+    projectId: Number,
   },
   components: { TaskBox },
   setup(props: any) {

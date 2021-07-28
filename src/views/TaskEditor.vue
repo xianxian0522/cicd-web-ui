@@ -10,7 +10,7 @@ export default {
   name: "TaskEditor",
   props: {
     editorId: String,
-    editorValue: Object || String,
+    editorValue: [Object, String],
     editorLanguage: {
       type: String,
       default: 'json',

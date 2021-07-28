@@ -34,5 +34,6 @@ export default {
   addProjectByAppId: (appId: number, params: any) => request.post(`${ApiApp}/${appId}/project`, params),
 
   queryProjectDetail: (projectId: number) => request.get<ProjectResponse>(`${ApiProject}/${projectId}`),
-  queryWorkflow: (projectId: number) => request.get<ProjectWorkflow>(`${ApiProject}/${projectId}/workflow`)
+  queryWorkflow: (projectId: number) => request.get<ProjectWorkflow>(`${ApiProject}/${projectId}/workflow`),
+  workflowRedo: (projectId: number, stepName: string) => request.post(`${ApiProject}/${projectId}/workflow/step/${stepName}/redo`),
 }

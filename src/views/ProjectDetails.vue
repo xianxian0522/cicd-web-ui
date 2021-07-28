@@ -25,7 +25,7 @@
     </div>
     <a-row class="project-detail-svg">
       <a-col :span="8" >
-        <TaskStepsList :stepsList="stepsList" ref="taskRef"/>
+        <TaskStepsList :stepsList="stepsList" ref="taskRef" :advanced-display="advancedDisplay" :project-id="projectId"/>
       </a-col>
       <a-col :span="16">
         <div id="svg">
@@ -40,7 +40,7 @@
 import CommonHeader from "@/components/CommonHeader.vue";
 import projectDetailRepositories from "@/composable/projectDetailRepositories";
 import cicdRepository from "@/api/cicdRepository";
-import {onBeforeUnmount, onMounted, ref, watch} from "vue";
+import {onBeforeUnmount, onMounted, provide, ref, watch} from "vue";
 import dagreD3 from 'dagre-d3'
 import * as d3 from 'd3'
 import * as _ from 'lodash'
@@ -61,6 +61,8 @@ export default {
     const nodeEdge = ref<string[]>([])
     const edgeSelect = ref()
     const taskRef = ref()
+    provide('advancedDisplay', advancedDisplay)
+    provide('projectId', projectId)
 
     const setNodeOpacity = (arr: string[]) => {
       Object.keys(stepsList.value).forEach(all => {

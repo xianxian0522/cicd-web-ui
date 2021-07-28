@@ -150,6 +150,7 @@ export interface TaskResponse {
 }
 export interface Step {
   name: string;
+  redo_step: string;
   description: string;
   output: {
     [key: string]: any
