@@ -54,40 +54,40 @@ export default {
   name: "Layout",
   // components: {UserOutlined, DownOutlined},
   setup() {
-    const router = useRouter()
-    const state = reactive({
-      selectedKey: ['/cicd/biz'],
-      username: '用户名',
-    })
-    const menuBar = ref<BarItem[]>([])
-
-    const logout = () => {
-      localStorage.removeItem('token')
-      router.push('/login')
-    }
-
-    const getBar = async () => {
-      try {
-        menuBar.value = await cicdRepository.queryBar()
-      } catch (e) {
-        console.error(e)
-      }
-    }
-
-    onMounted(() => {
-      getBar()
-
-      const token = localStorage.getItem('token')
-      if (token) {
-        const userInfo = jwtDecode<JwtTokenResponse>(token)
-        state.username = userInfo?.username || userInfo?.name
-      }
-    })
+    // const router = useRouter()
+    // const state = reactive({
+    //   selectedKey: ['/cicd/biz'],
+    //   username: '用户名',
+    // })
+    // const menuBar = ref<BarItem[]>([])
+    //
+    // const logout = () => {
+    //   localStorage.removeItem('token')
+    //   router.push('/login')
+    // }
+    //
+    // const getBar = async () => {
+    //   try {
+    //     menuBar.value = await cicdRepository.queryBar()
+    //   } catch (e) {
+    //     console.error(e)
+    //   }
+    // }
+    //
+    // onMounted(() => {
+    //   getBar()
+    //
+    //   const token = localStorage.getItem('token')
+    //   if (token) {
+    //     const userInfo = jwtDecode<JwtTokenResponse>(token)
+    //     state.username = userInfo?.username || userInfo?.name
+    //   }
+    // })
 
     return {
-      ...toRefs(state),
-      menuBar,
-      logout,
+      // ...toRefs(state),
+      // menuBar,
+      // logout,
     }
   }
 }
