@@ -216,14 +216,15 @@ export default {
           } else if (Object.keys(stepsList.value).length < 9) {
             initialScale = 0.8
           }
-          // console.log(graphWidth * initialScale, width * initialScale, )
           const svgWidth = document.getElementById('svg')?.clientWidth || (g.graph().width as number) * initialScale + 40
           svg.attr('width', svgWidth)
           const graphWidth = g.graph().width as number
           const graphHeight = g.graph().height as number
           const width = parseInt(svg.style('width').replace(/px/, ''))
           const height = parseInt(svg.style('height').replace(/px/, ''))
-          svg.attr('height', (g.graph().height as number) * initialScale + 40)
+          // console.log(graphWidth * initialScale, width * initialScale, graphHeight, height)
+          const attrHeight = graphHeight * initialScale < 500 ? 500 : graphHeight * initialScale
+          svg.attr('height', attrHeight + 40)
           svg.call(
             zoom.transform as any,
             d3.zoomIdentity
