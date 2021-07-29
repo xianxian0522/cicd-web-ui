@@ -1,41 +1,42 @@
 <template>
   <a-layout class="layout">
-    <a-layout-header class="header">
-      <div class="logo" >
-        <img src="http://www.sumscope.com/favicon.ico" alt="">
-        CICD
-      </div>
-      <div class="layout-header-menu">
-        <a-menu
-          theme="dark"
-          mode="horizontal"
-          v-model:selectedKeys="selectedKey"
-          :style="{ lineHeight: '58px' }"
-        >
-          <a-menu-item v-for="bar in menuBar" :key="bar.route">
-            <a :href="bar.path">{{ bar.name }}</a>
-          </a-menu-item>
-        </a-menu>
-      </div>
-      <section class="header-right">
-        <a-avatar class="user-avatar">
-          <template #icon><UserOutlined /></template>
-        </a-avatar>
-        <a-dropdown>
-          <a class="ant-dropdown-link" @click.prevent>
-            {{ username }}
-            <DownOutlined />
-          </a>
-          <template #overlay>
-            <a-menu>
-              <a-menu-item>
-                <a @click="logout()">退出</a>
-              </a-menu-item>
-            </a-menu>
-          </template>
-        </a-dropdown>
-      </section>
-    </a-layout-header>
+<!--    <a-layout-header class="header">-->
+<!--      <div class="logo" >-->
+<!--        <img src="http://www.sumscope.com/favicon.ico" alt="">-->
+<!--        CICD-->
+<!--      </div>-->
+<!--      <div class="layout-header-menu">-->
+<!--        <a-menu-->
+<!--          theme="dark"-->
+<!--          mode="horizontal"-->
+<!--          v-model:selectedKeys="selectedKey"-->
+<!--          :style="{ lineHeight: '58px' }"-->
+<!--        >-->
+<!--          <a-menu-item v-for="bar in menuBar" :key="bar.route">-->
+<!--            <a :href="bar.path">{{ bar.name }}</a>-->
+<!--          </a-menu-item>-->
+<!--        </a-menu>-->
+<!--      </div>-->
+<!--      <section class="header-right">-->
+<!--        <a-avatar class="user-avatar">-->
+<!--          <template #icon><UserOutlined /></template>-->
+<!--        </a-avatar>-->
+<!--        <a-dropdown>-->
+<!--          <a class="ant-dropdown-link" @click.prevent>-->
+<!--            {{ username }}-->
+<!--            <DownOutlined />-->
+<!--          </a>-->
+<!--          <template #overlay>-->
+<!--            <a-menu>-->
+<!--              <a-menu-item>-->
+<!--                <a @click="logout()">退出</a>-->
+<!--              </a-menu-item>-->
+<!--            </a-menu>-->
+<!--          </template>-->
+<!--        </a-dropdown>-->
+<!--      </section>-->
+<!--    </a-layout-header>-->
+    <HeaderComponent :logoTitle="'CICD'"/>
 
     <router-view ></router-view>
   </a-layout>
@@ -51,7 +52,7 @@ import jwtDecode from "jwt-decode";
 
 export default {
   name: "Layout",
-  components: {UserOutlined, DownOutlined},
+  // components: {UserOutlined, DownOutlined},
   setup() {
     const router = useRouter()
     const state = reactive({
