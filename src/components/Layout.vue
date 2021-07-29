@@ -36,7 +36,7 @@
 <!--        </a-dropdown>-->
 <!--      </section>-->
 <!--    </a-layout-header>-->
-    <HeaderComponent :logoTitle="'CICD'"/>
+    <HeaderComponent :logoTitle="'CICD'" :menuSelect="'/cicd/biz'"/>
 
     <router-view ></router-view>
   </a-layout>

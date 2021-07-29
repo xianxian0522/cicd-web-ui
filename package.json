@@ -19,7 +19,7 @@
     "moment": "^2.29.1",
     "monaco-editor": "^0.26.1",
     "monaco-editor-webpack-plugin": "^4.1.1",
-    "menu-header-component": "^0.1.8",
+    "menu-header-component": "^0.1.9",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0"
   },
