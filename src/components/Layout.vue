@@ -146,4 +146,8 @@ export default {
   display: flex;
   padding: 0 40px;
 }
+
+.layout ::v-deep .ant-menu-horizontal > .ant-menu-item a::before {
+  bottom: 0;
+}
 </style>
