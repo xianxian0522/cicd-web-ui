@@ -1,39 +1,40 @@
 <template>
   <div class="project-detail">
     <a-spin :spinning="spinning">
-    <CommonHeader :app-id="appId" />
-    <div class="project-refresh">
-      <span>自动刷新(5s)</span>
-      <a-switch v-model:checked="autoRefresh" />
-      <a-button :disabled="autoRefresh" @click="refresh" shape="circle"><SyncOutlined /></a-button>
-      <span style="display: inline-block; margin-left: 10px">高级展示</span>
-      <a-switch v-model:checked="advancedDisplay" />
-    </div>
-    <a-descriptions title="项目详情" bordered>
-      <template #extra>
-        <a-button type="primary">
-          <router-link :to="{name: 'project', params: {appId, projectId}}">返回详情列表</router-link>
-        </a-button>
-      </template>
-      <a-descriptions-item label="基本分支">{{ projectInfo?.base_branch }}</a-descriptions-item>
-      <a-descriptions-item label="分支名">{{ projectInfo?.branch_name }}</a-descriptions-item>
-      <a-descriptions-item label="comment">{{ projectInfo?.comment }}</a-descriptions-item>
-      <a-descriptions-item label="版本名">{{ projectInfo?.version_name }}</a-descriptions-item>
-      <a-descriptions-item label="创建人" :span="2">{{ projectInfo?.create_by_username }}</a-descriptions-item>
-    </a-descriptions>
-    <div id="tooltip" class="hidden">
-      <p><span id="tooltip_value"></span></p>
-    </div>
-    <a-row class="project-detail-svg">
-      <a-col :span="8" >
-        <TaskStepsList :stepsList="stepsList" ref="taskRef" :advanced-display="advancedDisplay" :project-id="projectId"/>
-      </a-col>
-      <a-col :span="16">
-        <div id="svg">
-          <svg ></svg>
-        </div>
-      </a-col>
-    </a-row>
+      <CommonHeader :app-id="appId" />
+      <div class="project-refresh">
+        <span>自动刷新(5s)</span>
+        <a-switch v-model:checked="autoRefresh" />
+        <a-button :disabled="autoRefresh" @click="refresh" shape="circle"><SyncOutlined /></a-button>
+        <span style="display: inline-block; margin-left: 10px">高级展示</span>
+        <a-switch v-model:checked="advancedDisplay" />
+      </div>
+      <CommonTicket :project-id="projectId" />
+      <a-descriptions title="项目详情" bordered>
+        <template #extra>
+          <a-button type="primary">
+            <router-link :to="{name: 'project', params: {appId, projectId}}">返回详情列表</router-link>
+          </a-button>
+        </template>
+        <a-descriptions-item label="基本分支">{{ projectInfo?.base_branch }}</a-descriptions-item>
+        <a-descriptions-item label="分支名">{{ projectInfo?.branch_name }}</a-descriptions-item>
+        <a-descriptions-item label="comment">{{ projectInfo?.comment }}</a-descriptions-item>
+        <a-descriptions-item label="版本名">{{ projectInfo?.version_name }}</a-descriptions-item>
+        <a-descriptions-item label="创建人" :span="2">{{ projectInfo?.create_by_username }}</a-descriptions-item>
+      </a-descriptions>
+      <div id="tooltip" class="hidden">
+        <p><span id="tooltip_value"></span></p>
+      </div>
+      <a-row class="project-detail-svg">
+        <a-col :span="8" >
+          <TaskStepsList :stepsList="stepsList" ref="taskRef" :advanced-display="advancedDisplay" :project-id="projectId"/>
+        </a-col>
+        <a-col :span="16">
+          <div id="svg">
+            <svg ></svg>
+          </div>
+        </a-col>
+      </a-row>
     </a-spin>
   </div>
 </template>
@@ -50,10 +51,11 @@ import TaskStepsList from "@/views/TaskStepsList.vue";
 import {Step} from "@/utils/response";
 import {taskStates} from "@/utils/store";
 import {SyncOutlined} from '@ant-design/icons-vue'
+import CommonTicket from "@/components/CommonTicket.vue";
 
 export default {
   name: "ProjectDetails",
-  components: { CommonHeader, TaskStepsList, SyncOutlined },
+  components: { CommonHeader, TaskStepsList, CommonTicket, SyncOutlined },
   setup() {
     const { appId, projectId, projectInfo } = projectDetailRepositories()
     const stepsList = ref<{[key: string]: Step}>({})
@@ -296,7 +298,7 @@ export default {
   padding-top: 20px;
 }
 .project-refresh {
-  margin-bottom: 6px;
+  margin-bottom: 15px;
   button {
     margin-left: 10px;
   }

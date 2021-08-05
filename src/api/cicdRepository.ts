@@ -13,6 +13,7 @@ const API = '/api/v1/';
 const ApiBiz = `${API}/my/biz`
 const ApiApp = `${API}/my/app`
 const ApiProject = `${API}/my/project`
+const ApiTicket = `${API}/my/ticket`
 
 let ApiBar = '/api/my/bar';
 if (window.location.hostname.endsWith('dev.ops.sumscope.com')) {
@@ -38,4 +39,6 @@ export default {
   queryWorkflow: (projectId: number) => request.get<ProjectWorkflow>(`${ApiProject}/${projectId}/workflow`),
   queryTicketsByProId: (projectId: number, params: any) => request.get<Page<TicketsResponse>>(`${ApiProject}/${projectId}/tickets`, params),
   workflowRedo: (projectId: number, stepName: string) => request.post(`${ApiProject}/${projectId}/workflow/step/${stepName}/redo`),
+
+  closeTicket: (ticketId: number) => request.put(`${ApiTicket}/${ticketId}/close`),
 }

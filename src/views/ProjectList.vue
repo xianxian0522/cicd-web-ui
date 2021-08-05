@@ -7,18 +7,7 @@
       <template v-slot:second>project</template>
     </CommonBreadcrumb>
     <CommonHeader :app-id="appId"/>
-    <a-collapse v-model:activeKey="activeKey" :bordered="false" @change="changeActiveKey">
-      <template #expandIcon="{ isActive }">
-        <caret-right-outlined :rotate="isActive ? 90 : 0" />
-      </template>
-      <a-collapse-panel key="1" header="tickets total" :style="customStyle">
-        <CommonTable :columns="ticketColumns" :data-source="ticketsList" :scroll-x="'1000px'" :is-page="true" :isPagination="pagination" @paginationChange="paginationChange">
-          <template v-slot:default="slotProps">
-            <a-button type="link" > {{ slotProps.action.id }} close</a-button>
-          </template>
-        </CommonTable>
-      </a-collapse-panel>
-    </a-collapse>
+    <CommonTicket :app-id="appId" :isAppTicket="true"/>
     <CommonTable :columns="columns" :data-source="projectList" :scroll-x="'2500px'">
       <template v-slot:default="slotProps">
         <a-button type="link" >
@@ -34,15 +23,7 @@ import projectRepositories from "@/composable/projectRepositories";
 import CommonHeader from "@/components/CommonHeader.vue";
 import CommonBreadcrumb from "@/components/CommonBreadcrumb.vue";
 import CommonTable from "@/components/CommonTable.vue";
-import {reactive, ref} from "vue";
-import {CaretRightOutlined} from '@ant-design/icons-vue'
-import cicdRepository from "@/api/cicdRepository";
-import {TicketsResponse} from "@/utils/response";
-
-export interface PageState {
-  pageSize: number;
-  pageNumber: number;
-}
+import CommonTicket from "@/components/CommonTicket.vue";
 
 export default {
   name: "ProjectList",
@@ -50,7 +31,7 @@ export default {
     CommonHeader,
     CommonBreadcrumb,
     CommonTable,
-    CaretRightOutlined,
+    CommonTicket,
   },
   setup() {
     const columns = [
@@ -70,61 +51,12 @@ export default {
       { title: '操作', key: 'action', fixed: 'right', slots: { customRender: 'action', }, align: 'center', width: 120},
     ]
     const { projectList, appId, bizId } = projectRepositories()
-    const activeKey = ref([])
-    const customStyle = 'background: #f7f7f7;border-radius: 4px;margin-bottom: 24px;border: 0;overflow: hidden'
-    const ticketColumns = [
-      { dataIndex: 'app_id', key: 'app_id', title: '应用ID', fixed: 'left', width: 100},
-      { dataIndex: 'message', key: 'message', title: '信息',},
-      { dataIndex: 'state', key: 'state', title: '状态',},
-      { dataIndex: 'type', key: 'type', title: '类型',},
-      { dataIndex: 'created_at', key: 'created_at', title: '创建时间', slots: { customRender: 'time' }},
-      { dataIndex: 'updated_at', key: 'updated_at', title: '更新时间', slots: { customRender: 'time' }},
-      { title: '操作', key: 'action', fixed: 'right', slots: { customRender: 'action', }, align: 'center', width: 120},
-    ]
-    const ticketsList = ref<TicketsResponse[]>([])
-    const pagination = reactive({
-      showSizeChanger: true,
-      current: 1,
-      pageSize: 1,
-      total: 1,
-    })
-
-    const changeActiveKey = (key: string[]) => {
-      if (key?.length > 0) {
-        queryPageTickets()
-      }
-    }
-    const paginationChange = (value: PageState) => {
-      pagination.current = value.pageNumber
-      pagination.pageSize = value.pageSize
-      queryPageTickets()
-    }
-    const queryPageTickets = async () => {
-      const value = {
-        pageSize: pagination.pageSize,
-        pageNumber: pagination.current - 1,
-      }
-      try {
-        const data = await cicdRepository.queryTicketsByAppId(appId.value, value)
-        ticketsList.value = data.content
-        pagination.total = data.totalElements
-      } catch (e) {
-        console.error(e)
-      }
-    }
 
     return {
       columns,
       projectList,
       appId,
       bizId,
-      activeKey,
-      customStyle,
-      ticketColumns,
-      ticketsList,
-      pagination,
-      changeActiveKey,
-      paginationChange,
     }
   }
 }
