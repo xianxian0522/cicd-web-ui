@@ -75,8 +75,8 @@ export default {
     const pagination = reactive({
       showSizeChanger: true,
       current: 1,
-      pageSize: 1,
-      total: 1,
+      pageSize: 10,
+      total: 10,
     })
     const selectState = reactive({
       state: 'open',
