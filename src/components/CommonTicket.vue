@@ -4,10 +4,33 @@
       <template #expandIcon="{ isActive }">
         <caret-right-outlined :rotate="isActive ? 90 : 0" />
       </template>
-      <a-collapse-panel key="1" header="tickets total" :style="customStyle">
+      <a-collapse-panel key="1" :style="customStyle">
+        <template #header>
+          <a-select
+            v-model:value="state"
+            size="small"
+            allowClear
+            @click.stop
+            style="width: 120px; margin-right: 10px"
+          >
+            <a-select-option value="open">open</a-select-option>
+            <a-select-option value="closed">closed</a-select-option>
+          </a-select>
+          <a-select
+            v-model:value="type"
+            size="small"
+            allowClear
+            @click.stop
+            style="width: 120px; margin-right: 10px"
+          >
+            <a-select-option value="generic">generic</a-select-option>
+            <a-select-option value="merge_conflict">merge_conflict</a-select-option>
+          </a-select>
+          tickets open total
+        </template>
         <CommonTable :columns="ticketColumns" :data-source="ticketsList" :scroll-x="'1000px'" :is-page="true" :isPagination="pagination" @paginationChange="paginationChange">
           <template v-slot:default="slotProps">
-            <a-button type="link" > {{ slotProps.action.id }} 关闭ticket</a-button>
+            <a-button type="link" @click="closedTicket(slotProps.action.id)">关闭ticket</a-button>
           </template>
         </CommonTable>
       </a-collapse-panel>
@@ -17,10 +40,11 @@
 
 <script lang="ts">
 import {CaretRightOutlined} from "@ant-design/icons-vue";
-import {reactive, ref} from "vue";
+import {reactive, ref, toRefs} from "vue";
 import {TicketsResponse} from "@/utils/response";
 import cicdRepository from "@/api/cicdRepository";
 import CommonTable from "@/components/CommonTable.vue";
+import {message} from "ant-design-vue";
 
 export interface PageState {
   pageSize: number;
@@ -54,6 +78,10 @@ export default {
       pageSize: 1,
       total: 1,
     })
+    const selectState = reactive({
+      state: 'open',
+      type: 'generic',
+    })
 
     const changeActiveKey = (key: string[]) => {
       if (key?.length > 0) {
@@ -79,8 +107,17 @@ export default {
         console.error(e)
       }
     }
+    const closedTicket = async (id: number) => {
+      try {
+        await cicdRepository.closeTicket(id)
+        message.success('ticket关闭成功')
+      } catch (e) {
+        console.error(e)
+      }
+    }
 
     return {
+      ...toRefs(selectState),
       activeKey,
       customStyle,
       ticketColumns,
@@ -88,6 +125,7 @@ export default {
       pagination,
       changeActiveKey,
       paginationChange,
+      closedTicket,
     }
   }
 }
