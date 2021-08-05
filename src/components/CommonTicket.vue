@@ -40,7 +40,7 @@
 
 <script lang="ts">
 import {CaretRightOutlined} from "@ant-design/icons-vue";
-import {reactive, ref, toRefs} from "vue";
+import {reactive, ref, toRefs, watch} from "vue";
 import {TicketsResponse} from "@/utils/response";
 import cicdRepository from "@/api/cicdRepository";
 import CommonTable from "@/components/CommonTable.vue";
@@ -97,6 +97,7 @@ export default {
       const value = {
         pageSize: pagination.pageSize,
         pageNumber: pagination.current - 1,
+        ...selectState
       }
       try {
         const data = props.isAppTicket ? await cicdRepository.queryTicketsByAppId(props.appId, value)
@@ -115,6 +116,9 @@ export default {
         console.error(e)
       }
     }
+    watch(selectState, value => {
+      changeActiveKey(activeKey.value)
+    })
 
     return {
       ...toRefs(selectState),
