@@ -33,6 +33,7 @@ export default {
       type: String,
       default: 'auto'
     },
+    isPage: Boolean,
   },
   setup() {
     const pagination = reactive({

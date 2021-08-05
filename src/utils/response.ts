@@ -167,3 +167,24 @@ export interface Step {
   };
   children?: any;
 }
+
+export interface Page<T> {
+  content: T[];
+  number: number;
+  numberOfElements: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+export interface TicketsResponse {
+  app_id: string;
+  created_at: string;
+  edges: {
+    RelatedProject: ProjectResponse;
+  };
+  id: number;
+  message: string;
+  state: string;
+  type: string;
+  updated_at: string;
+}

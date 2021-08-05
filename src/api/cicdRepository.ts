@@ -3,8 +3,8 @@ import {
   AppResponse,
   BarItem,
   BaseResponse,
-  LoginResponse,
-  ProjectResponse, ProjectWorkflow,
+  LoginResponse, Page,
+  ProjectResponse, ProjectWorkflow, TicketsResponse,
   VersionResponse,
 } from "@/utils/response";
 
@@ -31,9 +31,11 @@ export default {
   queryAppInfoByAppId: (appId: number) => request.get<AppResponse>(`${ApiApp}/${appId}`),
   queryProjectByAppId: (appId: number) => request.get<ProjectResponse[]>(`${ApiApp}/${appId}/project`),
   queryVersionByAppId: (appId: number) => request.get<VersionResponse[]>(`${ApiApp}/${appId}/version`),
+  queryTicketsByAppId: (appId: number, params: any) => request.get<Page<TicketsResponse>>(`${ApiApp}/${appId}/tickets`, params),
   addProjectByAppId: (appId: number, params: any) => request.post(`${ApiApp}/${appId}/project`, params),
 
   queryProjectDetail: (projectId: number) => request.get<ProjectResponse>(`${ApiProject}/${projectId}`),
   queryWorkflow: (projectId: number) => request.get<ProjectWorkflow>(`${ApiProject}/${projectId}/workflow`),
+  queryTicketsByProId: (projectId: number, params: any) => request.get<Page<TicketsResponse>>(`${ApiProject}/${projectId}/tickets`, params),
   workflowRedo: (projectId: number, stepName: string) => request.post(`${ApiProject}/${projectId}/workflow/step/${stepName}/redo`),
 }

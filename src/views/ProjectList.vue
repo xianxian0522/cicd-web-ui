@@ -7,6 +7,14 @@
       <template v-slot:second>project</template>
     </CommonBreadcrumb>
     <CommonHeader :app-id="appId"/>
+    <a-collapse v-model:activeKey="activeKey" :bordered="false" @change="changeActiveKey">
+      <template #expandIcon="{ isActive }">
+        <caret-right-outlined :rotate="isActive ? 90 : 0" />
+      </template>
+      <a-collapse-panel key="1" header="tickets total" :style="customStyle">
+        <p>{{ appId }}</p>
+      </a-collapse-panel>
+    </a-collapse>
     <CommonTable :columns="columns" :data-source="projectList" :scroll-x="'2500px'">
       <template v-slot:default="slotProps">
         <a-button type="link" >
@@ -22,6 +30,9 @@ import projectRepositories from "@/composable/projectRepositories";
 import CommonHeader from "@/components/CommonHeader.vue";
 import CommonBreadcrumb from "@/components/CommonBreadcrumb.vue";
 import CommonTable from "@/components/CommonTable.vue";
+import {ref} from "vue";
+import {CaretRightOutlined} from '@ant-design/icons-vue'
+import cicdRepository from "@/api/cicdRepository";
 
 export default {
   name: "ProjectList",
@@ -29,6 +40,7 @@ export default {
     CommonHeader,
     CommonBreadcrumb,
     CommonTable,
+    CaretRightOutlined,
   },
   setup() {
     const columns = [
@@ -48,12 +60,26 @@ export default {
       { title: '操作', key: 'action', fixed: 'right', slots: { customRender: 'action', }, align: 'center', width: 120},
     ]
     const { projectList, appId, bizId } = projectRepositories()
+    const activeKey = ref([])
+    const customStyle = 'background: #f7f7f7;border-radius: 4px;margin-bottom: 24px;border: 0;overflow: hidden'
+
+    const changeActiveKey = (key: string[]) => {
+      if (key?.length === 0) {
+        console.log(key)
+      } else {
+        cicdRepository.queryTicketsByAppId(appId.value, {})
+        console.log('=====')
+      }
+    }
 
     return {
       columns,
       projectList,
       appId,
       bizId,
+      activeKey,
+      customStyle,
+      changeActiveKey,
     }
   }
 }
