@@ -25,19 +25,19 @@
       <div id="tooltip" class="hidden">
         <p><span id="tooltip_value"></span></p>
       </div>
-      <a-row class="project-detail-svg">
-        <a-col :span="8" >
-          <TaskStepsList :stepsList="stepsList" ref="taskRef" :advanced-display="advancedDisplay" :project-id="projectId"/>
-        </a-col>
-        <a-col :span="16">
-          <div id="svg">
-            <svg ></svg>
-          </div>
-        </a-col>
-      </a-row>
-<!--      <div v-if="stepsList">-->
-<!--        <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay"/>-->
-<!--      </div>-->
+<!--      <a-row class="project-detail-svg">-->
+<!--        <a-col :span="8" >-->
+<!--          <TaskStepsList :stepsList="stepsList" ref="taskRef" :advanced-display="advancedDisplay" :project-id="projectId"/>-->
+<!--        </a-col>-->
+<!--        <a-col :span="16">-->
+<!--          <div id="svg">-->
+<!--            <svg ></svg>-->
+<!--          </div>-->
+<!--        </a-col>-->
+<!--      </a-row>-->
+      <div v-if="Object.keys(stepsList)?.length > 0">
+        <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay"/>
+      </div>
     </a-spin>
   </div>
 </template>
@@ -61,7 +61,7 @@ export default {
   name: "ProjectDetails",
   components: {
     CommonHeader,
-    TaskStepsList,
+    // TaskStepsList,
     CommonTicket,
     SyncOutlined
   },
@@ -91,6 +91,9 @@ export default {
     provide('spinChange', spinChange)
     provide('monaco', monaco)
 
+    const loadTask = () => {
+      return Object.keys(stepsList.value).length > 0
+    }
     const setNodeOpacity = (arr: string[]) => {
       Object.keys(stepsList.value).forEach(all => {
         let nodeEle = d3.select('g#' + all + '.node')
@@ -117,138 +120,138 @@ export default {
           const task = await cicdRepository.queryWorkflow(projectId.value)
           stepsList.value = advancedDisplay.value ? task.resolution.steps : task.display_resolution.steps
           console.log(stepsList.value)
-          const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
-          // const nodeInfos = Object.keys(stepsList.value).map(t => ({id: t, label: t, color: taskStates[stepsList.value[t]?.state]}))
-          // const edges = Object.keys(stepsList.value).filter(f => stepsList.value[f].dependencies)
-          //   .map(t => stepsList.value[t].dependencies?.map(d => {
-          //     if (d.endsWith(':ANY')) {
-          //       d = d.slice(0, -4)
-          //     }
-          //     return ({source: d, target: t, color: taskStates[stepsList.value[d]?.state]})
-          //   }))
-          // const edgesInfos = _.flattenDeep(edges)
-          // // console.log(nodeInfos, edges, edgesInfos)
-          // // 添加节点
-          // nodeInfos.forEach((item) => {
-          //   g.setNode(item.id, {
-          //     id: item.id,
-          //     label: item.label,
-          //     style: 'fill:' + item.color + ';stroke:' + item.color,
-          //     labelStyle: 'fill: #fff',
+          // const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
+          // // const nodeInfos = Object.keys(stepsList.value).map(t => ({id: t, label: t, color: taskStates[stepsList.value[t]?.state]}))
+          // // const edges = Object.keys(stepsList.value).filter(f => stepsList.value[f].dependencies)
+          // //   .map(t => stepsList.value[t].dependencies?.map(d => {
+          // //     if (d.endsWith(':ANY')) {
+          // //       d = d.slice(0, -4)
+          // //     }
+          // //     return ({source: d, target: t, color: taskStates[stepsList.value[d]?.state]})
+          // //   }))
+          // // const edgesInfos = _.flattenDeep(edges)
+          // // // console.log(nodeInfos, edges, edgesInfos)
+          // // // 添加节点
+          // // nodeInfos.forEach((item) => {
+          // //   g.setNode(item.id, {
+          // //     id: item.id,
+          // //     label: item.label,
+          // //     style: 'fill:' + item.color + ';stroke:' + item.color,
+          // //     labelStyle: 'fill: #fff',
+          // //     rx: 5,
+          // //     ry: 5,
+          // //   })
+          // // })
+          // // // 添加连线
+          // // edgesInfos.forEach(item => {
+          // //   g.setEdge(item.source, item.target, {
+          // //     style: 'stroke:' + item.color + ';fill: none',
+          // //     arrowheadStyle: 'fill:' + item.color + ';stroke:' + item.color,
+          // //     arrowhead: 'vee'
+          // //   })
+          // // })
+          // Object.keys(stepsList.value).forEach(t => {
+          //   const state = stepsList.value[t].state
+          //   let color = taskStates[state]
+          //   const styleColor = state === 'TODO' ? '#f0f0f0' : color
+          //   const desc = stepsList.value[t].description
+          //   g.setNode(t, {
+          //     id: t,
+          //     label: t,
+          //     description: desc,
+          //     style: 'fill:' + styleColor + ';stroke:' + styleColor,
+          //     labelStyle: state === 'TODO' ? 'fill: #000' : state === 'PRUNE' ? 'fill: grey' : 'fill: #fff',
           //     rx: 5,
           //     ry: 5,
           //   })
-          // })
-          // // 添加连线
-          // edgesInfos.forEach(item => {
-          //   g.setEdge(item.source, item.target, {
-          //     style: 'stroke:' + item.color + ';fill: none',
-          //     arrowheadStyle: 'fill:' + item.color + ';stroke:' + item.color,
-          //     arrowhead: 'vee'
+          //   stepsList.value[t].dependencies?.forEach(d => {
+          //     let label = ''
+          //     if (d.endsWith(':ANY')) {
+          //       d = d.slice(0, -4)
+          //       label = 'ANY'
+          //       color = '#ad0067'
+          //     }
+          //     g.setEdge(d, t, {
+          //       style: 'stroke:' + color + ';fill: none' ,
+          //       arrowheadStyle: 'fill:' + color + ';stroke:' + color,
+          //       arrowhead: 'vee',
+          //       label: label,
+          //     })
           //   })
           // })
-          Object.keys(stepsList.value).forEach(t => {
-            const state = stepsList.value[t].state
-            let color = taskStates[state]
-            const styleColor = state === 'TODO' ? '#f0f0f0' : color
-            const desc = stepsList.value[t].description
-            g.setNode(t, {
-              id: t,
-              label: t,
-              description: desc,
-              style: 'fill:' + styleColor + ';stroke:' + styleColor,
-              labelStyle: state === 'TODO' ? 'fill: #000' : state === 'PRUNE' ? 'fill: grey' : 'fill: #fff',
-              rx: 5,
-              ry: 5,
-            })
-            stepsList.value[t].dependencies?.forEach(d => {
-              let label = ''
-              if (d.endsWith(':ANY')) {
-                d = d.slice(0, -4)
-                label = 'ANY'
-                color = '#ad0067'
-              }
-              g.setEdge(d, t, {
-                style: 'stroke:' + color + ';fill: none' ,
-                arrowheadStyle: 'fill:' + color + ';stroke:' + color,
-                arrowhead: 'vee',
-                label: label,
-              })
-            })
-          })
-          const render = new dagreD3.render()
-          const svg = d3.select('#svg svg')
-          const svgGroup = svg.append('g')
-          const inner = svg.select('g')
-          const zoom = d3.zoom().on('zoom', function (e) { //添加鼠标滚轮放大缩小事件
-            inner.attr('transform', e.transform)
-          })
-          svg.call(zoom as any)
-          render(inner as any, g as any)
-          inner.selectAll('g.node')
-            .on('mouseover', (event, v: any) => {
-              // console.log(event, v, g.node(v), event.target)
-              console.log(event, event.pageX, event.pageY, g.node(v).x, g.node(v).y)
-              // 显示提示信息：更新提示条位置和值
-              const info: any = g.node(v)
-              d3.select("#tooltip")
-                .attr("style", "left:" + (event.pageX - 70) + "px" + ";top:" + (event.screenY - 75) + "px")
-                // .attr("style", "left:" + ((event.pageX + g.node(v).x) / 2 - 75) + "px" + ";top:" + (event.pageY + g.node(v).y + 70) + "px")
-                .select("#tooltip_value")
-                .text(info.description ? info.label + '-' + info.description : info.label)
-              // 显示提示条
-              d3.select("#tooltip").classed("hidden", false)
-            }).on('mouseout', e => {
-              // d3.select("#tooltip").classed("hidden", true)
-            })
-            .on('click', (event, v: any) => {
-              let arr: string[] = []
-              if (edgeSelect.value === v) {
-                edgeSelect.value = ''
-                arr = []
-                taskRef.value?.exactFilter(v, false)
-              } else {
-                edgeSelect.value = v
-                g.edges().forEach(edge => {
-                  if (edge.v === v) {
-                    arr.push(edge.w)
-                  }
-                  if (edge.w === v) {
-                    arr.push(edge.v)
-                  }
-                })
-                arr.push(v)
-                taskRef.value?.exactFilter(v, true)
-              }
-
-              nodeEdge.value = arr
-              setNodeOpacity(nodeEdge.value)
-              setEdgeOpacity(g)
-            })
-          let initialScale = 0.75 // 缩放比例
-          if (Object.keys(stepsList.value).length < 5) {
-            initialScale = 0.9
-          } else if (Object.keys(stepsList.value).length < 9) {
-            initialScale = 0.8
-          }
-          const svgWidth = document.getElementById('svg')?.clientWidth || (g.graph().width as number) * initialScale + 40
-          svg.attr('width', svgWidth)
-          const graphWidth = g.graph().width as number
-          const graphHeight = g.graph().height as number
-          const width = parseInt(svg.style('width').replace(/px/, ''))
-          const height = parseInt(svg.style('height').replace(/px/, ''))
-          // console.log(graphWidth * initialScale, width * initialScale, graphHeight, height)
-          const attrHeight = graphHeight * initialScale < 500 ? 500 : graphHeight * initialScale
-          svg.attr('height', attrHeight + 40)
-          svg.call(
-            zoom.transform as any,
-            d3.zoomIdentity
-              .translate(Math.abs(graphWidth * initialScale - width * initialScale ) / 2, 0)
-              .scale(initialScale)
-          )
-
-          setNodeOpacity(nodeEdge.value)
-          setEdgeOpacity(g)
+          // const render = new dagreD3.render()
+          // const svg = d3.select('#svg svg')
+          // const svgGroup = svg.append('g')
+          // const inner = svg.select('g')
+          // const zoom = d3.zoom().on('zoom', function (e) { //添加鼠标滚轮放大缩小事件
+          //   inner.attr('transform', e.transform)
+          // })
+          // svg.call(zoom as any)
+          // render(inner as any, g as any)
+          // inner.selectAll('g.node')
+          //   .on('mouseover', (event, v: any) => {
+          //     // console.log(event, v, g.node(v), event.target)
+          //     console.log(event, event.pageX, event.pageY, g.node(v).x, g.node(v).y)
+          //     // 显示提示信息：更新提示条位置和值
+          //     const info: any = g.node(v)
+          //     d3.select("#tooltip")
+          //       .attr("style", "left:" + (event.pageX - 70) + "px" + ";top:" + (event.screenY - 75) + "px")
+          //       // .attr("style", "left:" + ((event.pageX + g.node(v).x) / 2 - 75) + "px" + ";top:" + (event.pageY + g.node(v).y + 70) + "px")
+          //       .select("#tooltip_value")
+          //       .text(info.description ? info.label + '-' + info.description : info.label)
+          //     // 显示提示条
+          //     d3.select("#tooltip").classed("hidden", false)
+          //   }).on('mouseout', e => {
+          //     // d3.select("#tooltip").classed("hidden", true)
+          //   })
+          //   .on('click', (event, v: any) => {
+          //     let arr: string[] = []
+          //     if (edgeSelect.value === v) {
+          //       edgeSelect.value = ''
+          //       arr = []
+          //       taskRef.value?.exactFilter(v, false)
+          //     } else {
+          //       edgeSelect.value = v
+          //       g.edges().forEach(edge => {
+          //         if (edge.v === v) {
+          //           arr.push(edge.w)
+          //         }
+          //         if (edge.w === v) {
+          //           arr.push(edge.v)
+          //         }
+          //       })
+          //       arr.push(v)
+          //       taskRef.value?.exactFilter(v, true)
+          //     }
+          //
+          //     nodeEdge.value = arr
+          //     setNodeOpacity(nodeEdge.value)
+          //     setEdgeOpacity(g)
+          //   })
+          // let initialScale = 0.75 // 缩放比例
+          // if (Object.keys(stepsList.value).length < 5) {
+          //   initialScale = 0.9
+          // } else if (Object.keys(stepsList.value).length < 9) {
+          //   initialScale = 0.8
+          // }
+          // const svgWidth = document.getElementById('svg')?.clientWidth || (g.graph().width as number) * initialScale + 40
+          // svg.attr('width', svgWidth)
+          // const graphWidth = g.graph().width as number
+          // const graphHeight = g.graph().height as number
+          // const width = parseInt(svg.style('width').replace(/px/, ''))
+          // const height = parseInt(svg.style('height').replace(/px/, ''))
+          // // console.log(graphWidth * initialScale, width * initialScale, graphHeight, height)
+          // const attrHeight = graphHeight * initialScale < 500 ? 500 : graphHeight * initialScale
+          // svg.attr('height', attrHeight + 40)
+          // svg.call(
+          //   zoom.transform as any,
+          //   d3.zoomIdentity
+          //     .translate(Math.abs(graphWidth * initialScale - width * initialScale ) / 2, 0)
+          //     .scale(initialScale)
+          // )
+          //
+          // setNodeOpacity(nodeEdge.value)
+          // setEdgeOpacity(g)
         }
       } catch (e) {
         console.error(e)
@@ -294,6 +297,7 @@ export default {
       taskRef,
       spinning,
       refresh,
+      loadTask,
     }
   }
 }
