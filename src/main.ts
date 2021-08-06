@@ -16,6 +16,8 @@ import {
 } from "ant-design-vue";
 import HeaderComponent from 'menu-header-component/dist/menu-header-component.common.js'
 import 'menu-header-component/dist/menu-header-component.css'
+import TaskFlow from 'task-flow-ui/dist/task-flow-ui.umd.js'
+import 'task-flow-ui/dist/task-flow-ui.css'
 
 const app = createApp(App)
 
@@ -41,5 +43,6 @@ app.use(Switch)
 app.use(Spin)
 
 app.use(HeaderComponent)
+app.use(TaskFlow)
 
 app.mount("#app");

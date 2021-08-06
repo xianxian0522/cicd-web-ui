@@ -35,6 +35,9 @@
           </div>
         </a-col>
       </a-row>
+<!--      <div v-if="stepsList">-->
+<!--        <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay"/>-->
+<!--      </div>-->
     </a-spin>
   </div>
 </template>
@@ -52,10 +55,16 @@ import {Step} from "@/utils/response";
 import {taskStates} from "@/utils/store";
 import {SyncOutlined} from '@ant-design/icons-vue'
 import CommonTicket from "@/components/CommonTicket.vue";
+import * as monaco from 'monaco-editor'
 
 export default {
   name: "ProjectDetails",
-  components: { CommonHeader, TaskStepsList, CommonTicket, SyncOutlined },
+  components: {
+    CommonHeader,
+    TaskStepsList,
+    CommonTicket,
+    SyncOutlined
+  },
   setup() {
     const { appId, projectId, projectInfo } = projectDetailRepositories()
     const stepsList = ref<{[key: string]: Step}>({})
@@ -80,6 +89,7 @@ export default {
       }
     }
     provide('spinChange', spinChange)
+    provide('monaco', monaco)
 
     const setNodeOpacity = (arr: string[]) => {
       Object.keys(stepsList.value).forEach(all => {
@@ -105,8 +115,9 @@ export default {
       try {
         if (projectId.value) {
           const task = await cicdRepository.queryWorkflow(projectId.value)
-          const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
           stepsList.value = advancedDisplay.value ? task.resolution.steps : task.display_resolution.steps
+          console.log(stepsList.value)
+          const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
           // const nodeInfos = Object.keys(stepsList.value).map(t => ({id: t, label: t, color: taskStates[stepsList.value[t]?.state]}))
           // const edges = Object.keys(stepsList.value).filter(f => stepsList.value[f].dependencies)
           //   .map(t => stepsList.value[t].dependencies?.map(d => {
@@ -177,16 +188,18 @@ export default {
           inner.selectAll('g.node')
             .on('mouseover', (event, v: any) => {
               // console.log(event, v, g.node(v), event.target)
+              console.log(event, event.pageX, event.pageY, g.node(v).x, g.node(v).y)
               // 显示提示信息：更新提示条位置和值
               const info: any = g.node(v)
               d3.select("#tooltip")
-                .attr("style", "left:" + (event.pageX - 70) + "px" + ";top:" + (event.pageY - 75) + "px")
+                .attr("style", "left:" + (event.pageX - 70) + "px" + ";top:" + (event.screenY - 75) + "px")
+                // .attr("style", "left:" + ((event.pageX + g.node(v).x) / 2 - 75) + "px" + ";top:" + (event.pageY + g.node(v).y + 70) + "px")
                 .select("#tooltip_value")
                 .text(info.description ? info.label + '-' + info.description : info.label)
               // 显示提示条
               d3.select("#tooltip").classed("hidden", false)
             }).on('mouseout', e => {
-              d3.select("#tooltip").classed("hidden", true)
+              // d3.select("#tooltip").classed("hidden", true)
             })
             .on('click', (event, v: any) => {
               let arr: string[] = []
@@ -230,7 +243,7 @@ export default {
           svg.call(
             zoom.transform as any,
             d3.zoomIdentity
-              .translate(Math.abs((graphWidth * initialScale - width * initialScale) / 2), 0)
+              .translate(Math.abs(graphWidth * initialScale - width * initialScale ) / 2, 0)
               .scale(initialScale)
           )
 
@@ -303,9 +316,9 @@ export default {
     margin-left: 10px;
   }
 }
-.opacity {
-  opacity: 0.3 !important;
-}
+//.opacity {
+//  opacity: 0.3 !important;
+//}
 #tooltip {
   position: absolute;
   width: auto;
