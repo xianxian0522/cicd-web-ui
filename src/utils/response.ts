@@ -77,6 +77,7 @@ export interface ProjectResponse {
   updated_by_user_id?: number;
   updated_by_username?: string;
   version_name?: string;
+  version_type?: string;
 }
 export interface VersionResponse {
   app_id?: number

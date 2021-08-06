@@ -19,20 +19,25 @@
 
     <a-modal v-model:visible="visible" :title="modelTitle" @ok="handleSubmit">
       <a-form ref="formRef" :rules="rules" :model="modalForm" :label-col="{ span: 4 }" :wrapper-col="{ span: 18 }">
-        <a-form-item label="基本分支" >
-          <a-input v-model:value="modalForm.BaseBranch" placeholder="基本分支" />
-        </a-form-item>
-        <a-form-item label="分支名">
-          <a-input v-model:value="modalForm.BranchName" placeholder="分支名" />
-        </a-form-item>
-        <a-form-item label="Jira" name="Jira">
-          <a-input v-model:value="modalForm.Jira" placeholder="Jira" />
+        <a-form-item label="分支类型" name="VersionType">
+          <a-select
+            v-model:value="modalForm.VersionType"
+            placeholder="please select versionType"
+            style="width: 100%"
+          >
+            <a-select-option value="hotfix">hotfix</a-select-option>
+            <a-select-option value="feature">feature</a-select-option>
+            <a-select-option value="release">release</a-select-option>
+          </a-select>
         </a-form-item>
         <a-form-item label="版本名" name="VersionName">
-          <a-input v-model:value="modalForm.VersionName" placeholder="版本名" />
+          <a-input v-model:value="modalForm.VersionName" :prefix="modalForm.VersionType" placeholder="版本名" />
         </a-form-item>
         <a-form-item label="备注">
           <a-input v-model:value="modalForm.Comment" placeholder="备注" />
+        </a-form-item>
+        <a-form-item label="Jira" name="Jira">
+          <a-input v-model:value="modalForm.Jira" placeholder="Jira" />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -47,13 +52,13 @@ import CommonHeader from "@/components/CommonHeader.vue";
 import {RuleObject, ValidateErrorEntity} from "ant-design-vue/es/form/interface";
 import cicdRepository from "@/api/cicdRepository";
 import {ProjectResponse} from "@/utils/response";
+import {message} from "ant-design-vue";
 
 export interface ModalForm {
-  BaseBranch: string | undefined;
-  BranchName: string | undefined;
   Comment: string | undefined;
   Jira: string | undefined;
   VersionName: string | undefined;
+  VersionType: string | undefined;
 }
 
 export default {
@@ -74,11 +79,10 @@ export default {
     })
 
     const modalForm: UnwrapRef<ModalForm> = reactive({
-      BaseBranch: undefined,
-      BranchName: undefined,
       Comment: undefined,
       Jira: undefined,
       VersionName: undefined,
+      VersionType: undefined,
     })
     const modalState = reactive({
       visible: false,
@@ -87,7 +91,7 @@ export default {
     })
     const formRef = ref()
     const validateVersion = (rule: RuleObject, value: string) => {
-      const reg = /^[0-9a-zA-Z_.]{1,}$/
+      const reg = /^[0-9a-zA-Z_.]+$/
       if (!value) {
         return Promise.reject('Please input VersionName')
       }
@@ -107,6 +111,7 @@ export default {
       VersionName: [
         { required: true, validator: validateVersion, trigger: 'blur' },
       ],
+      VersionType: [{required: true, message: 'Please input version type', trigger: 'blur'}],
       Jira: [{ validator: validateJira, trigger: 'change' }],
     };
 
@@ -115,11 +120,10 @@ export default {
       pagination.pageSize = page?.pageSize as number
     }
     const getFormValue = (project: ProjectResponse) => {
-      modalForm.BranchName = project.branch_name
-      modalForm.BaseBranch = project.base_branch
-      modalForm.Comment = project.comment
-      modalForm.Jira = project.Jira
-      modalForm.VersionName = project.version_name
+      modalForm.Comment = project?.comment
+      modalForm.Jira = project?.Jira
+      modalForm.VersionName = project?.version_name
+      modalForm.VersionType = project?.version_type
     }
     const addProject = (appId: number) => {
       modalState.appId = appId
@@ -131,7 +135,10 @@ export default {
       formRef.value.validate()
         .then(() => {
           const value = {...modalForm}
+          value.VersionName = value.VersionType + '_' + value.VersionName
           cicdRepository.addProjectByAppId(modalState.appId, value)
+          modalState.visible = false
+          message.success('新增项目成功')
         })
         .catch((error: ValidateErrorEntity) => console.error(error))
     }
