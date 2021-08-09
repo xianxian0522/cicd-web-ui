@@ -63,12 +63,13 @@ export default {
     const workflowRedo = async () => {
       try {
         const stepName = props.advancedDisplay ? props.stepInfo?.name : props.stepInfo?.redo_step
-        console.log(advancedDisplay.value, projectId.value)
+        console.log(advancedDisplay.value, projectId.value, stepName)
         spinChange(true)
         await cicdRepository.workflowRedo(props.projectId, stepName)
         message.success('redo success')
         spinChange(false)
       } catch (e) {
+        spinChange(false)
         console.error(e)
       }
     }
