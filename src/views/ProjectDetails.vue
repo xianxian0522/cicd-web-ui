@@ -1,6 +1,15 @@
 <template>
   <div class="project-detail">
-    <a-spin :spinning="spinning">
+<!--    放在外面 做遮罩层看看-->
+    <div class="spin" v-if="spinning">
+      <span class="spin-dot spin-dot-spin">
+        <i class="spin-dot-item"></i>
+        <i class="spin-dot-item"></i>
+        <i class="spin-dot-item"></i>
+        <i class="spin-dot-item"></i>
+      </span>
+    </div>
+    <div :class="{'spin-blur': spinning}">
       <CommonHeader :app-id="appId" />
       <div class="project-refresh">
         <span>自动刷新(5s)</span>
@@ -38,7 +47,7 @@
       <div v-if="Object.keys(stepsList)?.length > 0">
         <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay"/>
       </div>
-    </a-spin>
+    </div>
   </div>
 </template>
 
@@ -116,7 +125,7 @@ export default {
         if (projectId.value) {
           const task = await cicdRepository.queryWorkflow(projectId.value)
           stepsList.value = advancedDisplay.value ? task.resolution.steps : task.display_resolution.steps
-          console.log(stepsList.value)
+          
           // const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
           // // const nodeInfos = Object.keys(stepsList.value).map(t => ({id: t, label: t, color: taskStates[stepsList.value[t]?.state]}))
           // // const edges = Object.keys(stepsList.value).filter(f => stepsList.value[f].dependencies)
@@ -349,4 +358,67 @@ export default {
 //  font-size: 16px;
 //  line-height: 20px;
 //}
+
+.spin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 400px;
+}
+.spin-dot {
+  position: absolute;
+  top: 50%;
+  left: calc(50% + 100px);
+  margin: -10px;
+  display: inline-block;
+  font-size: 20px;
+  width: 1em;
+  height: 1em;
+}
+.spin-dot-spin {
+  transform: rotate(45deg);
+  animation: antRotate 1.2s infinite linear;
+}
+.spin-dot-item {
+  position: absolute;
+  display: block;
+  width: 9px;
+  height: 9px;
+  background-color: #1890ff;
+  border-radius: 100%;
+  transform: scale(.75);
+  transform-origin: 50% 50%;
+  opacity: .3;
+  animation: antSpinMove 1s infinite linear alternate;
+}
+.spin-dot-item:nth-child(1) {
+  top: 0;
+  left: 0;
+}
+.spin-dot-item:nth-child(2) {
+  top: 0;
+  right: 0;
+  animation-delay: .4s;
+}
+.spin-dot-item:nth-child(3) {
+  right: 0;
+  bottom: 0;
+  animation-delay: .8s;
+}
+.spin-dot-item:nth-child(4) {
+  bottom: 0;
+  left: 0;
+  animation-delay: 1.2s;
+}
+.spin-blur {
+  clear: both;
+  overflow: hidden;
+  opacity: .5;
+  user-select: none;
+  pointer-events: none;
+}
 </style>
