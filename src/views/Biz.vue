@@ -31,7 +31,7 @@
           </a-select>
         </a-form-item>
         <a-form-item label="版本名" name="VersionName">
-          <a-input v-model:value="modalForm.VersionName" :prefix="modalForm.VersionType" placeholder="版本名" />
+          <a-input v-model:value="modalForm.VersionName" :prefix="modalForm.VersionType ? modalForm.VersionType + '_' : modalForm.VersionType" placeholder="版本名" />
         </a-form-item>
         <a-form-item label="备注">
           <a-input v-model:value="modalForm.Comment" placeholder="备注" />

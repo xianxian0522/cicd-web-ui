@@ -22,9 +22,9 @@
         <a-descriptions-item label="版本名">{{ projectInfo?.version_name }}</a-descriptions-item>
         <a-descriptions-item label="创建人" :span="2">{{ projectInfo?.create_by_username }}</a-descriptions-item>
       </a-descriptions>
-      <div id="tooltip" class="hidden">
-        <p><span id="tooltip_value"></span></p>
-      </div>
+<!--      <div id="tooltip" class="hidden">-->
+<!--        <p><span id="tooltip_value"></span></p>-->
+<!--      </div>-->
 <!--      <a-row class="project-detail-svg">-->
 <!--        <a-col :span="8" >-->
 <!--          <TaskStepsList :stepsList="stepsList" ref="taskRef" :advanced-display="advancedDisplay" :project-id="projectId"/>-->
@@ -91,9 +91,6 @@ export default {
     provide('spinChange', spinChange)
     provide('monaco', monaco)
 
-    const loadTask = () => {
-      return Object.keys(stepsList.value).length > 0
-    }
     const setNodeOpacity = (arr: string[]) => {
       Object.keys(stepsList.value).forEach(all => {
         let nodeEle = d3.select('g#' + all + '.node')
@@ -297,7 +294,6 @@ export default {
       taskRef,
       spinning,
       refresh,
-      loadTask,
     }
   }
 }
@@ -323,34 +319,34 @@ export default {
 //.opacity {
 //  opacity: 0.3 !important;
 //}
-#tooltip {
-  position: absolute;
-  width: auto;
-  height: auto;
-  padding: 10px;
-  background-color: #000;
-  opacity: 0.75;
-  color: #fff;
-  text-align: center;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  font-size: 12px;
-  -webkit-box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
-  -moz-box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
-  box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
-  pointer-events: none;
-  z-index: 10;
-}
-
-#tooltip.hidden {
-  display: none;
-}
-
-#tooltip p {
-  margin: 0;
-  font-family: sans-serif;
-  font-size: 16px;
-  line-height: 20px;
-}
+//#tooltip {
+//  position: absolute;
+//  width: auto;
+//  height: auto;
+//  padding: 10px;
+//  background-color: #000;
+//  opacity: 0.75;
+//  color: #fff;
+//  text-align: center;
+//  -webkit-border-radius: 10px;
+//  -moz-border-radius: 10px;
+//  border-radius: 10px;
+//  font-size: 12px;
+//  -webkit-box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
+//  -moz-box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
+//  box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4);
+//  pointer-events: none;
+//  z-index: 10;
+//}
+//
+//#tooltip.hidden {
+//  display: none;
+//}
+//
+//#tooltip p {
+//  margin: 0;
+//  font-family: sans-serif;
+//  font-size: 16px;
+//  line-height: 20px;
+//}
 </style>
