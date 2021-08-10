@@ -10,7 +10,7 @@ import {
   Input,
   Layout,
   Menu,
-  Modal, Row,
+  Modal, Popconfirm, Row,
   Select, Spin, Switch,
   Table
 } from "ant-design-vue";
@@ -41,6 +41,7 @@ app.use(Row)
 app.use(Collapse)
 app.use(Switch)
 app.use(Spin)
+app.use(Popconfirm)
 
 app.use(HeaderComponent)
 app.use(TaskFlow)

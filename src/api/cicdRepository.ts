@@ -43,4 +43,6 @@ export default {
   workflowRedo: (projectId: number, stepName: string) => request.post(`${ApiProject}/${projectId}/workflow/step/${stepName}/redo`),
 
   closeTicket: (ticketId: number) => request.put(`${ApiTicket}/${ticketId}/close`),
+
+  confirmProjectWorkflowStep: (projectId: number, stepName: string, Value: string) => request.put(`${ApiProject}/${projectId}/workflow/step/${stepName}/confirm`, {Value}),
 }

@@ -19,8 +19,26 @@
         <a-switch v-model:checked="advancedDisplay" />
       </div>
       <CommonTicket :project-id="projectId" />
-      <a-descriptions title="项目详情" bordered>
+      <a-descriptions title="项目详情" bordered class="project-description">
         <template #extra>
+          <a-popconfirm
+            title="确定开发完成吗?"
+            ok-text="Yes"
+            cancel-text="No"
+            @confirm="confirmSuccess"
+            :disabled="!enableConfirmSuccess()"
+          >
+            <a-button :disabled="!enableConfirmSuccess()">确认开发完成</a-button>
+          </a-popconfirm>
+          <a-popconfirm
+            title="确定放弃开发任务吗?"
+            ok-text="Yes"
+            cancel-text="No"
+            @confirm="confirmClose"
+            :disabled="!enableConfirmSuccess()"
+          >
+            <a-button :disabled="!enableConfirmSuccess()">放弃开发任务</a-button>
+          </a-popconfirm>
           <a-button type="primary">
             <router-link :to="{name: 'project', params: {appId, projectId}}">返回详情列表</router-link>
           </a-button>
@@ -109,6 +127,25 @@ export default {
         console.error(e)
       }
     }
+    const enableConfirmSuccess = () => {
+      return stepsList.value?.['confirm_ok']?.state === 'BLOCKED';
+    }
+    const confirmSuccess = async () => {
+      try {
+        await cicdRepository.confirmProjectWorkflowStep(projectId.value, 'confirm_ok', 'YES')
+        refresh()
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    const confirmClose = async () => {
+      try {
+        await cicdRepository.confirmProjectWorkflowStep(projectId.value, 'confirm_ok', 'NO')
+        refresh()
+      } catch (e) {
+        console.error(e)
+      }
+    }
 
     const refresh = () => {
       getWorkflow()
@@ -147,6 +184,9 @@ export default {
       advancedDisplay,
       spinning,
       refresh,
+      confirmSuccess,
+      confirmClose,
+      enableConfirmSuccess,
     }
   }
 }
@@ -158,6 +198,11 @@ export default {
 }
 .project-refresh {
   margin-bottom: 15px;
+  button {
+    margin-left: 10px;
+  }
+}
+.project-description {
   button {
     margin-left: 10px;
   }
