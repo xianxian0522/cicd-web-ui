@@ -15,7 +15,7 @@
             placeholder="选择state"
             allowClear
             @click.stop
-            style="width: 120px; margin-right: 10px"
+            style="width: 200px; margin-right: 10px"
           >
             <a-select-option value="open">open</a-select-option>
             <a-select-option value="closed">closed</a-select-option>
@@ -26,13 +26,13 @@
             placeholder="选择type"
             allowClear
             @click.stop
-            style="width: 120px; margin-right: 10px"
+            style="width: 200px; margin-right: 10px"
           >
             <a-select-option value="generic">generic</a-select-option>
             <a-select-option value="merge_conflict">merge_conflict</a-select-option>
           </a-select>
         </div>
-        <CommonTable :columns="ticketColumns" :data-source="ticketsList" :scroll-x="'1000px'" :is-page="true" :isPagination="pagination" @paginationChange="paginationChange">
+        <CommonTable :columns="ticketColumns" :is-alarm="true" :data-source="ticketsList" :scroll-x="'1000px'" :is-page="true" :isPagination="pagination" @paginationChange="paginationChange">
           <template v-slot:default="slotProps">
             <a-button :disabled="slotProps.action.state === 'closed'" type="link" @click="closedTicket(slotProps.action.id)">关闭ticket</a-button>
           </template>
