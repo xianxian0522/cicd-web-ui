@@ -35,7 +35,7 @@
 <!--        <TaskSvg :steps-list="stepsList" :advanced-display="advancedDisplay"/>-->
 <!--      </div>-->
       <div v-if="Object.keys(stepsList)?.length > 0">
-        <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay"/>
+        <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay" :svg-id="'cicdSvg'"/>
       </div>
     </div>
   </div>
