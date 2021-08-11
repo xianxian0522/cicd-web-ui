@@ -56,6 +56,15 @@
         <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay" :svg-id="'cicdSvg'"/>
       </div>
     </div>
+
+    <a-modal
+      v-model:visible="modalVisible"
+      title="Jenkins build console"
+      width="100%"
+      wrapClassName="full-modal"
+    >
+      <pre><code>{{ modalContent }}</code></pre>
+    </a-modal>
   </div>
 </template>
 
@@ -63,7 +72,7 @@
 import CommonHeader from "@/components/CommonHeader.vue";
 import projectDetailRepositories from "@/composable/projectDetailRepositories";
 import cicdRepository from "@/api/cicdRepository";
-import {onBeforeUnmount, onMounted, provide, ref, watch} from "vue";
+import {onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
 import TaskSvg from "@/views/TaskSvg.vue";
 import {Step} from "@/utils/response";
 import {SyncOutlined} from '@ant-design/icons-vue'
@@ -86,6 +95,10 @@ export default {
     const advancedDisplay = ref(false)
     const timer = ref()
     const spinning = ref(false)
+    const modalState = reactive({
+      modalVisible: false,
+      modalContent: '',
+    })
     provide('advancedDisplay', advancedDisplay)
     provide('projectId', projectId)
 
@@ -110,8 +123,9 @@ export default {
         console.error(e)
       }
     }
-    const jenkinsConsoleChange = async (jobName: string, buildNum: string) => {
-      console.log(jobName, buildNum, '=====')
+    const jenkinsConsoleChange = (jobName: string, buildNum: string) => {
+      modalState.modalVisible = true
+      watchJenkinsConsole(jobName, buildNum, 0)
     }
     // // task-box组件触发
     // provide('spinChange', spinChange)
@@ -120,6 +134,20 @@ export default {
     provide('isRedo', true)
     provide('workflowRedo', workflowRedo)
 
+    const watchJenkinsConsole = async (jobName: string, buildNum: string, start: number) => {
+      try {
+        const data = await cicdRepository.queryJenkinsBuildConsole(projectId.value, jobName, buildNum, start)
+        start = data?.Offset
+        modalState.modalContent += data.Content
+        if (data?.HasMoreText) {
+          setTimeout(async () => {
+            await watchJenkinsConsole(jobName, buildNum, start)
+          }, 300)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
     const getWorkflow = async () => {
       try {
         if (projectId.value) {
@@ -187,6 +215,7 @@ export default {
       autoRefresh,
       advancedDisplay,
       spinning,
+      ...toRefs(modalState),
       refresh,
       confirmSuccess,
       confirmClose,
@@ -196,7 +225,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less" >
 .project-detail {
   padding-top: 20px;
 }
@@ -209,6 +238,24 @@ export default {
 .project-description {
   button {
     margin-left: 10px;
+  }
+}
+
+.full-modal {
+  .ant-modal {
+    max-width: 100%;
+    top: 0;
+    padding-bottom: 0;
+    margin: 0;
+  }
+  .ant-modal-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh);
+  }
+  .ant-modal-body {
+    flex: 1;
+    overflow: auto;
   }
 }
 

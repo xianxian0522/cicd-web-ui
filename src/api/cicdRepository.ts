@@ -2,7 +2,7 @@ import request from "@/utils/request";
 import {
   AppResponse,
   BarItem,
-  BaseResponse,
+  BaseResponse, JenkinsConsole,
   LoginResponse, Page,
   ProjectResponse, ProjectWorkflow, TicketsResponse,
   VersionResponse,
@@ -45,5 +45,5 @@ export default {
   closeTicket: (ticketId: number) => request.put(`${ApiTicket}/${ticketId}/close`),
 
   confirmProjectWorkflowStep: (projectId: number, stepName: string, Value: string) => request.put(`${ApiProject}/${projectId}/workflow/step/${stepName}/confirm`, {Value}),
-  queryJenkinsBuildConsole: (projectId: number, jobName: string, buildNum: string, start: number) => request.get(`${ApiProject}/${projectId}/jenkins/job/${jobName}/build/${buildNum}/console`, {start}),
+  queryJenkinsBuildConsole: (projectId: number, jobName: string, buildNum: string, start: number) => request.get<JenkinsConsole>(`${ApiProject}/${projectId}/jenkins/job/${jobName}/build/${buildNum}/console`, {start}),
 }

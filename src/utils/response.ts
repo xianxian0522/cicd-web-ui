@@ -189,3 +189,8 @@ export interface TicketsResponse {
   type: string;
   updated_at: string;
 }
+export interface JenkinsConsole {
+  Content: string;
+  HasMoreText: boolean;
+  Offset: number;
+}
