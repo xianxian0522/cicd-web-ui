@@ -125,6 +125,7 @@ export default {
     }
     const jenkinsConsoleChange = (jobName: string, buildNum: string) => {
       modalState.modalVisible = true
+      modalState.modalContent = ''
       watchJenkinsConsole(jobName, buildNum, 0)
     }
     // // task-box组件触发
@@ -142,7 +143,7 @@ export default {
         if (data?.HasMoreText) {
           setTimeout(async () => {
             await watchJenkinsConsole(jobName, buildNum, start)
-          }, 300)
+          }, 3000)
         }
       } catch (e) {
         console.error(e)
