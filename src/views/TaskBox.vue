@@ -64,7 +64,7 @@ export default {
 
     const jenkinsBuild = () => {
       const stepName = props.advancedDisplay ? props.stepInfo?.name : (props.stepInfo?.redo_step || props.stepInfo?.name)
-      console.log(stepName, ';;;;;')
+      // console.log(stepName, ';;;;;')
       return stepName === 'jenkins_build_result'
     }
     const jenkinsBuildConsole = () => {

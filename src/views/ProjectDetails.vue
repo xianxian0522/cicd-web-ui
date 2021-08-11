@@ -1,6 +1,6 @@
 <template>
   <div class="project-detail">
-<!--    放在外面 做遮罩层看看-->
+<!--    放在外面 做遮罩层-->
     <div class="spin" v-if="spinning">
       <span class="spin-dot spin-dot-spin">
         <i class="spin-dot-item"></i>
@@ -49,12 +49,12 @@
         <a-descriptions-item label="版本名">{{ projectInfo?.version_name }}</a-descriptions-item>
         <a-descriptions-item label="创建人" :span="2">{{ projectInfo?.create_by_username }}</a-descriptions-item>
       </a-descriptions>
-      <div v-if="Object.keys(stepsList)?.length > 0" >
-        <TaskSvg :steps-list="stepsList" :advanced-display="advancedDisplay"/>
-      </div>
-<!--      <div v-if="Object.keys(stepsList)?.length > 0">-->
-<!--        <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay" :svg-id="'cicdSvg'"/>-->
+<!--      <div v-if="Object.keys(stepsList)?.length > 0" >-->
+<!--        <TaskSvg :steps-list="stepsList" :advanced-display="advancedDisplay"/>-->
 <!--      </div>-->
+      <div v-if="Object.keys(stepsList)?.length > 0">
+        <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay" :svg-id="'cicdSvg'"/>
+      </div>
     </div>
   </div>
 </template>
@@ -75,7 +75,7 @@ export default {
   name: "ProjectDetails",
   components: {
     CommonHeader,
-    TaskSvg,
+    // TaskSvg,
     CommonTicket,
     SyncOutlined
   },
@@ -113,8 +113,8 @@ export default {
     const jenkinsConsoleChange = async (jobName: string, buildNum: string) => {
       console.log(jobName, buildNum, '=====')
     }
-    // task-box组件触发
-    provide('spinChange', spinChange)
+    // // task-box组件触发
+    // provide('spinChange', spinChange)
     provide('jenkinsConsoleChange', jenkinsConsoleChange)
     provide('monaco', monaco)
     provide('isRedo', true)
