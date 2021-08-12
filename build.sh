@@ -1,5 +1,7 @@
 #!/bin/sh
 
+sleep 3600
+
 npm config set registry=http://172.16.97.41:9000/repository/npm/
 npm i
 export PATH=$(pwd)/node_modules/.bin:$PATH
