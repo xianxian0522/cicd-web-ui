@@ -6,6 +6,7 @@
 <script lang="ts">
 import cicdRepository from "@/api/cicdRepository";
 import {useRouter} from "vue-router";
+import tokenRepositories from "@/composable/tokenRepositories";
 
 export default {
   name: 'Middle',
@@ -16,7 +17,7 @@ export default {
     const login = async () => {
       const data = await cicdRepository.login()
       if (data?.token) {
-        localStorage.setItem('token', data.token)
+        tokenRepositories(data?.token)
       }
     }
 
