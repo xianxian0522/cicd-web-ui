@@ -15,9 +15,6 @@ def jobInfo = [
             [
                 fileName: "*.tar.gz",
                 repoName: "generic-release",
-                projectName: "devops",
-                packageName: "cicd-web-ui",
-                props: "proj=devops;app=cicd-web-ui"
             ]
         ]
     ]
