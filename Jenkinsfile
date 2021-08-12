@@ -23,4 +23,4 @@ def jobInfo = [
     ]
 ]
 
-building.BuildCustomProject(jobInfo) //根据给定的信息执行Pipeline
+building.buildCustomProject(jobInfo) //根据给定的信息执行Pipeline
