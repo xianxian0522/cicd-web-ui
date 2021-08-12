@@ -10,6 +10,7 @@ def jobInfo = [
         archiveFiles: "*.tar.gz", //可选，存档的包文件，可用通配符，默认为*.tar.gz
     ],
     releaseInfo: [
+        skip: true,
         serverName: "artifactory",
         packages: [
             [
