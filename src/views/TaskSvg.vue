@@ -58,6 +58,15 @@ export default {
         }
       })
     }
+    const state2LabelStyle = (state) => {
+      if (state === 'TODO') {
+        return 'fill: #000';
+      }
+      if (state === 'PRUNE') {
+        return 'fill: grey';
+      }
+      return 'fill: #fff';
+    }
     const getWorkflow = async (init?: boolean) => {
       try {
         const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
@@ -99,7 +108,7 @@ export default {
             label: t,
             description: desc,
             style: 'fill:' + styleColor + ';stroke:' + styleColor,
-            labelStyle: state === 'TODO' ? 'fill: #000' : state === 'PRUNE' ? 'fill: grey' : 'fill: #fff',
+            labelStyle: state2LabelStyle(state),
             rx: 5,
             ry: 5,
           })

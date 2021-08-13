@@ -1,12 +1,12 @@
 <template>
   <div class="project-detail">
-<!--    放在外面 做遮罩层-->
+    <!--  放在外面 做遮罩层-->
     <div class="spin" v-if="spinning">
       <span class="spin-dot spin-dot-spin">
-        <i class="spin-dot-item"></i>
-        <i class="spin-dot-item"></i>
-        <i class="spin-dot-item"></i>
-        <i class="spin-dot-item"></i>
+        <em class="spin-dot-item"></em>
+        <em class="spin-dot-item"></em>
+        <em class="spin-dot-item"></em>
+        <em class="spin-dot-item"></em>
       </span>
     </div>
     <div :class="{'spin-blur': spinning}">
@@ -63,7 +63,13 @@
       width="100%"
       wrapClassName="full-modal"
     >
-      <pre><code>{{ modalContent }}</code></pre>
+      <template #footer>
+        <a-button key="back" @click="modalVisible = false">取消</a-button>
+      </template>
+      <div ref="consoleRef">
+        <pre ><code>{{ modalContent }}</code></pre>
+        <a-spin v-if="modalLoading" />
+      </div>
     </a-modal>
   </div>
 </template>
@@ -72,7 +78,7 @@
 import CommonHeader from "@/components/CommonHeader.vue";
 import projectDetailRepositories from "@/composable/projectDetailRepositories";
 import cicdRepository from "@/api/cicdRepository";
-import {onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
+import {nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
 import TaskSvg from "@/views/TaskSvg.vue";
 import {Step} from "@/utils/response";
 import {SyncOutlined} from '@ant-design/icons-vue'
@@ -98,7 +104,9 @@ export default {
     const modalState = reactive({
       modalVisible: false,
       modalContent: '',
+      modalLoading: true,
     })
+    const consoleRef = ref()
     provide('advancedDisplay', advancedDisplay)
     provide('projectId', projectId)
 
@@ -125,6 +133,7 @@ export default {
     }
     const jenkinsConsoleChange = (jobName: string, buildNum: string) => {
       modalState.modalVisible = true
+      modalState.modalLoading = true
       modalState.modalContent = ''
       watchJenkinsConsole(jobName, buildNum, 0)
     }
@@ -139,11 +148,16 @@ export default {
       try {
         const data = await cicdRepository.queryJenkinsBuildConsole(projectId.value, jobName, buildNum, start)
         start = data?.Offset
-        modalState.modalContent += data.Content
+        modalState.modalContent = modalState.modalContent + data.Content
+        await nextTick(() => {
+          consoleRef.value?.scrollIntoView({behavior: 'auto', block: 'end'})
+        })
         if (data?.HasMoreText) {
           setTimeout(async () => {
             await watchJenkinsConsole(jobName, buildNum, start)
           }, 3000)
+        } else {
+          modalState.modalLoading = false
         }
       } catch (e) {
         console.error(e)
@@ -192,6 +206,10 @@ export default {
         }
       }, 5000)
     }
+    const watchModalScroll = () => {
+      console.log('=====')
+    }
+
     watch(autoRefresh, value => {
       if (value) {
         watchRefresh()
@@ -203,9 +221,11 @@ export default {
     onMounted(() => {
       getWorkflow()
       watchRefresh()
+      window.addEventListener('mousewheel', watchModalScroll, true)
     })
     onBeforeUnmount(() => {
       clearInterval(timer.value)
+      window.removeEventListener('mousewheel', watchModalScroll, true)
     })
 
     return {
@@ -217,6 +237,7 @@ export default {
       advancedDisplay,
       spinning,
       ...toRefs(modalState),
+      consoleRef,
       refresh,
       confirmSuccess,
       confirmClose,

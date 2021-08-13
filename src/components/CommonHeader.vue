@@ -15,7 +15,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import {useRoute} from "vue-router";
 import appInfoRepositories from "@/composable/appInfoRepositories";
 
 export default defineComponent({
