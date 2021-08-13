@@ -63,6 +63,9 @@
       width="100%"
       wrapClassName="full-modal"
     >
+      <template #footer>
+        <a-button key="back" @click="modalVisible = false">取消</a-button>
+      </template>
       <pre><code>{{ modalContent }}</code></pre>
     </a-modal>
   </div>
