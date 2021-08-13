@@ -133,6 +133,7 @@ export default {
     }
     const jenkinsConsoleChange = (jobName: string, buildNum: string) => {
       modalState.modalVisible = true
+      modalState.modalLoading = true
       modalState.modalContent = ''
       watchJenkinsConsole(jobName, buildNum, 0)
     }
@@ -205,6 +206,10 @@ export default {
         }
       }, 5000)
     }
+    const watchModalScroll = () => {
+      console.log('=====')
+    }
+
     watch(autoRefresh, value => {
       if (value) {
         watchRefresh()
@@ -216,9 +221,11 @@ export default {
     onMounted(() => {
       getWorkflow()
       watchRefresh()
+      window.addEventListener('mousewheel', watchModalScroll, true)
     })
     onBeforeUnmount(() => {
       clearInterval(timer.value)
+      window.removeEventListener('mousewheel', watchModalScroll, true)
     })
 
     return {
