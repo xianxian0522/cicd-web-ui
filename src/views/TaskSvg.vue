@@ -61,6 +61,15 @@ export default {
     const getWorkflow = async (init?: boolean) => {
       try {
         const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
+        const state2LabelStyle = (state) => {
+          if (state === 'TODO') {
+            return 'fill: #000';
+          }
+          if (state === 'PRUNE') {
+            return 'fill: grey';
+          }
+          return 'fill: #fff';
+        }
         // const nodeInfos = Object.keys(props.stepsList).map(t => ({id: t, label: t, color: taskStates[stepsList.value[t]?.state]}))
         // const edges = Object.keys(props.stepsList).filter(f => stepsList.value[f].dependencies)
         //   .map(t => stepsList.value[t].dependencies?.map(d => {
@@ -89,15 +98,6 @@ export default {
         //     arrowhead: 'vee'
         //   })
         // })
-        const state2LabelStyle = (state) => {
-          if (state === 'TODO') {
-            return 'fill: #000';
-          }
-          if (state === 'PRUNE') {
-            return 'fill: grey';
-          }
-          return 'fill: #fff';
-        }
         Object.keys(props.stepsList).forEach(t => {
           const state = props.stepsList[t].state
           let color = taskStates[state]
