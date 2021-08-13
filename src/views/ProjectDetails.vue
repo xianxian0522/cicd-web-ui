@@ -66,7 +66,8 @@
       <template #footer>
         <a-button key="back" @click="modalVisible = false">取消</a-button>
       </template>
-      <pre><code>{{ modalContent }}</code></pre>
+      <pre id="console" style="display: block"><code>{{ modalContent }}</code></pre>
+      <a-spin v-if="modalLoading" />
     </a-modal>
   </div>
 </template>
@@ -75,7 +76,7 @@
 import CommonHeader from "@/components/CommonHeader.vue";
 import projectDetailRepositories from "@/composable/projectDetailRepositories";
 import cicdRepository from "@/api/cicdRepository";
-import {onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
+import {nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
 import TaskSvg from "@/views/TaskSvg.vue";
 import {Step} from "@/utils/response";
 import {SyncOutlined} from '@ant-design/icons-vue'
@@ -101,6 +102,7 @@ export default {
     const modalState = reactive({
       modalVisible: false,
       modalContent: '',
+      modalLoading: true,
     })
     provide('advancedDisplay', advancedDisplay)
     provide('projectId', projectId)
@@ -142,11 +144,26 @@ export default {
       try {
         const data = await cicdRepository.queryJenkinsBuildConsole(projectId.value, jobName, buildNum, start)
         start = data?.Offset
-        modalState.modalContent += data.Content
+        modalState.modalContent = modalState.modalContent + data.Content
+        const id = document.getElementById('console')
+        await nextTick(() => {
+          if (id) {
+            id.scrollTop = id?.scrollHeight
+            console.log(id?.offsetHeight, id?.scrollHeight, id.scrollTop, id)
+          }
+        })
+        // setTimeout(() => {
+        //   if (id) {
+        //
+        //   }
+        //   console.log(id?.offsetHeight, id?.scrollHeight, id?.scrollTop, id)
+        // }, 0)
         if (data?.HasMoreText) {
           setTimeout(async () => {
             await watchJenkinsConsole(jobName, buildNum, start)
           }, 3000)
+        } else {
+          modalState.modalLoading = false
         }
       } catch (e) {
         console.error(e)
