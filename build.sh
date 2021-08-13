@@ -1,7 +1,7 @@
 #!/bin/sh
 
 npm config set registry=http://172.16.97.41:9000/repository/npm/
-npm i --loglevel verbose
+npm i
 npm run build
 
 mv dist $APP
