@@ -89,6 +89,15 @@ export default {
         //     arrowhead: 'vee'
         //   })
         // })
+        const state2LabelStyle = (state) => {
+          if (state === 'TODO') {
+            return 'fill: #000';
+          }
+          if (state === 'PRUNE') {
+            return 'fill: grey';
+          }
+          return 'fill: #fff';
+        }
         Object.keys(props.stepsList).forEach(t => {
           const state = props.stepsList[t].state
           let color = taskStates[state]
@@ -99,7 +108,7 @@ export default {
             label: t,
             description: desc,
             style: 'fill:' + styleColor + ';stroke:' + styleColor,
-            labelStyle: state === 'TODO' ? 'fill: #000' : state === 'PRUNE' ? 'fill: grey' : 'fill: #fff',
+            labelStyle: state2LabelStyle(state),
             rx: 5,
             ry: 5,
           })
