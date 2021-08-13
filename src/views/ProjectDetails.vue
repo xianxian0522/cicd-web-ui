@@ -66,8 +66,10 @@
       <template #footer>
         <a-button key="back" @click="modalVisible = false">取消</a-button>
       </template>
-      <pre id="console" style="display: block"><code>{{ modalContent }}</code></pre>
-      <a-spin v-if="modalLoading" />
+      <div ref="consoleRef">
+        <pre ><code>{{ modalContent }}</code></pre>
+        <a-spin v-if="modalLoading" />
+      </div>
     </a-modal>
   </div>
 </template>
@@ -104,6 +106,7 @@ export default {
       modalContent: '',
       modalLoading: true,
     })
+    const consoleRef = ref()
     provide('advancedDisplay', advancedDisplay)
     provide('projectId', projectId)
 
@@ -145,19 +148,15 @@ export default {
         const data = await cicdRepository.queryJenkinsBuildConsole(projectId.value, jobName, buildNum, start)
         start = data?.Offset
         modalState.modalContent = modalState.modalContent + data.Content
-        const id = document.getElementById('console')
         await nextTick(() => {
-          if (id) {
-            id.scrollTop = id?.scrollHeight
-            console.log(id?.offsetHeight, id?.scrollHeight, id.scrollTop, id)
-          }
+          // const id = document.getElementById('console')
+          // if (id) {
+          //   id.scrollTop = id?.scrollHeight
+          //   console.log(id?.offsetHeight, id?.scrollHeight, id.scrollTop, id)
+          // }
+          consoleRef.value.scrollTop = consoleRef.value?.scrollHeight
+          console.log(consoleRef.value, consoleRef.value.scrollTop, consoleRef.value?.scrollHeight)
         })
-        // setTimeout(() => {
-        //   if (id) {
-        //
-        //   }
-        //   console.log(id?.offsetHeight, id?.scrollHeight, id?.scrollTop, id)
-        // }, 0)
         if (data?.HasMoreText) {
           setTimeout(async () => {
             await watchJenkinsConsole(jobName, buildNum, start)
@@ -227,6 +226,15 @@ export default {
     onBeforeUnmount(() => {
       clearInterval(timer.value)
     })
+    watch(() => modalState.modalContent , () => {
+      nextTick(() => {
+        // const el = document.getElementById('console')
+        // if (el) {
+        //   el.scrollTop = el.scrollHeight
+        //   console.log(el.offsetHeight, el.scrollHeight, el.scrollTop, el)
+        // }
+      })
+    })
 
     return {
       appId,
@@ -237,6 +245,7 @@ export default {
       advancedDisplay,
       spinning,
       ...toRefs(modalState),
+      consoleRef,
       refresh,
       confirmSuccess,
       confirmClose,
