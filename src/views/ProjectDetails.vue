@@ -149,13 +149,7 @@ export default {
         start = data?.Offset
         modalState.modalContent = modalState.modalContent + data.Content
         await nextTick(() => {
-          // const id = document.getElementById('console')
-          // if (id) {
-          //   id.scrollTop = id?.scrollHeight
-          //   console.log(id?.offsetHeight, id?.scrollHeight, id.scrollTop, id)
-          // }
-          consoleRef.value.scrollTop = consoleRef.value?.scrollHeight
-          console.log(consoleRef.value, consoleRef.value.scrollTop, consoleRef.value?.scrollHeight)
+          consoleRef.value?.scrollIntoView({behavior: 'auto', block: 'end'})
         })
         if (data?.HasMoreText) {
           setTimeout(async () => {
@@ -225,15 +219,6 @@ export default {
     })
     onBeforeUnmount(() => {
       clearInterval(timer.value)
-    })
-    watch(() => modalState.modalContent , () => {
-      nextTick(() => {
-        // const el = document.getElementById('console')
-        // if (el) {
-        //   el.scrollTop = el.scrollHeight
-        //   console.log(el.offsetHeight, el.scrollHeight, el.scrollTop, el)
-        // }
-      })
     })
 
     return {
