@@ -85,6 +85,7 @@ import {SyncOutlined} from '@ant-design/icons-vue'
 import CommonTicket from "@/components/CommonTicket.vue";
 import * as monaco from 'monaco-editor'
 import {message} from "ant-design-vue";
+import * as _ from "lodash";
 
 export default {
   name: "ProjectDetails",
@@ -158,6 +159,7 @@ export default {
           }, 3000)
         } else {
           modalState.modalLoading = false
+          // window.removeEventListener('mousewheel', watchModalScroll, true)
         }
       } catch (e) {
         console.error(e)
@@ -206,10 +208,25 @@ export default {
         }
       }, 5000)
     }
-    const watchModalScroll = () => {
-      console.log('=====')
+    const watchModalScroll = (e: any) => {
+      console.log('=====', e, '下面去处理ref元素的高度')
+      const scrollTop =
+        document.documentElement.scrollTop || document.body.scrollTop //变量windowHeight是可视区的高度
+      const windowHeight =
+        document.documentElement.clientHeight || document.body.clientHeight //变量scrollHeight是滚动条的总高度
+      const scrollHeight =
+        document.documentElement.scrollHeight || document.body.scrollHeight
+      console.log(scrollTop, windowHeight, scrollHeight)
     }
+    const scrollDebounce = _.debounce(watchModalScroll, 300)
 
+    watch(() => modalState.modalVisible, value => {
+      if (value) {
+        window.addEventListener('mousewheel', scrollDebounce, true)
+      } else {
+        window.removeEventListener('mousewheel', scrollDebounce, true)
+      }
+    })
     watch(autoRefresh, value => {
       if (value) {
         watchRefresh()
@@ -221,11 +238,11 @@ export default {
     onMounted(() => {
       getWorkflow()
       watchRefresh()
-      window.addEventListener('mousewheel', watchModalScroll, true)
+      // window.addEventListener('mousewheel', watchModalScroll, true)
     })
     onBeforeUnmount(() => {
       clearInterval(timer.value)
-      window.removeEventListener('mousewheel', watchModalScroll, true)
+      // window.removeEventListener('mousewheel', watchModalScroll, true)
     })
 
     return {
