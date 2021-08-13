@@ -6,12 +6,16 @@
       </template>
       <a-collapse-panel key="1" :style="customStyle">
         <template #header>
+          总共 {{ openTotal }} 条 open tickets
+        </template>
+        <div style="margin-bottom: 10px">
           <a-select
             v-model:value="state"
             size="small"
+            placeholder="选择state"
             allowClear
             @click.stop
-            style="width: 120px; margin-right: 10px"
+            style="width: 200px; margin-right: 10px"
           >
             <a-select-option value="open">open</a-select-option>
             <a-select-option value="closed">closed</a-select-option>
@@ -19,18 +23,18 @@
           <a-select
             v-model:value="type"
             size="small"
+            placeholder="选择type"
             allowClear
             @click.stop
-            style="width: 120px; margin-right: 10px"
+            style="width: 200px; margin-right: 10px"
           >
             <a-select-option value="generic">generic</a-select-option>
             <a-select-option value="merge_conflict">merge_conflict</a-select-option>
           </a-select>
-          tickets open total
-        </template>
-        <CommonTable :columns="ticketColumns" :data-source="ticketsList" :scroll-x="'1000px'" :is-page="true" :isPagination="pagination" @paginationChange="paginationChange">
+        </div>
+        <CommonTable :columns="ticketColumns" :is-alarm="true" :data-source="ticketsList" :scroll-x="'1000px'" :is-page="true" :isPagination="pagination" @paginationChange="paginationChange">
           <template v-slot:default="slotProps">
-            <a-button type="link" @click="closedTicket(slotProps.action.id)">关闭ticket</a-button>
+            <a-button :disabled="slotProps.action.state === 'closed'" type="link" @click="closedTicket(slotProps.action.id)">关闭ticket</a-button>
           </template>
         </CommonTable>
       </a-collapse-panel>
@@ -40,7 +44,7 @@
 
 <script lang="ts">
 import {CaretRightOutlined} from "@ant-design/icons-vue";
-import {reactive, ref, toRefs, watch} from "vue";
+import {onMounted, reactive, ref, toRefs, watch} from "vue";
 import {TicketsResponse} from "@/utils/response";
 import cicdRepository from "@/api/cicdRepository";
 import CommonTable from "@/components/CommonTable.vue";
@@ -80,8 +84,9 @@ export default {
     })
     const selectState = reactive({
       state: 'open',
-      type: 'generic',
+      type: undefined,
     })
+    const openTotal = ref()
 
     const changeActiveKey = (key: string[]) => {
       if (key?.length > 0) {
@@ -108,16 +113,32 @@ export default {
         console.error(e)
       }
     }
+    const queryOpenCount = async () => {
+      try {
+        const value = {
+          state: 'open',
+        }
+        openTotal.value = props.isAppTicket ? await cicdRepository.queryTicketOpenCountByAppId(props.appId, value)
+          : await cicdRepository.queryTicketOpenCountByProId(props.projectId, value)
+      } catch (e) {
+        console.error(e)
+      }
+    }
     const closedTicket = async (id: number) => {
       try {
         await cicdRepository.closeTicket(id)
         message.success('ticket关闭成功')
+        await queryPageTickets()
+        await queryOpenCount()
       } catch (e) {
         console.error(e)
       }
     }
     watch(selectState, value => {
       changeActiveKey(activeKey.value)
+    })
+    onMounted(() => {
+      queryOpenCount()
     })
 
     return {
@@ -127,6 +148,7 @@ export default {
       ticketColumns,
       ticketsList,
       pagination,
+      openTotal,
       changeActiveKey,
       paginationChange,
       closedTicket,

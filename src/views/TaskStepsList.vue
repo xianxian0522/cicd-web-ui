@@ -42,7 +42,7 @@ export default {
 
     const exactFilter = (value: string, isExact: boolean) => {
       if (isExact) {
-        const filter = Object.keys(props.stepsList).filter(f => f.toLowerCase().indexOf(value.toLowerCase()) >= 0)
+        const filter = Object.keys(props.stepsList).filter(f => f.toLowerCase() === value.toLowerCase())
         taskSteps.value = filter.map(s => ({name: s, value: props.stepsList[s]}))
         stepSelect.value = ['Step: ' + value]
         isExactValue.value = value

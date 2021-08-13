@@ -9,7 +9,6 @@
       >
         <a-menu-item v-for="item in bar" :key="item.path">
             <span>
-<!--              <icon-font :type="item.icon" />-->
               <router-link :to="{name: item.route, params: {appId, bizId}}">{{ item.name }}</router-link>
             </span>
         </a-menu-item>

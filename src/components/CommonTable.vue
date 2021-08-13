@@ -1,9 +1,10 @@
 <template>
   <div>
-    <a-table :columns="columns" :data-source="dataSource" :rowKey="record => record.id"
+    <a-table class="common-table" :columns="columns" :data-source="dataSource" :rowKey="record => record.id"
              @change="paginationChange"
              :scroll="{x: scrollX}"
-             :pagination="isPage ? isPagination : pagination" >
+             :rowClassName="(record) => (isAlarm && record?.state === 'open' ? 'ticket-open' : null)"
+             :pagination="isPage ? isPagination : pagination">
       <template #name="{ text }">
         <a>{{ text }}</a>
       </template>
@@ -35,6 +36,7 @@ export default {
     },
     isPage: Boolean,
     isPagination: Object,
+    isAlarm: Boolean,
   },
   emits: ['paginationChange'],
   setup(props: any, {emit}: any) {
@@ -68,5 +70,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-
+.common-table ::v-deep .ticket-open {
+  background-color: #fff1f0;
+}
 </style>

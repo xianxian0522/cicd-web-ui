@@ -10,6 +10,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import cicdRepository from "@/api/cicdRepository";
+import tokenRepositories from "@/composable/tokenRepositories";
 
 export default defineComponent({
   name: "Login",
@@ -19,6 +20,9 @@ export default defineComponent({
         const data = await cicdRepository.login()
         if (data?.url) {
           window.location.href = data.url
+        }
+        if (data?.token) {
+          tokenRepositories(data?.token)
         }
       } catch (e) {
         console.error(e)

@@ -1,12 +1,12 @@
 <template>
   <div class="project-detail">
-<!--    放在外面 做遮罩层看看-->
+    <!--  放在外面 做遮罩层-->
     <div class="spin" v-if="spinning">
       <span class="spin-dot spin-dot-spin">
-        <i class="spin-dot-item"></i>
-        <i class="spin-dot-item"></i>
-        <i class="spin-dot-item"></i>
-        <i class="spin-dot-item"></i>
+        <em class="spin-dot-item"></em>
+        <em class="spin-dot-item"></em>
+        <em class="spin-dot-item"></em>
+        <em class="spin-dot-item"></em>
       </span>
     </div>
     <div :class="{'spin-blur': spinning}">
@@ -19,8 +19,26 @@
         <a-switch v-model:checked="advancedDisplay" />
       </div>
       <CommonTicket :project-id="projectId" />
-      <a-descriptions title="项目详情" bordered>
+      <a-descriptions title="项目详情" bordered class="project-description">
         <template #extra>
+          <a-popconfirm
+            title="确定开发完成吗?"
+            ok-text="Yes"
+            cancel-text="No"
+            @confirm="confirmSuccess"
+            :disabled="!enableConfirmSuccess()"
+          >
+            <a-button :disabled="!enableConfirmSuccess()">确认开发完成</a-button>
+          </a-popconfirm>
+          <a-popconfirm
+            title="确定放弃开发任务吗?"
+            ok-text="Yes"
+            cancel-text="No"
+            @confirm="confirmClose"
+            :disabled="!enableConfirmSuccess()"
+          >
+            <a-button :disabled="!enableConfirmSuccess()">放弃开发任务</a-button>
+          </a-popconfirm>
           <a-button type="primary">
             <router-link :to="{name: 'project', params: {appId, projectId}}">返回详情列表</router-link>
           </a-button>
@@ -38,6 +56,21 @@
         <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay" :svg-id="'cicdSvg'"/>
       </div>
     </div>
+
+    <a-modal
+      v-model:visible="modalVisible"
+      title="Jenkins build console"
+      width="100%"
+      wrapClassName="full-modal"
+    >
+      <template #footer>
+        <a-button key="back" @click="modalVisible = false">取消</a-button>
+      </template>
+      <div ref="consoleRef">
+        <pre ><code>{{ modalContent }}</code></pre>
+        <a-spin v-if="modalLoading" />
+      </div>
+    </a-modal>
   </div>
 </template>
 
@@ -45,7 +78,7 @@
 import CommonHeader from "@/components/CommonHeader.vue";
 import projectDetailRepositories from "@/composable/projectDetailRepositories";
 import cicdRepository from "@/api/cicdRepository";
-import {onBeforeUnmount, onMounted, provide, ref, watch} from "vue";
+import {nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
 import TaskSvg from "@/views/TaskSvg.vue";
 import {Step} from "@/utils/response";
 import {SyncOutlined} from '@ant-design/icons-vue'
@@ -68,6 +101,12 @@ export default {
     const advancedDisplay = ref(false)
     const timer = ref()
     const spinning = ref(false)
+    const modalState = reactive({
+      modalVisible: false,
+      modalContent: '',
+      modalLoading: true,
+    })
+    const consoleRef = ref()
     provide('advancedDisplay', advancedDisplay)
     provide('projectId', projectId)
 
@@ -92,12 +131,38 @@ export default {
         console.error(e)
       }
     }
+    const jenkinsConsoleChange = (jobName: string, buildNum: string) => {
+      modalState.modalVisible = true
+      modalState.modalLoading = true
+      modalState.modalContent = ''
+      watchJenkinsConsole(jobName, buildNum, 0)
+    }
     // // task-box组件触发
     // provide('spinChange', spinChange)
+    provide('jenkinsConsoleChange', jenkinsConsoleChange)
     provide('monaco', monaco)
     provide('isRedo', true)
     provide('workflowRedo', workflowRedo)
 
+    const watchJenkinsConsole = async (jobName: string, buildNum: string, start: number) => {
+      try {
+        const data = await cicdRepository.queryJenkinsBuildConsole(projectId.value, jobName, buildNum, start)
+        start = data?.Offset
+        modalState.modalContent = modalState.modalContent + data.Content
+        await nextTick(() => {
+          consoleRef.value?.scrollIntoView({behavior: 'auto', block: 'end'})
+        })
+        if (data?.HasMoreText) {
+          setTimeout(async () => {
+            await watchJenkinsConsole(jobName, buildNum, start)
+          }, 3000)
+        } else {
+          modalState.modalLoading = false
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
     const getWorkflow = async () => {
       try {
         if (projectId.value) {
@@ -105,6 +170,25 @@ export default {
           stepsList.value = advancedDisplay.value ? task.resolution.steps : task.display_resolution.steps
 
         }
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    const enableConfirmSuccess = () => {
+      return stepsList.value?.['confirm_ok']?.state === 'BLOCKED';
+    }
+    const confirmSuccess = async () => {
+      try {
+        await cicdRepository.confirmProjectWorkflowStep(projectId.value, 'confirm_ok', 'YES')
+        refresh()
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    const confirmClose = async () => {
+      try {
+        await cicdRepository.confirmProjectWorkflowStep(projectId.value, 'confirm_ok', 'NO')
+        refresh()
       } catch (e) {
         console.error(e)
       }
@@ -122,6 +206,10 @@ export default {
         }
       }, 5000)
     }
+    const watchModalScroll = () => {
+      console.log('=====')
+    }
+
     watch(autoRefresh, value => {
       if (value) {
         watchRefresh()
@@ -133,9 +221,11 @@ export default {
     onMounted(() => {
       getWorkflow()
       watchRefresh()
+      window.addEventListener('mousewheel', watchModalScroll, true)
     })
     onBeforeUnmount(() => {
       clearInterval(timer.value)
+      window.removeEventListener('mousewheel', watchModalScroll, true)
     })
 
     return {
@@ -146,13 +236,18 @@ export default {
       autoRefresh,
       advancedDisplay,
       spinning,
+      ...toRefs(modalState),
+      consoleRef,
       refresh,
+      confirmSuccess,
+      confirmClose,
+      enableConfirmSuccess,
     }
   }
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less" >
 .project-detail {
   padding-top: 20px;
 }
@@ -160,6 +255,29 @@ export default {
   margin-bottom: 15px;
   button {
     margin-left: 10px;
+  }
+}
+.project-description {
+  button {
+    margin-left: 10px;
+  }
+}
+
+.full-modal {
+  .ant-modal {
+    max-width: 100%;
+    top: 0;
+    padding-bottom: 0;
+    margin: 0;
+  }
+  .ant-modal-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh);
+  }
+  .ant-modal-body {
+    flex: 1;
+    overflow: auto;
   }
 }
 

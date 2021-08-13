@@ -36,6 +36,7 @@ export default {
     const edgeSelect = ref()
     const taskRef = ref()
     const nodeEdge = ref<string[]>([])
+    const nodeTransform = ref()
 
     const setNodeOpacity = (arr: string[]) => {
       Object.keys(props.stepsList).forEach(all => {
@@ -57,7 +58,16 @@ export default {
         }
       })
     }
-    const getWorkflow = async () => {
+    const state2LabelStyle = (state) => {
+      if (state === 'TODO') {
+        return 'fill: #000';
+      }
+      if (state === 'PRUNE') {
+        return 'fill: grey';
+      }
+      return 'fill: #fff';
+    }
+    const getWorkflow = async (init?: boolean) => {
       try {
         const g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function () {return {}})
         // const nodeInfos = Object.keys(props.stepsList).map(t => ({id: t, label: t, color: taskStates[stepsList.value[t]?.state]}))
@@ -98,7 +108,7 @@ export default {
             label: t,
             description: desc,
             style: 'fill:' + styleColor + ';stroke:' + styleColor,
-            labelStyle: state === 'TODO' ? 'fill: #000' : state === 'PRUNE' ? 'fill: grey' : 'fill: #fff',
+            labelStyle: state2LabelStyle(state),
             rx: 5,
             ry: 5,
           })
@@ -122,7 +132,15 @@ export default {
         const svgGroup = svg.append('g')
         const inner = svg.select('g')
         const zoom = d3.zoom().on('zoom', function (e: any) { //添加鼠标滚轮放大缩小事件
-          inner.attr('transform', e?.transform)
+          if (init) {
+            nodeTransform.value = e?.transform
+          }
+          if (e?.sourceEvent === null) {
+            inner.attr('transform', nodeTransform.value)
+          } else {
+            nodeTransform.value = e?.transform
+            inner.attr('transform', e?.transform)
+          }
         })
         svg.call(zoom as any)
         render(inner as any, g as any)
@@ -198,7 +216,7 @@ export default {
       getWorkflow()
     })
     onMounted(() => {
-      getWorkflow()
+      getWorkflow(true)
     })
     watch(() => props.stepsList, () => {
       getWorkflow()
