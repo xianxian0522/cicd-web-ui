@@ -1,12 +1,12 @@
 <template>
   <div class="project-detail">
-<!--    放在外面 做遮罩层-->
+    <!--  放在外面 做遮罩层-->
     <div class="spin" v-if="spinning">
       <span class="spin-dot spin-dot-spin">
-        <i class="spin-dot-item"></i>
-        <i class="spin-dot-item"></i>
-        <i class="spin-dot-item"></i>
-        <i class="spin-dot-item"></i>
+        <em class="spin-dot-item"></em>
+        <em class="spin-dot-item"></em>
+        <em class="spin-dot-item"></em>
+        <em class="spin-dot-item"></em>
       </span>
     </div>
     <div :class="{'spin-blur': spinning}">
