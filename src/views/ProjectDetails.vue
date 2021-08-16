@@ -137,6 +137,7 @@ export default {
       modalState.modalVisible = true
       modalState.modalLoading = true
       modalState.modalContent = ''
+      isScroll.value = true
       watchJenkinsConsole(jobName, buildNum, 0)
     }
     // // task-box组件触发
@@ -162,7 +163,6 @@ export default {
           }, 3000)
         } else {
           modalState.modalLoading = false
-          // window.removeEventListener('mousewheel', watchModalScroll, true)
         }
       } catch (e) {
         console.error(e)
@@ -214,12 +214,14 @@ export default {
     const watchModalScroll = () => {
       const el = document.querySelector('.full-modal .ant-modal-body')
       if (el) {
-        if (el.scrollTop + el.clientHeight === el.scrollHeight) {
+        const max = el.scrollHeight + 10
+        const min = el.scrollHeight - 10
+        const height = el.scrollTop + el.clientHeight
+        if (height <= max && height >= min) {
           isScroll.value = true
         } else {
           isScroll.value = false
         }
-        console.log(el.scrollTop, el.clientHeight, el.scrollHeight)
       }
     }
     const scrollDebounce = _.debounce(watchModalScroll, 300)
