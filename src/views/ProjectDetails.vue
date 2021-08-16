@@ -67,7 +67,7 @@
         <a-button key="back" @click="modalVisible = false">取消</a-button>
       </template>
       <div ref="consoleRef">
-        <pre ><code>{{ modalContent }}</code></pre>
+        <pre id="pre"><code>{{ modalContent }}</code></pre>
         <a-spin v-if="modalLoading" />
       </div>
     </a-modal>
@@ -85,6 +85,7 @@ import {SyncOutlined} from '@ant-design/icons-vue'
 import CommonTicket from "@/components/CommonTicket.vue";
 import * as monaco from 'monaco-editor'
 import {message} from "ant-design-vue";
+import * as _ from "lodash";
 
 export default {
   name: "ProjectDetails",
@@ -107,6 +108,7 @@ export default {
       modalLoading: true,
     })
     const consoleRef = ref()
+    const isScroll = ref(true)
     provide('advancedDisplay', advancedDisplay)
     provide('projectId', projectId)
 
@@ -135,6 +137,7 @@ export default {
       modalState.modalVisible = true
       modalState.modalLoading = true
       modalState.modalContent = ''
+      isScroll.value = true
       watchJenkinsConsole(jobName, buildNum, 0)
     }
     // // task-box组件触发
@@ -150,7 +153,9 @@ export default {
         start = data?.Offset
         modalState.modalContent = modalState.modalContent + data.Content
         await nextTick(() => {
-          consoleRef.value?.scrollIntoView({behavior: 'auto', block: 'end'})
+          if (isScroll.value) {
+            consoleRef.value?.scrollIntoView({behavior: 'auto', block: 'end'})
+          }
         })
         if (data?.HasMoreText) {
           setTimeout(async () => {
@@ -207,9 +212,27 @@ export default {
       }, 5000)
     }
     const watchModalScroll = () => {
-      console.log('=====')
+      const el = document.querySelector('.full-modal .ant-modal-body')
+      if (el) {
+        const max = el.scrollHeight + 10
+        const min = el.scrollHeight - 10
+        const height = el.scrollTop + el.clientHeight
+        if (height <= max && height >= min) {
+          isScroll.value = true
+        } else {
+          isScroll.value = false
+        }
+      }
     }
+    const scrollDebounce = _.debounce(watchModalScroll, 300)
 
+    watch(() => modalState.modalVisible, value => {
+      if (value) {
+        window.addEventListener('mousewheel', scrollDebounce, true)
+      } else {
+        window.removeEventListener('mousewheel', scrollDebounce, true)
+      }
+    })
     watch(autoRefresh, value => {
       if (value) {
         watchRefresh()
@@ -221,11 +244,11 @@ export default {
     onMounted(() => {
       getWorkflow()
       watchRefresh()
-      window.addEventListener('mousewheel', watchModalScroll, true)
+      // window.addEventListener('mousewheel', watchModalScroll, true)
     })
     onBeforeUnmount(() => {
       clearInterval(timer.value)
-      window.removeEventListener('mousewheel', watchModalScroll, true)
+      // window.removeEventListener('mousewheel', watchModalScroll, true)
     })
 
     return {

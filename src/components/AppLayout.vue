@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import {useRoute} from "vue-router";
-import {ref, watch} from "vue";
+import {ref} from "vue";
 import {BarItem} from "@/utils/response";
 
 export default {
@@ -37,11 +37,6 @@ export default {
       {id: 1, icon: 'icon-project', path: 'project-list', name: '项目列表', route: 'project'},
       {id: 2, icon: 'icon-version', path: 'version-list', name: '版本列表', route: 'version'},
     ])
-
-    watch(() => route.path, value => {
-      const url = value.split('/')
-      selectedKeysMenu.value = [url[3]]
-    })
 
     return {
       selectedKeysMenu,
