@@ -5,4 +5,4 @@ npm i
 npm run build
 
 mv dist $APP
-tar -czvf "$APP-$VERSION_NAME.tar.gz" $APP/
+tar -czvf "$APP-$VERSION_NAME-$BUILD_NUMBER.tar.gz" $APP/
