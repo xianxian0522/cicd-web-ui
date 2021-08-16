@@ -215,9 +215,9 @@ export default {
       const el = document.querySelector('.full-modal .ant-modal-body')
       if (el) {
         if (el.scrollTop + el.clientHeight === el.scrollHeight) {
-          isScroll.value = false
-        } else {
           isScroll.value = true
+        } else {
+          isScroll.value = false
         }
         console.log(el.scrollTop, el.clientHeight, el.scrollHeight)
       }
