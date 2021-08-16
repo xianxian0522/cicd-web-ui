@@ -67,7 +67,7 @@
         <a-button key="back" @click="modalVisible = false">取消</a-button>
       </template>
       <div ref="consoleRef">
-        <pre ><code>{{ modalContent }}</code></pre>
+        <pre id="pre"><code>{{ modalContent }}</code></pre>
         <a-spin v-if="modalLoading" />
       </div>
     </a-modal>
@@ -108,6 +108,7 @@ export default {
       modalLoading: true,
     })
     const consoleRef = ref()
+    const isScroll = ref(true)
     provide('advancedDisplay', advancedDisplay)
     provide('projectId', projectId)
 
@@ -151,7 +152,9 @@ export default {
         start = data?.Offset
         modalState.modalContent = modalState.modalContent + data.Content
         await nextTick(() => {
-          consoleRef.value?.scrollIntoView({behavior: 'auto', block: 'end'})
+          if (isScroll.value) {
+            consoleRef.value?.scrollIntoView({behavior: 'auto', block: 'end'})
+          }
         })
         if (data?.HasMoreText) {
           setTimeout(async () => {
@@ -208,15 +211,16 @@ export default {
         }
       }, 5000)
     }
-    const watchModalScroll = (e: any) => {
-      console.log('=====', e, '下面去处理ref元素的高度')
-      const scrollTop =
-        document.documentElement.scrollTop || document.body.scrollTop //变量windowHeight是可视区的高度
-      const windowHeight =
-        document.documentElement.clientHeight || document.body.clientHeight //变量scrollHeight是滚动条的总高度
-      const scrollHeight =
-        document.documentElement.scrollHeight || document.body.scrollHeight
-      console.log(scrollTop, windowHeight, scrollHeight)
+    const watchModalScroll = () => {
+      const el = document.querySelector('.full-modal .ant-modal-body')
+      if (el) {
+        if (el.scrollTop + el.clientHeight === el.scrollHeight) {
+          isScroll.value = false
+        } else {
+          isScroll.value = true
+        }
+        console.log(el.scrollTop, el.clientHeight, el.scrollHeight)
+      }
     }
     const scrollDebounce = _.debounce(watchModalScroll, 300)
 
