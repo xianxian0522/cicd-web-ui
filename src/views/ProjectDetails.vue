@@ -49,12 +49,13 @@
         <a-descriptions-item label="版本名">{{ projectInfo?.version_name }}</a-descriptions-item>
         <a-descriptions-item label="创建人" :span="2">{{ projectInfo?.create_by_username }}</a-descriptions-item>
       </a-descriptions>
-<!--      <div v-if="Object.keys(stepsList)?.length > 0" >-->
-<!--        <TaskSvg :steps-list="stepsList" :advanced-display="advancedDisplay"/>-->
-<!--      </div>-->
-      <div v-if="Object.keys(stepsList)?.length > 0">
-        <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay" :svg-id="'cicdSvg'"/>
+      <div v-if="Object.keys(stepsList)?.length > 0" >
+        <TaskCanvas :steps-list="stepsList" :advanced-display="advancedDisplay" :svg-id="'cicdSvg'" />
+<!--        <TaskSvg :steps-list="stepsList" :advanced-display="advancedDisplay" :svg-id="'cicdSvg'"/>-->
       </div>
+<!--      <div v-if="Object.keys(stepsList)?.length > 0">-->
+<!--        <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay" :svg-id="'cicdSvg'"/>-->
+<!--      </div>-->
     </div>
 
     <a-modal
@@ -80,6 +81,7 @@ import projectDetailRepositories from "@/composable/projectDetailRepositories";
 import cicdRepository from "@/api/cicdRepository";
 import {nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
 import TaskSvg from "@/views/TaskSvg.vue";
+import TaskCanvas from "@/views/TaskCanvas.vue";
 import {Step} from "@/utils/response";
 import {SyncOutlined} from '@ant-design/icons-vue'
 import CommonTicket from "@/components/CommonTicket.vue";
@@ -92,6 +94,7 @@ export default {
   components: {
     CommonHeader,
     // TaskSvg,
+    TaskCanvas,
     CommonTicket,
     SyncOutlined
   },
@@ -140,8 +143,8 @@ export default {
       isScroll.value = true
       watchJenkinsConsole(jobName, buildNum, 0)
     }
-    // // task-box组件触发
-    // provide('spinChange', spinChange)
+    // task-box组件触发
+    provide('spinChange', spinChange)
     provide('jenkinsConsoleChange', jenkinsConsoleChange)
     provide('monaco', monaco)
     provide('isRedo', true)
@@ -217,11 +220,7 @@ export default {
         const max = el.scrollHeight + 10
         const min = el.scrollHeight - 10
         const height = el.scrollTop + el.clientHeight
-        if (height <= max && height >= min) {
-          isScroll.value = true
-        } else {
-          isScroll.value = false
-        }
+        isScroll.value = height <= max && height >= min
       }
     }
     const scrollDebounce = _.debounce(watchModalScroll, 300)
