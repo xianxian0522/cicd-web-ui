@@ -93,6 +93,8 @@ export default {
       const value = stepSelect.value || []
       if (!isExactValue.value) {
         filterTask(value)
+      } else {
+        exactFilter(isExactValue.value, true)
       }
     }
     const getTaskState = () => {

@@ -235,26 +235,13 @@ export default {
             },
           ],
         },
-        // fitView: true,
       })
       graph.value.on('node:click', nodeClick)
-      // graph.value.on('viewportchange', (event: any) => {
-      //   console.log(event)
-      // })
-      graph.value.on('canvas:drag', dragCanvas)
       graph.value.data(taskData.value)
       graph.value.render()
       graph.value.zoom(zoomScale())
-      console.log(graph.value.getGraphCenterPoint(), '====', graph.value.getViewPortCenterPoint())
       graph.value.translate(100, 10)
-      console.log(graph.value.getGraphCenterPoint(), '-----', graph.value.getViewPortCenterPoint())
 
-    }
-    const dragCanvas = (e: any) => {
-      const point = graph.value.getGraphCenterPoint()
-      const x = point.x - e.x
-      const y = point.y - e.y
-      console.log( x, y, point, graph.value.getViewPortCenterPoint())
     }
     const zoomScale = () => {
       const len = Object.keys(props.stepsList).length
@@ -270,18 +257,19 @@ export default {
       return 0.4
     }
     const canvasChange = () => {
+      //在拉取新数据重新渲染页面之前先获取点（0,0）在画布上的位置以及缩放比例
+      const lastPoint = graph.value.getCanvasByPoint(0, 0)
+      const zoom = graph.value.getZoom()
       getData()
-      console.log(taskData.value)
-      graph.value.changeData(taskData.value.nodes, taskData.value.edges)
-      graph.value.refresh()
-      // graph.value.data(taskData.value)
-      // graph.value.render()
-      // graph.value.zoom(zoomScale())
-      // console.log(graph.value, graph.value.getZoom())
-      // console.log(graph.value.getGraphCenterPoint(), '----/////====', graph.value.getViewPortCenterPoint())
-      //
-      // setNodeOpacity(nodeEdge.value)
-      // setEdgeOpacity()
+      graph.value.data(taskData.value)
+      graph.value.render()
+      //获取重新渲染之后点（0,0）在画布的位置
+      const newPoint = graph.value.getCanvasByPoint(0, 0)
+      graph.value.zoom(zoom)
+      graph.value.translate(lastPoint.x - newPoint.x, lastPoint.y - newPoint.y)
+
+      setNodeOpacity(nodeEdge.value)
+      setEdgeOpacity()
     }
     onMounted(() => {
       getCanvas()
@@ -295,11 +283,6 @@ export default {
       }
     })
 
-    // watch(() => props.advancedDisplay, () => {
-    //   nodeEdge.value = []
-    //   edgeSelect.value = ''
-    //   canvasChange()
-    // })
     watch(() => props.stepsList, () => {
       nodeEdge.value = []
       edgeSelect.value = ''
