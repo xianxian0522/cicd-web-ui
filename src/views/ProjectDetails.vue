@@ -49,13 +49,13 @@
         <a-descriptions-item label="版本名">{{ projectInfo?.version_name }}</a-descriptions-item>
         <a-descriptions-item label="创建人" :span="2">{{ projectInfo?.create_by_username }}</a-descriptions-item>
       </a-descriptions>
-      <div v-if="Object.keys(stepsList)?.length > 0" >
-        <TaskCanvas :steps-list="stepsList" :advanced-display="advancedDisplay" :svg-id="'cicdSvg'" />
-<!--        <TaskSvg :steps-list="stepsList" :advanced-display="advancedDisplay" :svg-id="'cicdSvg'"/>-->
-      </div>
-<!--      <div v-if="Object.keys(stepsList)?.length > 0">-->
-<!--        <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay" :svg-id="'cicdSvg'"/>-->
+<!--      <div v-if="Object.keys(stepsList)?.length > 0" >-->
+<!--        <TaskCanvas :steps-list="stepsList" :advanced-display="advancedDisplay" :svg-id="'cicdSvg'" />-->
+<!--&lt;!&ndash;        <TaskSvg :steps-list="stepsList" :advanced-display="advancedDisplay" :svg-id="'cicdSvg'"/>&ndash;&gt;-->
 <!--      </div>-->
+      <div v-if="Object.keys(stepsList)?.length > 0" >
+        <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay" :svg-id="'cicdSvg'"/>
+      </div>
     </div>
 
     <a-modal
@@ -94,7 +94,7 @@ export default {
   components: {
     CommonHeader,
     // TaskSvg,
-    TaskCanvas,
+    // TaskCanvas,
     CommonTicket,
     SyncOutlined
   },
@@ -143,8 +143,8 @@ export default {
       isScroll.value = true
       watchJenkinsConsole(jobName, buildNum, 0)
     }
-    // task-box组件触发
-    provide('spinChange', spinChange)
+    // // task-box组件触发
+    // provide('spinChange', spinChange)
     provide('jenkinsConsoleChange', jenkinsConsoleChange)
     provide('monaco', monaco)
     provide('isRedo', true)

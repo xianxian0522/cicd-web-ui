@@ -4,7 +4,7 @@
       <a-col :span="8" >
         <TaskStepsList :stepsList="stepsList" ref="taskRef" :advanced-display="advancedDisplay" :project-id="projectId"/>
       </a-col>
-      <a-col :span="16" >
+      <a-col :span="16" style="min-height: 800px;">
         <div :id="svgId" style="height: 100%"></div>
       </a-col>
     </a-row>
