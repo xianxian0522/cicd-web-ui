@@ -4,8 +4,8 @@
       <a-col :span="8" >
         <TaskStepsList :stepsList="stepsList" ref="taskRef" :advanced-display="advancedDisplay" :project-id="projectId"/>
       </a-col>
-      <a-col :span="16">
-        <div :id="svgId"></div>
+      <a-col :span="16" >
+        <div :id="svgId" style="height: 100%"></div>
       </a-col>
     </a-row>
   </div>
@@ -236,39 +236,52 @@ export default {
           ],
         },
         // fitView: true,
-      });
+      })
       graph.value.on('node:click', nodeClick)
       // graph.value.on('viewportchange', (event: any) => {
       //   console.log(event)
       // })
+      graph.value.on('canvas:drag', dragCanvas)
       graph.value.data(taskData.value)
       graph.value.render()
       graph.value.zoom(zoomScale())
+      console.log(graph.value.getGraphCenterPoint(), '====', graph.value.getViewPortCenterPoint())
+      graph.value.translate(100, 10)
+      console.log(graph.value.getGraphCenterPoint(), '-----', graph.value.getViewPortCenterPoint())
 
+    }
+    const dragCanvas = (e: any) => {
+      const point = graph.value.getGraphCenterPoint()
+      const x = point.x - e.x
+      const y = point.y - e.y
+      console.log( x, y, point, graph.value.getViewPortCenterPoint())
     }
     const zoomScale = () => {
       const len = Object.keys(props.stepsList).length
-      if (len < 5) {
-        return 0.8
+      if (len <= 5) {
+        return 0.7
       }
-      if (len < 10) {
+      if (len <= 10) {
         return 0.6
       }
       if (len < 20) {
-        return 0.4
+        return 0.5
       }
-      return 0.3
+      return 0.4
     }
     const canvasChange = () => {
       getData()
-
-      graph.value.data(taskData.value)
-      graph.value.render()
-      graph.value.zoom(zoomScale())
-      console.log(graph.value, graph.value.getZoom())
-
-      setNodeOpacity(nodeEdge.value)
-      setEdgeOpacity()
+      console.log(taskData.value)
+      graph.value.changeData(taskData.value.nodes, taskData.value.edges)
+      graph.value.refresh()
+      // graph.value.data(taskData.value)
+      // graph.value.render()
+      // graph.value.zoom(zoomScale())
+      // console.log(graph.value, graph.value.getZoom())
+      // console.log(graph.value.getGraphCenterPoint(), '----/////====', graph.value.getViewPortCenterPoint())
+      //
+      // setNodeOpacity(nodeEdge.value)
+      // setEdgeOpacity()
     }
     onMounted(() => {
       getCanvas()
