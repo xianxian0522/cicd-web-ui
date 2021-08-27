@@ -166,12 +166,14 @@ export default {
             consoleRef.value?.scrollIntoView({behavior: 'auto', block: 'end'})
           }
         })
-        if (data?.HasMoreText) {
-          setTimeout(async () => {
-            await watchJenkinsConsole(jobName, buildNum, start)
-          }, 3000)
-        } else {
-          modalState.modalLoading = false
+        if (modalState.modalVisible) {
+          if (data?.HasMoreText) {
+            setTimeout(async () => {
+              await watchJenkinsConsole(jobName, buildNum, start)
+            }, 3000)
+          } else {
+            modalState.modalLoading = false
+          }
         }
       } catch (e) {
         console.error(e)
