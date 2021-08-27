@@ -17,9 +17,22 @@
         </div>
         <div v-if="stepInfo?.last_run">Last run: <strong>{{ timeFormat(stepInfo?.last_run) }}</strong></div>
         <template #extra>
-          <a-button @click.stop="jenkinsBuildConsole" size="small" v-if="jenkinsBuild()" style="margin-right: 4px"><MessageOutlined style="color: #fff" /></a-button>
-          <a-button @click.stop="workflowRedo" v-if="(advancedDisplay && stepInfo?.state !== 'TODO') || (!advancedDisplay && stepInfo?.redo_step)" size="small" style="margin-right: 4px;"><PlayCircleOutlined style="color: #fff;" /></a-button>
-          <a-button @click.stop="showTaskEdit" size="small"><ProfileOutlined style="color: #fff;" /></a-button>
+          <a-tooltip>
+            <template #title>代码检测</template>
+            <a-button @click.stop="openSonarView" size="small" v-if="openSonar()" style="margin-right: 4px"><FolderOpenOutlined style="color: #fff" /></a-button>
+          </a-tooltip>
+          <a-tooltip>
+            <template #title>日志输出</template>
+            <a-button @click.stop="jenkinsBuildConsole" size="small" v-if="jenkinsBuild()" style="margin-right: 4px"><MessageOutlined style="color: #fff" /></a-button>
+          </a-tooltip>
+          <a-tooltip>
+            <template #title>重跑流程</template>
+            <a-button @click.stop="workflowRedo" v-if="(advancedDisplay && stepInfo?.state !== 'TODO') || (!advancedDisplay && stepInfo?.redo_step)" size="small" style="margin-right: 4px;"><PlayCircleOutlined style="color: #fff;" /></a-button>
+          </a-tooltip>
+          <a-tooltip>
+            <template #title>详情</template>
+            <a-button @click.stop="showTaskEdit" size="small"><ProfileOutlined style="color: #fff;" /></a-button>
+          </a-tooltip>
         </template>
       </a-collapse-panel>
     </a-collapse>
@@ -34,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import {ProfileOutlined, PlayCircleOutlined, MessageOutlined} from '@ant-design/icons-vue'
+import {ProfileOutlined, PlayCircleOutlined, MessageOutlined, FolderOpenOutlined} from '@ant-design/icons-vue'
 import {inject, reactive, ref, toRefs} from "vue";
 import {taskStates} from "@/utils/store";
 import moment from "moment";
@@ -50,7 +63,7 @@ export default {
     advancedDisplay: Boolean,
     projectId: Number,
   },
-  components: {ProfileOutlined, PlayCircleOutlined, MessageOutlined, TaskEditor},
+  components: {ProfileOutlined, PlayCircleOutlined, MessageOutlined, FolderOpenOutlined, TaskEditor},
   setup(props: any) {
     const activeKey = ref(['0'])
     const modalTask = reactive({
@@ -61,10 +74,17 @@ export default {
     const advancedDisplay = ref(inject<boolean>('advancedDisplay'))
     const spinChange: any = inject('spinChange')
     const jenkinsConsoleChange: any = inject('jenkinsConsoleChange')
+    const openSonarNewView: any = inject('openSonarNewView')
 
+    const openSonar = () => {
+      const stepName = props.stepInfo?.name
+      return stepName === 'sonar' || stepName === 'sonarqube_project_status'
+    }
+    const openSonarView = () => {
+      openSonarNewView()
+    }
     const jenkinsBuild = () => {
       const stepName = props.advancedDisplay ? props.stepInfo?.name : (props.stepInfo?.redo_step || props.stepInfo?.name)
-      // console.log(stepName, ';;;;;')
       return stepName === 'jenkins_build_result'
     }
     const jenkinsBuildConsole = () => {
@@ -125,6 +145,8 @@ export default {
       workflowRedo,
       jenkinsBuild,
       jenkinsBuildConsole,
+      openSonar,
+      openSonarView,
     }
   }
 }

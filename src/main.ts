@@ -12,7 +12,7 @@ import {
   Menu,
   Modal, Popconfirm, Row,
   Select, Spin, Switch,
-  Table
+  Table, Tooltip
 } from "ant-design-vue";
 import HeaderComponent from 'menu-header-component/dist/menu-header-component.common.js'
 import 'menu-header-component/dist/menu-header-component.css'
@@ -42,6 +42,7 @@ app.use(Collapse)
 app.use(Switch)
 app.use(Spin)
 app.use(Popconfirm)
+app.use(Tooltip)
 
 app.use(HeaderComponent)
 app.use(TaskFlow)

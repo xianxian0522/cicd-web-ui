@@ -284,9 +284,11 @@ export default {
     })
 
     watch(() => props.stepsList, () => {
+      canvasChange()
+    })
+    watch(() => props.advancedDisplay, () => {
       nodeEdge.value = []
       edgeSelect.value = ''
-      canvasChange()
     })
 
     return {
