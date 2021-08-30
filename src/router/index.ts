@@ -37,18 +37,17 @@ const routes: Array<RouteRecordRaw> = [
           {
             path: 'project-list/:appId/detail', name: 'project-detail',
             beforeEnter: (to, from) => {
-              console.log(to, from.name)
               to.meta.keepAlive = from.name === 'sonar'
             },
             meta: {
-              // keepAlive: true // 需要缓存
+              keepAlive: true // 需要缓存
             },
             component: () => import('../views/ProjectDetails.vue')
           },
           {path: 'version-list/:appId', name: 'version',
             component: () => import('../views/VersionList.vue')},
           {
-            path: 'project-list/sonarqube',
+            path: 'project-list/:appId/sonarqube',
             name: 'sonar',
             component: () => import('../views/SonarQube.vue'),
           },

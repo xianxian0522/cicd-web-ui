@@ -153,6 +153,7 @@ export default {
         query: {
           projectKey: query
         },
+        params: { appId: appId.value },
       })
       // window.open(`${url}/dashboard?id=${query}`)
     }
