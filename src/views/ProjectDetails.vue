@@ -79,7 +79,7 @@
 import CommonHeader from "@/components/CommonHeader.vue";
 import projectDetailRepositories from "@/composable/projectDetailRepositories";
 import cicdRepository from "@/api/cicdRepository";
-import {nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
+import {nextTick, onActivated, onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
 import TaskSvg from "@/views/TaskSvg.vue";
 import TaskCanvas from "@/views/TaskCanvas.vue";
 import {Step} from "@/utils/response";
@@ -88,7 +88,7 @@ import CommonTicket from "@/components/CommonTicket.vue";
 import * as monaco from 'monaco-editor'
 import {message} from "ant-design-vue";
 import * as _ from "lodash";
-import {useRouter} from "vue-router";
+import {onBeforeRouteLeave, useRouter} from "vue-router";
 
 export default {
   name: "ProjectDetails",
@@ -105,6 +105,7 @@ export default {
     const stepsList = ref<{[key: string]: Step}>({})
     const autoRefresh = ref(true)
     const advancedDisplay = ref(false)
+    const isAuto = ref(false)
     const timer = ref()
     const spinning = ref(false)
     const modalState = reactive({
@@ -252,10 +253,26 @@ export default {
     watch(autoRefresh, value => {
       if (value) {
         watchRefresh()
+      } else {
+        clearInterval(timer.value)
       }
     })
     watch(advancedDisplay, value => {
       getWorkflow()
+    })
+    onBeforeRouteLeave(() => {
+      clearInterval(timer.value)
+      if (autoRefresh.value) {
+        isAuto.value = false
+        autoRefresh.value = false
+      } else {
+        isAuto.value = true
+      }
+    })
+    onActivated(() => {
+      if (!isAuto.value) {
+        autoRefresh.value = true
+      }
     })
     onMounted(() => {
       getWorkflow()
