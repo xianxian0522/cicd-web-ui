@@ -15,7 +15,15 @@
       </a-menu>
     </a-layout-sider>
     <a-layout-content class="common-content-layout app-layout-content">
-      <router-view></router-view>
+      <router-view v-slot="{ Component, route }">
+        <keep-alive v-if="route?.meta?.keepAlive">
+          <component :is="Component"  />
+        </keep-alive>
+        <template v-else>
+          <component :is="Component" />
+        </template>
+      </router-view>
+<!--      <router-view></router-view>-->
     </a-layout-content>
   </a-layout>
 </template>

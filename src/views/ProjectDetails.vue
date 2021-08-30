@@ -79,7 +79,7 @@
 import CommonHeader from "@/components/CommonHeader.vue";
 import projectDetailRepositories from "@/composable/projectDetailRepositories";
 import cicdRepository from "@/api/cicdRepository";
-import {nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
+import {nextTick, onActivated, onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
 import TaskSvg from "@/views/TaskSvg.vue";
 import TaskCanvas from "@/views/TaskCanvas.vue";
 import {Step} from "@/utils/response";
@@ -88,6 +88,7 @@ import CommonTicket from "@/components/CommonTicket.vue";
 import * as monaco from 'monaco-editor'
 import {message} from "ant-design-vue";
 import * as _ from "lodash";
+import {useRouter} from "vue-router";
 
 export default {
   name: "ProjectDetails",
@@ -99,6 +100,7 @@ export default {
     SyncOutlined
   },
   setup() {
+    const router = useRouter()
     const { appId, projectId, projectInfo } = projectDetailRepositories()
     const stepsList = ref<{[key: string]: Step}>({})
     const autoRefresh = ref(true)
@@ -146,7 +148,13 @@ export default {
     const openSonarNewView = () => {
       const url = window.location.origin
       const query = projectInfo.value?.biz_name + '_' + projectInfo.value?.app_name + '_' + projectInfo.value?.version_name
-      window.open(`${url}/dashboard?id=${query}`)
+      router.push({
+        name: 'sonar',
+        query: {
+          projectKey: query
+        },
+      })
+      // window.open(`${url}/dashboard?id=${query}`)
     }
     // // task-box组件触发
     // provide('spinChange', spinChange)
@@ -249,9 +257,13 @@ export default {
       getWorkflow()
     })
     onMounted(() => {
+      console.log('zhi xing ')
       getWorkflow()
       watchRefresh()
       // window.addEventListener('mousewheel', watchModalScroll, true)
+    })
+    onActivated(() => {
+      console.log('activated')
     })
     onBeforeUnmount(() => {
       clearInterval(timer.value)
