@@ -20,11 +20,6 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/Login.vue'),
   },
   {
-    path: '/sonarqube',
-    name: 'sonar',
-    component: () => import('../views/SonarQube.vue'),
-  },
-  {
     path: '/cicd',
     component: () => import('../components/Layout.vue'),
     children: [
@@ -41,20 +36,24 @@ const routes: Array<RouteRecordRaw> = [
             component: () => import('../views/ProjectList.vue')},
           {
             path: 'project-list/:appId/detail', name: 'project-detail',
+            beforeEnter: (to, from) => {
+              console.log(to, from.name)
+              to.meta.keepAlive = from.name === 'sonar'
+            },
             meta: {
-              keepAlive: true // 需要缓存
+              // keepAlive: true // 需要缓存
             },
             component: () => import('../views/ProjectDetails.vue')
           },
           {path: 'version-list/:appId', name: 'version',
             component: () => import('../views/VersionList.vue')},
+          {
+            path: 'project-list/sonarqube',
+            name: 'sonar',
+            component: () => import('../views/SonarQube.vue'),
+          },
         ],
       },
-      // {
-      //   path: ':bizId/project-list/:appId',
-      //   name: 'project',
-      //   component: () => import('../views/ProjectList.vue')
-      // },
     ],
   },
   {

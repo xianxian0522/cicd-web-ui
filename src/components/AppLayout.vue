@@ -16,12 +16,10 @@
     </a-layout-sider>
     <a-layout-content class="common-content-layout app-layout-content">
       <router-view v-slot="{ Component, route }">
-        <keep-alive v-if="route?.meta?.keepAlive">
-          <component :is="Component"  />
+        <keep-alive >
+          <component :is="Component" v-if="route?.meta?.keepAlive" />
         </keep-alive>
-        <template v-else>
-          <component :is="Component" />
-        </template>
+        <component :is="Component" v-if="!route?.meta?.keepAlive" />
       </router-view>
 <!--      <router-view></router-view>-->
     </a-layout-content>

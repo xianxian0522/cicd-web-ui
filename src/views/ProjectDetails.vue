@@ -79,7 +79,7 @@
 import CommonHeader from "@/components/CommonHeader.vue";
 import projectDetailRepositories from "@/composable/projectDetailRepositories";
 import cicdRepository from "@/api/cicdRepository";
-import {nextTick, onActivated, onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
+import {nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
 import TaskSvg from "@/views/TaskSvg.vue";
 import TaskCanvas from "@/views/TaskCanvas.vue";
 import {Step} from "@/utils/response";
@@ -257,17 +257,11 @@ export default {
       getWorkflow()
     })
     onMounted(() => {
-      console.log('zhi xing ')
       getWorkflow()
       watchRefresh()
-      // window.addEventListener('mousewheel', watchModalScroll, true)
-    })
-    onActivated(() => {
-      console.log('activated')
     })
     onBeforeUnmount(() => {
       clearInterval(timer.value)
-      // window.removeEventListener('mousewheel', watchModalScroll, true)
     })
 
     return {
