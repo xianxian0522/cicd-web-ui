@@ -303,7 +303,8 @@ export default {
 
 <style lang="less" >
 .project-detail {
-  padding-top: 20px;
+  padding: 20px;
+  background: #fff;
 }
 .project-refresh {
   margin-bottom: 15px;

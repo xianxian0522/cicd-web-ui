@@ -57,6 +57,7 @@ export default {
 <style scoped lang="less">
 @import "index";
 .app-layout-content {
-  padding: 0 20px;
+  padding: 0;
+  background: #f3f3f3;
 }
 </style>
