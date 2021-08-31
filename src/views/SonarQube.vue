@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="sonar">
     <div class="sonar-content-header">
       <div class="common-sonar">
         <div class="sonar-header">
@@ -63,6 +63,9 @@ export default {
 </script>
 
 <style scoped lang="less">
+.sonar {
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+}
 .sonar-header {
   display: flex;
   padding: 8px 0;
