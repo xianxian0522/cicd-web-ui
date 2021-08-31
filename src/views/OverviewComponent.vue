@@ -33,7 +33,7 @@
               </div>
             </div>
           </div>
-          <CommonCode />
+          <CommonCode :activeKey="activeKey" />
         </div>
       </div>
     </div>
@@ -81,9 +81,6 @@ export default {
 }
 .with-25 {
   width: 25%;
-}
-.big-spacer-right {
-  margin-right: 16px;
 }
 .overview-panel {
   min-height: 100%;

@@ -6,13 +6,19 @@
         <icon-font type="icon-bug" class="icon-svg little-spacer-right big-spacer-left" />
         <span>New Bugs</span>
       </div>
-      <div class="overview-panel-big-padded overview-measures-aside flex-center"></div>
+      <div class="overview-panel-big-padded overview-measures-aside flex-center">
+        <span class="flex-1 big-spacer-right text-right">Reliability</span>
+        <span>
+          <a class="link-no-underline"><span class="rating" :style="{backgroundColor: '#0a0'}">A</span></a>
+        </span>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import {createFromIconfontCN} from "@ant-design/icons-vue";
+import {ref} from "vue";
 
 const IconFont = createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_2780490_4v25w6tlomw.js'
@@ -21,10 +27,14 @@ const IconFont = createFromIconfontCN({
 export default {
   name: "CommonCode",
   components: {IconFont},
-  setup() {
+  props: {
+    activeKey: Number,
+  },
+  setup(props: any) {
+    const isNew = ref(props.activeKey === 1)
 
     return {
-
+      isNew,
     }
   }
 }
@@ -39,6 +49,9 @@ export default {
 }
 .text-light {
   font-weight: 300;
+}
+.link-no-underline {
+  border-bottom: none !important;
 }
 .overview-panel-big-padded {
   padding: 24px;
@@ -73,5 +86,21 @@ export default {
 }
 .little-spacer-right {
   margin-right: 4px;
+}
+.text-right {
+  text-align: right;
+}
+.rating {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  border-radius: 24px;
+  box-sizing: border-box;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: center;
+  text-shadow: 0 0 1px rgb(0 0 0 / 35%);
 }
 </style>
