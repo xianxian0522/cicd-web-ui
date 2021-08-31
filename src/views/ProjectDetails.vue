@@ -305,6 +305,7 @@ export default {
 .project-detail {
   padding: 20px;
   background: #fff;
+  min-height: 100%;
 }
 .project-refresh {
   margin-bottom: 15px;
