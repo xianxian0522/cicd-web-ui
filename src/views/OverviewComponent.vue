@@ -153,9 +153,6 @@ export default {
 .text-bold {
   font-weight: 700;
 }
-.spacer-top {
-  margin-top: 8px;
-}
 .note {
   color: #666;
   font-size: 12px;

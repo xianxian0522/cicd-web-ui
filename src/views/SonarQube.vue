@@ -4,7 +4,7 @@
       <div class="common-sonar">
         <div class="sonar-header">
           <a-button @click="goToBack"><ArrowLeftOutlined /></a-button>
-          <div>{{ projectKey }}</div>
+          <div class="big">{{ projectKey }}</div>
         </div>
         <div>
           <ul class="sonar-menu-bar">
@@ -63,6 +63,8 @@ export default {
 </script>
 
 <style scoped lang="less">
+@import "../components/index";
+
 .sonar {
   font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
 }

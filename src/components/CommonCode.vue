@@ -79,11 +79,96 @@
     </div>
 
     <div class="overview-measures-row flex">
-      <div class="overview-panel-huge-padded flex-1 bordered-right flex-center">
-        <div class="flex-center"></div>
-        <div></div>
+      <div class="overview-panel-huge-padded flex-1 bordered-right">
+        <div v-if="false" class="flex-center">
+          <div class="flex-center">
+            <span class="big-spacer-right">
+              <svg width="40" height="40" class="svg-circle">
+                <circle cx="20" cy="20" r="18.5" stroke-width="3" stroke="#a4030f" fill="none"></circle>
+                <circle cx="20" cy="20" r="18.5" stroke-width="3" stroke="#00aa00" fill="none" style="stroke-dasharray: 16.485 116.18">
+                </circle>
+              </svg>
+            </span>
+            <div class="flex-column">
+              <span><a class="overview-measures-value text-light link-underline">3.0%</a></span>
+              <span class="spacer-top"></span>
+              <span>
+                Coverage on
+                <a class="link-underline big">764</a>
+                Lines to cover
+              </span>
+            </div>
+          </div>
+          <div class="huge-spacer-left">
+            <div class="flex-column">
+              <span class="overview-measures-value text-light"> - </span>
+              <span class="spacer-top">Unit Tests</span>
+            </div>
+          </div>
+        </div>
+        <div v-else class="flex-column flex-1">
+          <div class="flex-center flex-justify-center">
+            <span class="big-spacer-right flex-center">
+              <svg width="40" height="40" class="svg-circle">
+                <circle cx="20" cy="20" r="18.5" stroke-width="3" stroke="#a4030f" fill="none"></circle>
+                <circle cx="20" cy="20" r="18.5" stroke-width="3" stroke="#00aa00" fill="none" style="stroke-dasharray: 16.485 116.18">
+                </circle>
+              </svg>
+            </span>
+            <a class="overview-measures-value text-light link-underline">0.0%</a>
+          </div>
+          <div class="spacer-top flex-justify-center">
+            <span>
+              Coverage on
+              <a class="link-underline big">169</a>
+              New Lines to cover
+            </span>
+          </div>
+        </div>
       </div>
-      <div class="overview-panel-huge-padded flex-1 flex-center"></div>
+      <div class="overview-panel-huge-padded flex-1">
+        <div v-if="false" class="flex-center">
+          <div class="flex-center">
+            <div class="big-spacer-right">
+              <div class="duplications-rating-big" style="border-color: #ed7d20;">
+                <div style="background: #ed7d20" class="duplications-rating"></div>
+              </div>
+            </div>
+            <div class="flex-column">
+              <span><a class="overview-measures-value text-light link-underline">10.0%</a></span>
+              <span class="spacer-top"></span>
+              <span>
+                Duplications on
+                <a class="link-underline big">2.4k</a>
+                 Lines
+              </span>
+            </div>
+          </div>
+          <div class="huge-spacer-left">
+            <div class="flex-column">
+              <span><a class="overview-measures-value text-light link-underline">30</a></span>
+              <span class="spacer-top">Duplicated Blocks</span>
+            </div>
+          </div>
+        </div>
+        <div v-else class="flex-column flex-1">
+          <div class="flex-center flex-justify-center">
+            <div class="big-spacer-right">
+              <div class="duplications-rating-big" style="border-color: #0a0;">
+                <div style="background: #ed7d20" class="duplications-rating"></div>
+              </div>
+            </div>
+            <a class="overview-measures-value text-light link-underline">0.0%</a>
+          </div>
+          <div class="spacer-top flex-justify-center">
+            <span>
+              Duplications on
+              <a class="link-underline big">955</a>
+               New Lines
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -176,6 +261,9 @@ export default {
 .bordered-right {
   border-right: 1px solid #e6e6e6;
 }
+.huge-spacer-left {
+  margin-left: 40px;
+}
 .rating {
   display: inline-block;
   width: 24px;
@@ -191,6 +279,22 @@ export default {
 }
 .spacer-left {
   margin-left: 8px;
+}
+.duplications-rating {
+  background-color: #ed7d20;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+.duplications-rating-big {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #ed7d20;
+  border-radius: 50%;
+  display: inline-flex;
+  vertical-align: top;
+  justify-content: center;
+  align-items: center;
 }
 .svg-circle {
   stroke-dashoffset: 0;
