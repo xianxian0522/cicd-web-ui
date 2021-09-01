@@ -15,15 +15,7 @@ const ApiApp = `${API}/my/app`
 const ApiProject = `${API}/my/project`
 const ApiTicket = `${API}/my/ticket`
 
-let ApiBar = '/api/my/bar';
-if (window.location.hostname.endsWith('dev.ops.sumscope.com')) {
-  ApiBar = 'http://menu.dev.ops.sumscope.com:3000' + ApiBar;
-} else if (window.location.hostname.endsWith('ops.sumscope.com')) {
-  ApiBar = 'http://menu.ops.sumscope.com' + ApiBar;
-}
-
 export default {
-  queryBar: () => request.get<BarItem[]>(ApiBar),
   login: () => request.get<LoginResponse>(ApiLogin),
 
   queryAllBiz: () => request.get<BaseResponse[]>(`${ApiBiz}`),
@@ -46,4 +38,7 @@ export default {
 
   confirmProjectWorkflowStep: (projectId: number, stepName: string, Value: string) => request.put(`${ApiProject}/${projectId}/workflow/step/${stepName}/confirm`, {Value}),
   queryJenkinsBuildConsole: (projectId: number, jobName: string, buildNum: string, start: number) => request.get<JenkinsConsole>(`${ApiProject}/${projectId}/jenkins/job/${jobName}/build/${buildNum}/console`, {start}),
+
+
+  queryProjectStatus: (projectKey: string) => request.get('/api/qualitygates/project_status', {projectKey}),
 }

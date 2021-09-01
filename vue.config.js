@@ -16,7 +16,11 @@ const vueConfig = {
       '/api/my/': {
         target: 'http://172.16.97.194:3000',
         changeOrigin: true,
-      }
+      },
+      '/api/qualitygates': {
+        target: 'http://172.16.128.75:9000',
+        changeOrigin: true,
+      },
     },
     watchOptions: {
       ignored: ['**/node_modules', '**/.#*']

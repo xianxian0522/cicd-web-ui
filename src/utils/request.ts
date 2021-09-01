@@ -25,7 +25,7 @@ service.interceptors.response.use(response => {
 }, error => {
   if (error.response?.status === 401) {
     localStorage.removeItem('token');
-    router.push('/login').then();
+    // router.push('/login').then();
   }
   message.error(error.response?.data);
   return Promise.reject(error);

@@ -24,8 +24,9 @@
 
 <script lang="ts">
 import {useRoute, useRouter} from "vue-router";
-import {defineAsyncComponent, ref} from "vue";
+import {defineAsyncComponent, onMounted, ref} from "vue";
 import {ArrowLeftOutlined} from '@ant-design/icons-vue';
+import cicdRepository from "@/api/cicdRepository";
 
 export default {
   name: "SonarQube",
@@ -37,7 +38,7 @@ export default {
   setup() {
     const router = useRouter()
     const route = useRoute()
-    const projectKey = ref(route.query.projectKey)
+    const projectKey = ref<string>(route.query.projectKey as string)
     const activeKey = ref<number>(1)
     const menuBar = ref([
       { id: 1, title: 'Overview' },
@@ -50,6 +51,16 @@ export default {
     const handleActive = (index: number) => {
       activeKey.value = index
     }
+    const projectStatus = async () => {
+      try {
+        const data = await cicdRepository.queryProjectStatus(projectKey.value)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    onMounted(() => {
+      projectStatus()
+    })
 
     return {
       activeKey,
@@ -67,6 +78,7 @@ export default {
 
 .sonar {
   font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+  min-width: 800px;
 }
 .sonar-header {
   display: flex;
