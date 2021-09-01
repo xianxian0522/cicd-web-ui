@@ -5,9 +5,9 @@
         <div class="overview-panel">
           <h2 class="overview-panel-title flex-center">
             Quality Gate Status
-            <a-tooltip placement="bottom" class="little-spacer-left">
+            <a-tooltip placement="bottom" class="little-spacer-left" :overlay-style="{fontSize: '12px'}" color="#475760">
               <template #title>
-                <span>A Quality Gate is a set of measure-based Boolean conditions. It helps you know immediately whether your project is production-ready. If your current status is not Passed, you'll see which measures caused the problem and the values required to pass.</span>
+                <span class="tooltip-title-color">A Quality Gate is a set of measure-based Boolean conditions. It helps you know immediately whether your project is production-ready. If your current status is not Passed, you'll see which measures caused the problem and the values required to pass.</span>
               </template>
               <QuestionCircleOutlined />
             </a-tooltip>

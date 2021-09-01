@@ -4,7 +4,7 @@
       <div class="overview-panel-big-padded flex-1 small flex-center big-spacer-left">
         <a class="overview-measures-value text-light link-underline">0</a>
         <icon-font type="icon-bug" class="icon-svg little-spacer-right big-spacer-left" />
-        <span>New Bugs</span>
+        <span><span v-if="activeKey === 1">New</span> Bugs</span>
       </div>
       <div class="overview-panel-big-padded overview-measures-aside flex-center">
         <span class="flex-1 big-spacer-right text-right">Reliability</span>
@@ -18,7 +18,7 @@
       <div class="overview-panel-big-padded flex-1 small flex-center big-spacer-left">
         <a class="overview-measures-value text-light link-underline">0</a>
         <icon-font type="icon-jiesuo" class="icon-svg little-spacer-right big-spacer-left" />
-        <span>New Vulnerabilities</span>
+        <span><span v-if="activeKey === 1">New</span> Vulnerabilities</span>
       </div>
       <div class="overview-panel-big-padded overview-measures-aside flex-center">
         <span class="flex-1 big-spacer-right text-right">Security</span>
@@ -32,10 +32,10 @@
       <div class="overview-panel-big-padded flex-1 small flex-center big-spacer-left">
         <a class="overview-measures-value text-light link-underline">0</a>
         <icon-font type="icon-security" class="icon-svg little-spacer-right big-spacer-left" />
-        <span>New Security Hotspots</span>
-        <a-tooltip placement="bottom" class="little-spacer-left">
+        <span><span v-if="activeKey === 1">New</span> Security Hotspots</span>
+        <a-tooltip placement="bottom" class="little-spacer-left" :overlay-style="{fontSize: '12px'}" color="#475760">
           <template #title>
-            <span>Security-sensitive code that requires manual review to assess whether or not a vulnerability exists.</span>
+            <span class="tooltip-title-color">Security-sensitive code that requires manual review to assess whether or not a vulnerability exists.</span>
           </template>
           <QuestionCircleOutlined />
         </a-tooltip>
@@ -63,12 +63,12 @@
     <div class="overview-measures-row flex">
       <div class="overview-panel-big-padded flex-1 small flex-center big-spacer-left">
         <a class="overview-measures-value text-light link-underline">33min</a>
-        <span class="big-spacer-left">Added Debt</span>
+        <span class="big-spacer-left"><span v-if="activeKey === 1">Added</span> Debt</span>
       </div>
       <div class="flex-1 small flex-center">
         <a class="overview-measures-value text-light link-underline">0</a>
         <icon-font type="icon-security" class="icon-svg little-spacer-right big-spacer-left" />
-        <span>New Code Smells</span>
+        <span><span v-if="activeKey === 1">New</span> Code Smells</span>
       </div>
       <div class="overview-panel-big-padded overview-measures-aside flex-center">
         <span class="flex-1 big-spacer-right text-right">Maintainability</span>
@@ -80,7 +80,26 @@
 
     <div class="overview-measures-row flex">
       <div class="overview-panel-huge-padded flex-1 bordered-right">
-        <div v-if="false" class="flex-center">
+        <div v-if="activeKey === 1" class="flex-column flex-1">
+          <div class="flex-center flex-justify-center">
+            <span class="big-spacer-right flex-center">
+              <svg width="40" height="40" class="svg-circle">
+                <circle cx="20" cy="20" r="18.5" stroke-width="3" stroke="#a4030f" fill="none"></circle>
+                <circle cx="20" cy="20" r="18.5" stroke-width="3" stroke="#00aa00" fill="none" style="stroke-dasharray: 16.485 116.18">
+                </circle>
+              </svg>
+            </span>
+            <a class="overview-measures-value text-light link-underline">0.0%</a>
+          </div>
+          <div class="spacer-top flex-justify-center">
+            <span>
+              Coverage on
+              <a class="link-underline big">169</a>
+              New Lines to cover
+            </span>
+          </div>
+        </div>
+        <div v-else class="flex-center">
           <div class="flex-center">
             <span class="big-spacer-right">
               <svg width="40" height="40" class="svg-circle">
@@ -106,28 +125,26 @@
             </div>
           </div>
         </div>
-        <div v-else class="flex-column flex-1">
+      </div>
+      <div class="overview-panel-huge-padded flex-1">
+        <div v-if="activeKey === 1" class="flex-column flex-1">
           <div class="flex-center flex-justify-center">
-            <span class="big-spacer-right flex-center">
-              <svg width="40" height="40" class="svg-circle">
-                <circle cx="20" cy="20" r="18.5" stroke-width="3" stroke="#a4030f" fill="none"></circle>
-                <circle cx="20" cy="20" r="18.5" stroke-width="3" stroke="#00aa00" fill="none" style="stroke-dasharray: 16.485 116.18">
-                </circle>
-              </svg>
-            </span>
+            <div class="big-spacer-right">
+              <div class="duplications-rating-big" style="border-color: #0a0;">
+                <div style="background: #ed7d20" class="duplications-rating"></div>
+              </div>
+            </div>
             <a class="overview-measures-value text-light link-underline">0.0%</a>
           </div>
           <div class="spacer-top flex-justify-center">
             <span>
-              Coverage on
-              <a class="link-underline big">169</a>
-              New Lines to cover
+              Duplications on
+              <a class="link-underline big">955</a>
+               New Lines
             </span>
           </div>
         </div>
-      </div>
-      <div class="overview-panel-huge-padded flex-1">
-        <div v-if="false" class="flex-center">
+        <div v-else class="flex-center">
           <div class="flex-center">
             <div class="big-spacer-right">
               <div class="duplications-rating-big" style="border-color: #ed7d20;">
@@ -149,23 +166,6 @@
               <span><a class="overview-measures-value text-light link-underline">30</a></span>
               <span class="spacer-top">Duplicated Blocks</span>
             </div>
-          </div>
-        </div>
-        <div v-else class="flex-column flex-1">
-          <div class="flex-center flex-justify-center">
-            <div class="big-spacer-right">
-              <div class="duplications-rating-big" style="border-color: #0a0;">
-                <div style="background: #ed7d20" class="duplications-rating"></div>
-              </div>
-            </div>
-            <a class="overview-measures-value text-light link-underline">0.0%</a>
-          </div>
-          <div class="spacer-top flex-justify-center">
-            <span>
-              Duplications on
-              <a class="link-underline big">955</a>
-               New Lines
-            </span>
           </div>
         </div>
       </div>
