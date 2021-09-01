@@ -13,6 +13,51 @@
         </span>
       </div>
     </div>
+
+    <div class="overview-measures-row flex">
+      <div class="overview-panel-big-padded flex-1 small flex-center big-spacer-left">
+        <a class="overview-measures-value text-light">0</a>
+        <icon-font type="icon-jiesuo" class="icon-svg little-spacer-right big-spacer-left" />
+        <span>New Vulnerabilities</span>
+      </div>
+      <div class="overview-panel-big-padded overview-measures-aside flex-center">
+        <span class="flex-1 big-spacer-right text-right">Security</span>
+        <span>
+          <a class="link-no-underline"><span class="rating" :style="{backgroundColor: '#0a0'}">A</span></a>
+        </span>
+      </div>
+    </div>
+
+    <div class="overview-measures-row flex">
+      <div class="overview-panel-big-padded flex-1 small flex-center big-spacer-left">
+        <a class="overview-measures-value text-light">0</a>
+        <icon-font type="icon-security" class="icon-svg little-spacer-right big-spacer-left" />
+        <span>New Security Hotspots</span>
+      </div>
+      <div class="flex-1 small flex-center">
+
+      </div>
+      <div class="overview-panel-big-padded overview-measures-aside flex-center">
+        <span class="flex-1 big-spacer-right text-right">Security Review</span>
+        <span>
+          <a class="link-no-underline"><span class="rating" :style="{backgroundColor: '#0a0'}">A</span></a>
+        </span>
+      </div>
+    </div>
+
+    <div class="overview-measures-row flex">
+      <div class="overview-panel-big-padded flex-1 small flex-center big-spacer-left">
+        <a class="overview-measures-value text-light">0</a>
+        <icon-font type="icon-security" class="icon-svg little-spacer-right big-spacer-left" />
+        <span>New Vulnerabilities</span>
+      </div>
+      <div class="overview-panel-big-padded overview-measures-aside flex-center">
+        <span class="flex-1 big-spacer-right text-right">Security</span>
+        <span>
+          <a class="link-no-underline"><span class="rating" :style="{backgroundColor: '#0a0'}">A</span></a>
+        </span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -72,6 +117,9 @@ export default {
 .overview-measures-row {
   min-height: 105px;
   box-sizing: border-box;
+}
+.overview-measures-row+.overview-measures-row {
+  border-top: 1px solid #e6e6e6;
 }
 .big-spacer-left {
   margin-left: 16px;
