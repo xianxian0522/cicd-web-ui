@@ -2,7 +2,7 @@
   <div class="overview-panel-content flex-1">
     <div class="overview-measures-row flex">
       <div class="overview-panel-big-padded flex-1 small flex-center big-spacer-left">
-        <a class="overview-measures-value text-light">0</a>
+        <a class="overview-measures-value text-light link-underline">0</a>
         <icon-font type="icon-bug" class="icon-svg little-spacer-right big-spacer-left" />
         <span>New Bugs</span>
       </div>
@@ -16,7 +16,7 @@
 
     <div class="overview-measures-row flex">
       <div class="overview-panel-big-padded flex-1 small flex-center big-spacer-left">
-        <a class="overview-measures-value text-light">0</a>
+        <a class="overview-measures-value text-light link-underline">0</a>
         <icon-font type="icon-jiesuo" class="icon-svg little-spacer-right big-spacer-left" />
         <span>New Vulnerabilities</span>
       </div>
@@ -30,7 +30,7 @@
 
     <div class="overview-measures-row flex">
       <div class="overview-panel-big-padded flex-1 small flex-center big-spacer-left">
-        <a class="overview-measures-value text-light">0</a>
+        <a class="overview-measures-value text-light link-underline">0</a>
         <icon-font type="icon-security" class="icon-svg little-spacer-right big-spacer-left" />
         <span>New Security Hotspots</span>
         <a-tooltip placement="bottom" class="little-spacer-left">
@@ -62,16 +62,28 @@
 
     <div class="overview-measures-row flex">
       <div class="overview-panel-big-padded flex-1 small flex-center big-spacer-left">
-        <a class="overview-measures-value text-light">0</a>
+        <a class="overview-measures-value text-light link-underline">33min</a>
+        <span class="big-spacer-left">Added Debt</span>
+      </div>
+      <div class="flex-1 small flex-center">
+        <a class="overview-measures-value text-light link-underline">0</a>
         <icon-font type="icon-security" class="icon-svg little-spacer-right big-spacer-left" />
-        <span>New Vulnerabilities</span>
+        <span>New Code Smells</span>
       </div>
       <div class="overview-panel-big-padded overview-measures-aside flex-center">
-        <span class="flex-1 big-spacer-right text-right">Security</span>
+        <span class="flex-1 big-spacer-right text-right">Maintainability</span>
         <span>
           <a class="link-no-underline"><span class="rating" :style="{backgroundColor: '#0a0'}">A</span></a>
         </span>
       </div>
+    </div>
+
+    <div class="overview-measures-row flex">
+      <div class="overview-panel-huge-padded flex-1 bordered-right flex-center">
+        <div class="flex-center"></div>
+        <div></div>
+      </div>
+      <div class="overview-panel-huge-padded flex-1 flex-center"></div>
     </div>
   </div>
 </template>
@@ -116,15 +128,14 @@ export default {
 }
 .overview-panel-big-padded {
   padding: 24px;
-
-  a {
-    border-bottom: 1px solid #cae3f2;
-    color: #236a97;
-    cursor: pointer;
-    outline: 0;
-    text-decoration: none;
-    transition: all .2s ease;
-  }
+}
+.link-underline {
+  border-bottom: 1px solid #cae3f2;
+  color: #236a97;
+  cursor: pointer;
+  outline: 0;
+  text-decoration: none;
+  transition: all .2s ease;
 }
 .overview-measures-aside {
   flex-basis: 200px;
@@ -158,6 +169,12 @@ export default {
 }
 .text-right {
   text-align: right;
+}
+.overview-panel-huge-padded {
+  padding: 40px;
+}
+.bordered-right {
+  border-right: 1px solid #e6e6e6;
 }
 .rating {
   display: inline-block;
