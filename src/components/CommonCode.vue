@@ -33,9 +33,24 @@
         <a class="overview-measures-value text-light">0</a>
         <icon-font type="icon-security" class="icon-svg little-spacer-right big-spacer-left" />
         <span>New Security Hotspots</span>
+        <a-tooltip placement="bottom" class="little-spacer-left">
+          <template #title>
+            <span>Security-sensitive code that requires manual review to assess whether or not a vulnerability exists.</span>
+          </template>
+          <QuestionCircleOutlined />
+        </a-tooltip>
       </div>
       <div class="flex-1 small flex-center">
-
+        <span v-if="false" class="overview-measures-empty-value"></span>
+        <span v-else class="flex-center">
+          <svg width="24" height="24" class="svg-circle">
+            <circle cx="12" cy="12" r="10.5" stroke-width="3" stroke="#a4030f" fill="none"></circle>
+            <circle cx="12" cy="12" r="10.5" stroke-width="3" stroke="#00aa00" fill="none" style="stroke-dasharray: 16.485 65.94">
+            </circle>
+          </svg>
+          <span class="huge spacer-left">3.0%</span>
+        </span>
+        <span class="big-spacer-left">Reviewed</span>
       </div>
       <div class="overview-panel-big-padded overview-measures-aside flex-center">
         <span class="flex-1 big-spacer-right text-right">Security Review</span>
@@ -64,6 +79,7 @@
 <script lang="ts">
 import {createFromIconfontCN} from "@ant-design/icons-vue";
 import {ref} from "vue";
+import {QuestionCircleOutlined} from '@ant-design/icons-vue'
 
 const IconFont = createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_2780490_4v25w6tlomw.js'
@@ -71,7 +87,7 @@ const IconFont = createFromIconfontCN({
 
 export default {
   name: "CommonCode",
-  components: {IconFont},
+  components: {IconFont, QuestionCircleOutlined},
   props: {
     activeKey: Number,
   },
@@ -124,6 +140,11 @@ export default {
 .big-spacer-left {
   margin-left: 16px;
 }
+.overview-measures-empty-value {
+  height: 1px;
+  width: 16px;
+  background: #333;
+}
 .overview-measures-value {
   line-height: 1;
   font-size: 36px;
@@ -150,5 +171,15 @@ export default {
   font-weight: 400;
   text-align: center;
   text-shadow: 0 0 1px rgb(0 0 0 / 35%);
+}
+.spacer-left {
+  margin-left: 8px;
+}
+.svg-circle {
+  stroke-dashoffset: 0;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: all .2s;
+  z-index: 2;
 }
 </style>

@@ -5,7 +5,7 @@
         <div class="overview-panel">
           <h2 class="overview-panel-title flex-center">
             Quality Gate Status
-            <a-tooltip placement="bottom" >
+            <a-tooltip placement="bottom" class="little-spacer-left">
               <template #title>
                 <span>A Quality Gate is a set of measure-based Boolean conditions. It helps you know immediately whether your project is production-ready. If your current status is not Passed, you'll see which measures caused the problem and the values required to pass.</span>
               </template>
@@ -90,10 +90,6 @@ export default {
   font-weight: 600;
   font-size: 12px;
   margin-bottom: 8px;
-
-  span {
-    margin-left: 4px;
-  }
 }
 .overview-panel-content {
   background: #fff;
@@ -113,9 +109,6 @@ export default {
 }
 .big-spacer-bottom {
   margin-bottom: 16px;
-}
-.huge {
-  font-size: 24px;
 }
 .btn-active {
   background-color: #fff;
