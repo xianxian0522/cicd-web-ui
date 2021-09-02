@@ -148,14 +148,14 @@ export default {
     }
     const openSonarNewView = () => {
       const url = window.location.origin
-      const query = projectInfo.value?.biz_name + '_' + projectInfo.value?.app_name + '_' + projectInfo.value?.version_name
-      router.push({
-        name: 'sonar',
-        query: {
-          projectKey: query
-        },
-        params: { appId: appId.value },
-      })
+      // const query = projectInfo.value?.biz_name + '_' + projectInfo.value?.app_name + '_' + projectInfo.value?.version_name
+      // router.push({
+      //   name: 'sonar',
+      //   query: {
+      //     projectKey: query
+      //   },
+      //   params: { appId: appId.value },
+      // })
       // window.open(`${url}/dashboard?id=${query}`)
     }
     // // task-box组件触发
