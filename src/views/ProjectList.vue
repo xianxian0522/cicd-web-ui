@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="common-content-list">
     <CommonBreadcrumb>
       <template v-slot:first>
         <router-link  :to="{ name: 'biz', query: { bizId } }">biz</router-link>
@@ -59,5 +59,5 @@ export default {
 </script>
 
 <style scoped lang="less">
-
+@import "../components/index";
 </style>

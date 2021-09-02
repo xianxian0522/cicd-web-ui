@@ -50,9 +50,10 @@
         <a-descriptions-item label="创建人" :span="2">{{ projectInfo?.create_by_username }}</a-descriptions-item>
       </a-descriptions>
 <!--      <div v-if="Object.keys(stepsList)?.length > 0" >-->
-<!--        <TaskSvg :steps-list="stepsList" :advanced-display="advancedDisplay"/>-->
+<!--        <TaskCanvas :steps-list="stepsList" :advanced-display="advancedDisplay" :svg-id="'cicdSvg'" />-->
+<!--&lt;!&ndash;        <TaskSvg :steps-list="stepsList" :advanced-display="advancedDisplay" :svg-id="'cicdSvg'"/>&ndash;&gt;-->
 <!--      </div>-->
-      <div v-if="Object.keys(stepsList)?.length > 0">
+      <div v-if="Object.keys(stepsList)?.length > 0" >
         <TaskFlow :stepsList="stepsList" :advancedDisplay="advancedDisplay" :svg-id="'cicdSvg'"/>
       </div>
     </div>
@@ -67,7 +68,7 @@
         <a-button key="back" @click="modalVisible = false">取消</a-button>
       </template>
       <div ref="consoleRef">
-        <pre ><code>{{ modalContent }}</code></pre>
+        <pre id="pre"><code>{{ modalContent }}</code></pre>
         <a-spin v-if="modalLoading" />
       </div>
     </a-modal>
@@ -78,27 +79,33 @@
 import CommonHeader from "@/components/CommonHeader.vue";
 import projectDetailRepositories from "@/composable/projectDetailRepositories";
 import cicdRepository from "@/api/cicdRepository";
-import {nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
+import {nextTick, onActivated, onBeforeUnmount, onMounted, provide, reactive, ref, toRefs, watch} from "vue";
 import TaskSvg from "@/views/TaskSvg.vue";
+import TaskCanvas from "@/views/TaskCanvas.vue";
 import {Step} from "@/utils/response";
 import {SyncOutlined} from '@ant-design/icons-vue'
 import CommonTicket from "@/components/CommonTicket.vue";
 import * as monaco from 'monaco-editor'
 import {message} from "ant-design-vue";
+import * as _ from "lodash";
+import {onBeforeRouteLeave, useRouter} from "vue-router";
 
 export default {
   name: "ProjectDetails",
   components: {
     CommonHeader,
     // TaskSvg,
+    // TaskCanvas,
     CommonTicket,
     SyncOutlined
   },
   setup() {
+    const router = useRouter()
     const { appId, projectId, projectInfo } = projectDetailRepositories()
     const stepsList = ref<{[key: string]: Step}>({})
     const autoRefresh = ref(true)
     const advancedDisplay = ref(false)
+    const isAuto = ref(false)
     const timer = ref()
     const spinning = ref(false)
     const modalState = reactive({
@@ -107,6 +114,7 @@ export default {
       modalLoading: true,
     })
     const consoleRef = ref()
+    const isScroll = ref(true)
     provide('advancedDisplay', advancedDisplay)
     provide('projectId', projectId)
 
@@ -135,11 +143,25 @@ export default {
       modalState.modalVisible = true
       modalState.modalLoading = true
       modalState.modalContent = ''
+      isScroll.value = true
       watchJenkinsConsole(jobName, buildNum, 0)
+    }
+    const openSonarNewView = () => {
+      const url = window.location.origin
+      // const query = projectInfo.value?.biz_name + '_' + projectInfo.value?.app_name + '_' + projectInfo.value?.version_name
+      // router.push({
+      //   name: 'sonar',
+      //   query: {
+      //     projectKey: query
+      //   },
+      //   params: { appId: appId.value },
+      // })
+      // window.open(`${url}/dashboard?id=${query}`)
     }
     // // task-box组件触发
     // provide('spinChange', spinChange)
     provide('jenkinsConsoleChange', jenkinsConsoleChange)
+    provide('openSonarNewView', openSonarNewView)
     provide('monaco', monaco)
     provide('isRedo', true)
     provide('workflowRedo', workflowRedo)
@@ -150,14 +172,18 @@ export default {
         start = data?.Offset
         modalState.modalContent = modalState.modalContent + data.Content
         await nextTick(() => {
-          consoleRef.value?.scrollIntoView({behavior: 'auto', block: 'end'})
+          if (isScroll.value) {
+            consoleRef.value?.scrollIntoView({behavior: 'auto', block: 'end'})
+          }
         })
-        if (data?.HasMoreText) {
-          setTimeout(async () => {
-            await watchJenkinsConsole(jobName, buildNum, start)
-          }, 3000)
-        } else {
-          modalState.modalLoading = false
+        if (modalState.modalVisible) {
+          if (data?.HasMoreText) {
+            setTimeout(async () => {
+              await watchJenkinsConsole(jobName, buildNum, start)
+            }, 3000)
+          } else {
+            modalState.modalLoading = false
+          }
         }
       } catch (e) {
         console.error(e)
@@ -207,25 +233,53 @@ export default {
       }, 5000)
     }
     const watchModalScroll = () => {
-      console.log('=====')
+      const el = document.querySelector('.full-modal .ant-modal-body')
+      if (el) {
+        const max = el.scrollHeight + 10
+        const min = el.scrollHeight - 10
+        const height = el.scrollTop + el.clientHeight
+        isScroll.value = height <= max && height >= min
+      }
     }
+    const scrollDebounce = _.debounce(watchModalScroll, 300)
 
+    watch(() => modalState.modalVisible, value => {
+      if (value) {
+        window.addEventListener('mousewheel', scrollDebounce, true)
+      } else {
+        window.removeEventListener('mousewheel', scrollDebounce, true)
+      }
+    })
     watch(autoRefresh, value => {
       if (value) {
         watchRefresh()
+      } else {
+        clearInterval(timer.value)
       }
     })
     watch(advancedDisplay, value => {
       getWorkflow()
     })
+    onBeforeRouteLeave(() => {
+      clearInterval(timer.value)
+      if (autoRefresh.value) {
+        isAuto.value = false
+        autoRefresh.value = false
+      } else {
+        isAuto.value = true
+      }
+    })
+    onActivated(() => {
+      if (!isAuto.value) {
+        autoRefresh.value = true
+      }
+    })
     onMounted(() => {
       getWorkflow()
       watchRefresh()
-      window.addEventListener('mousewheel', watchModalScroll, true)
     })
     onBeforeUnmount(() => {
       clearInterval(timer.value)
-      window.removeEventListener('mousewheel', watchModalScroll, true)
     })
 
     return {
@@ -249,7 +303,9 @@ export default {
 
 <style lang="less" >
 .project-detail {
-  padding-top: 20px;
+  padding: 20px;
+  background: #fff;
+  min-height: 100%;
 }
 .project-refresh {
   margin-bottom: 15px;

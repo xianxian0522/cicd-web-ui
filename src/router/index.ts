@@ -34,17 +34,25 @@ const routes: Array<RouteRecordRaw> = [
         children: [
           {path: 'project-list/:appId', name: 'project',
             component: () => import('../views/ProjectList.vue')},
-          {path: 'project-list/:appId/detail', name: 'project-detail',
-            component: () => import('../views/ProjectDetails.vue')},
+          {
+            path: 'project-list/:appId/detail', name: 'project-detail',
+            beforeEnter: (to, from) => {
+              to.meta.keepAlive = from.name === 'sonar'
+            },
+            meta: {
+              keepAlive: true // 需要缓存
+            },
+            component: () => import('../views/ProjectDetails.vue')
+          },
           {path: 'version-list/:appId', name: 'version',
             component: () => import('../views/VersionList.vue')},
+          {
+            path: 'project-list/:appId/sonarqube',
+            name: 'sonar',
+            component: () => import('../views/SonarQube.vue'),
+          },
         ],
       },
-      // {
-      //   path: ':bizId/project-list/:appId',
-      //   name: 'project',
-      //   component: () => import('../views/ProjectList.vue')
-      // },
     ],
   },
   {

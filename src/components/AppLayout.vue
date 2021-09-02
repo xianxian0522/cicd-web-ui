@@ -15,14 +15,20 @@
       </a-menu>
     </a-layout-sider>
     <a-layout-content class="common-content-layout app-layout-content">
-      <router-view></router-view>
+      <router-view v-slot="{ Component, route }">
+        <keep-alive >
+          <component :is="Component" v-if="route?.meta?.keepAlive" />
+        </keep-alive>
+        <component :is="Component" v-if="!route?.meta?.keepAlive" />
+      </router-view>
+<!--      <router-view></router-view>-->
     </a-layout-content>
   </a-layout>
 </template>
 
 <script lang="ts">
 import {useRoute} from "vue-router";
-import {ref, watch} from "vue";
+import {ref} from "vue";
 import {BarItem} from "@/utils/response";
 
 export default {
@@ -38,11 +44,6 @@ export default {
       {id: 2, icon: 'icon-version', path: 'version-list', name: '版本列表', route: 'version'},
     ])
 
-    watch(() => route.path, value => {
-      const url = value.split('/')
-      selectedKeysMenu.value = [url[3]]
-    })
-
     return {
       selectedKeysMenu,
       bar,
@@ -56,6 +57,7 @@ export default {
 <style scoped lang="less">
 @import "index";
 .app-layout-content {
-  padding: 0 20px;
+  padding: 0;
+  background: #f3f3f3;
 }
 </style>
