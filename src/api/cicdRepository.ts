@@ -9,7 +9,7 @@ import {
 } from "@/utils/response";
 
 const ApiLogin = '/api/v1/sso/login';
-const API = '/api/v1/';
+const API = '/api/v1';
 const ApiBiz = `${API}/my/biz`
 const ApiApp = `${API}/my/app`
 const ApiProject = `${API}/my/project`
