@@ -26,7 +26,7 @@ export default {
   queryVersionByAppId: (appId: number) => request.get<VersionResponse[]>(`${ApiApp}/${appId}/version`),
   queryTicketsByAppId: (appId: number, params: any) => request.get<Page<TicketsResponse>>(`${ApiApp}/${appId}/tickets`, params),
   queryTicketOpenCountByAppId: (appId: number, params: any) => request.get(`${ApiApp}/${appId}/ticket_count`, params),
-  addProjectByAppId: (appId: number, params: any) => request.post(`${ApiApp}/${appId}/project`, params),
+  addProjectByAppId: (appId: number, params: any) => request.post<ProjectResponse>(`${ApiApp}/${appId}/project`, params),
 
   queryProjectDetail: (projectId: number) => request.get<ProjectResponse>(`${ApiProject}/${projectId}`),
   queryWorkflow: (projectId: number) => request.get<ProjectWorkflow>(`${ApiProject}/${projectId}/workflow`),

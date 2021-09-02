@@ -10,6 +10,9 @@
       <p>{{ info.DisplayName }}</p>
       <p>{{ info.Comment }}</p>
     </div>
+    <div v-if="isEdit">
+      <a-button type="primary" @click="addProjectHandle">添加项目</a-button>
+    </div>
   </div>
 </template>
 
@@ -22,12 +25,23 @@ export default defineComponent({
   props: {
     info: Object,
     appId: Number,
+    isEdit: Boolean,
   },
-  setup(props: any) {
+  emits: ['addProject'],
+  setup(props: any, {emit}: any) {
     const { appInfo } = appInfoRepositories()
 
+    const addProjectHandle = () => {
+      try {
+        emit('addProject')
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
     return {
-      appInfo
+      appInfo,
+      addProjectHandle,
     }
   }
 });

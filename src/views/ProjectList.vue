@@ -6,7 +6,7 @@
       </template>
       <template v-slot:second>project</template>
     </CommonBreadcrumb>
-    <CommonHeader :app-id="appId"/>
+    <CommonHeader :app-id="appId" :is-edit="true" @addProject="addProject"/>
     <CommonTicket :app-id="appId" :isAppTicket="true"/>
     <CommonTable :columns="columns" :data-source="projectList" :scroll-x="'1800px'">
       <template v-slot:default="slotProps">
@@ -15,6 +15,10 @@
         </a-button>
       </template>
     </CommonTable>
+
+    <a-modal v-model:visible="visible" :title="modelTitle" @ok="handleSubmit">
+      <ProjectEdit ref="editRef" :appId="appId" @visibleChange="visibleChange" />
+    </a-modal>
   </div>
 </template>
 
@@ -24,6 +28,8 @@ import CommonHeader from "@/components/CommonHeader.vue";
 import CommonBreadcrumb from "@/components/CommonBreadcrumb.vue";
 import CommonTable from "@/components/CommonTable.vue";
 import CommonTicket from "@/components/CommonTicket.vue";
+import {reactive, ref, toRefs} from "vue";
+import ProjectEdit from "@/components/ProjectEdit.vue";
 
 export default {
   name: "ProjectList",
@@ -32,6 +38,7 @@ export default {
     CommonBreadcrumb,
     CommonTable,
     CommonTicket,
+    ProjectEdit,
   },
   setup() {
     const columns = [
@@ -47,12 +54,34 @@ export default {
       { title: '操作', key: 'action', fixed: 'right', slots: { customRender: 'action', }, align: 'center', width: 120},
     ]
     const { projectList, appId, bizId } = projectRepositories()
+    const editRef = ref()
+    const modalState = reactive({
+      visible: false,
+      modelTitle: '新增项目',
+    })
+
+    const visibleChange = (value: boolean) => {
+      modalState.visible = value
+    }
+    const addProject = () => {
+      modalState.visible = true
+      modalState.modelTitle = '新增项目'
+      editRef.value?.getFormValue({})
+    }
+    const handleSubmit = () => {
+      editRef.value?.addProjectHandle()
+    }
 
     return {
       columns,
       projectList,
       appId,
       bizId,
+      editRef,
+      ...toRefs(modalState),
+      addProject,
+      visibleChange,
+      handleSubmit,
     }
   }
 }
